@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -61,7 +62,8 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        {/* <Avatar src={account.photoURL} alt="photoURL" /> */}
+        <Icon icon="ic:baseline-settings" width="40" height="40" />
       </IconButton>
 
       <Popover

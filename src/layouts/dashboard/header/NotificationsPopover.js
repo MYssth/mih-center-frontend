@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
@@ -104,7 +105,8 @@ export default function NotificationsPopover() {
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
         <Badge badgeContent={totalUnRead} color="error">
-          <Iconify icon="eva:bell-fill" />
+          {/* <Iconify icon="eva:bell-fill" /> */}
+          <Icon icon="ic:baseline-notifications" width="40" height="40" />
         </Badge>
       </IconButton>
 

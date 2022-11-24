@@ -11,6 +11,10 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UserPageNewUser from './pages/UserPageNewUser';
 
+// DMIS
+import DMISDashboardLayout from './pages/DMIS/DMISDashboardLayout';
+import ITMTDashboard from './pages/DMIS/ITMTDashboard';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -28,8 +32,16 @@ export default function Router() {
       ],
     },
     {
-      path: 'login',
+      path: '/login',
       element: <LoginPage />,
+    },
+    {
+      path: '/dmis',
+      element: <DMISDashboardLayout />,
+      children: [
+        { path: 'itmtindex', element: <ITMTDashboard />},
+
+      ],
     },
     {
       element: <SimpleLayout />,

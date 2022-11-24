@@ -1,4 +1,5 @@
 // component
+import { Icon } from '@iconify/react';
 import SvgColor from '../../../components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -7,35 +8,40 @@ const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ 
 
 const navConfig = [
   {
-    title: 'dashboard',
+    title: 'หน้าหลัก',
     path: '/dashboard/app',
-    icon: icon('ic_analytics'),
+    icon: <Icon icon="ic:baseline-dashboard" width="30" height="30" />,
   },
   {
-    title: 'user',
+    title: 'จัดการผู้ใช้',
     path: '/dashboard/user',
-    icon: icon('ic_user'),
+    icon: <Icon icon="ic:baseline-person" width="30" height="30" />,
   },
   {
-    title: 'product',
-    path: '/dashboard/products',
-    icon: icon('ic_cart'),
+    title: 'จัดการโครงสร้างองค์กร',
+    path: '/dashboard/<ยังไม่สร้าง>',
+    icon: <Icon icon="ic:baseline-maps-home-work" width="30" height="30" />,
   },
-  {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: icon('ic_blog'),
-  },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'product',
+  //   path: '/dashboard/products',
+  //   icon: icon('ic_cart'),
+  // },
+  // {
+  //   title: 'blog',
+  //   path: '/dashboard/blog',
+  //   icon: icon('ic_blog'),
+  // },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  // },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;

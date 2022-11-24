@@ -1,6 +1,5 @@
-import jwtDecode from "jwt-decode";
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
@@ -40,13 +39,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const isDesktop = useResponsive('up', 'lg');
 
-  const [tokenData, setTokenData] = useState([]);
-
   useEffect(() => {
-
-    const token = localStorage.getItem('token');
-        setTokenData(jwtDecode(token));
-
     if (openNav) {
       onCloseNav();
     }
@@ -67,15 +60,15 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            {/* <Avatar src={account.photoURL} alt="photoURL" /> */}
+            <Avatar src={account.photoURL} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {tokenData.personnel_name}
+                {account.displayName}
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {tokenData.personnel_id}
+                {account.role}
               </Typography>
             </Box>
           </StyledAccount>
@@ -85,6 +78,30 @@ export default function Nav({ openNav, onCloseNav }) {
       <NavSection data={navConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
+
+      <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
+        <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+          <Box
+            component="img"
+            src="/assets/illustrations/illustration_avatar.png"
+            sx={{ width: 100, position: 'absolute', top: -50 }}
+          />
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography gutterBottom variant="h6">
+              Get more?
+            </Typography>
+
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              From only $69
+            </Typography>
+          </Box>
+
+          <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="contained">
+            Upgrade to Pro
+          </Button>
+        </Stack>
+      </Box>
     </Scrollbar>
   );
 

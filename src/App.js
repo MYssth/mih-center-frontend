@@ -15,7 +15,8 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch('http://localhost:5000/api/authen', {
+    // fetch(`http://${process.env.host}:${process.env.loginPort}/api/authen`, {
+      fetch(`http://localhost:5000/api/authen`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

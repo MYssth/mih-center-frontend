@@ -32,6 +32,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 
+
 // ----------------------------------------------------------------------
 
 // const TABLE_HEAD = [
@@ -47,7 +48,6 @@ const TABLE_HEAD = [
   { id: 'id', label: 'รหัสพนักงาน', alignRight: false },
   { id: 'name', label: 'ชื่อ-นามสกุล', alignRight: false },
   { id: 'position', label: 'ตำแหน่ง', alignRight: false },
-  { id: 'level', label: 'ระดับการเข้าถึง', alignRight: false },
   { id: 'status', label: 'สถานะ', alignRight: false },
   { id: '' },
 ];
@@ -104,7 +104,8 @@ export default function UserPage() {
 
   useEffect(() => {
 
-    fetch('http://localhost:5001/api/getpersonnel')
+    // fetch(`http://${process.env.host}:${process.env.psnDataDistPort}/api/getpersonnel`)
+    fetch(`http://localhost:5001/api/getpersonnel`)
       .then((response) => response.json())
       .then((data) => {
         setPersonnel(data);
@@ -180,16 +181,16 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> จัดการผู้ใช้ | MIH Center </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            จัดการผู้ใช้
           </Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleNewUser}>
-            New User
+            เพิ่มผู้ใช้ใหม่
           </Button>
         </Stack>
 
@@ -215,8 +216,7 @@ export default function UserPage() {
                     const id = row.personnel_id;
                     const name = `${row.personnel_firstname} ${row.personnel_lastname}`;
                     const isActive = row.personnel_isactive;
-                    const position = row.position_id;
-                    const level = row.level_id;
+                    const position = row.position_name;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -228,7 +228,6 @@ export default function UserPage() {
                         <TableCell align="left">{id}</TableCell>
                         <TableCell align="left">{name}</TableCell>
                         <TableCell align="left">{position}</TableCell>
-                        <TableCell align="left">{level}</TableCell>
                         <TableCell align="left">{isActive ? 'Active' : 'Deactive'}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>

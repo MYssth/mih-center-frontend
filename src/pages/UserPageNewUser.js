@@ -4,22 +4,24 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Container, Stack, Typography, TextField, IconButton, InputAdornment, Card, Button } from '@mui/material';
+import { Container, Stack, Typography, TextField, IconButton, InputAdornment, Card, Button, Checkbox, Box } from '@mui/material';
 
 export default function UserPageNewUser() {
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
 
     const [positionName, setPositionName] = React.useState('');
     const [positionId, setPositionId] = React.useState('');
     const [positions, setPositions] = React.useState([]);
-    const [levelDescription, setLevelDescription] = React.useState([]);
-    const [levelId, setLevelId] = React.useState([]);
+    const [DMISLevelName, setDMISLevelName] = React.useState('');
+    const [DMISLevelId, setDMISLevelId] = React.useState('');
+    const [DMISLevelDescription, setDMISLevelDescription] = React.useState('');
     const [levels, setLevels] = React.useState([]);
+    const [isDMIS, setIsDMIS] = React.useState(false);
 
     useEffect(() => {
 
-        fetch('http://localhost:5001/api/getpositions')
+        // fetch(`http://${process.env.host}:${process.env.psnDataDistPort}/api/getpositions`)
+        fetch(`http://localhost:5001/api/getpositions`)
             .then((response) => response.json())
             .then((data) => {
                 setPositions(data);
@@ -28,7 +30,8 @@ export default function UserPageNewUser() {
                 console.error('Error:', error);
             });
 
-        fetch('http://localhost:5001/api/getlevels')
+        // fetch(`http://${process.env.host}:${process.env.psnDataDistPort}/api/getlevels`)
+        fetch(`http://localhost:5001/api/getlevels`)
             .then((response) => response.json())
             .then((data) => {
                 setLevels(data);
@@ -40,6 +43,13 @@ export default function UserPageNewUser() {
     }, []);
 
     const handleSubmit = () => {
+
+        const levelList = [];
+
+        if (isDMIS) {
+            levelList.push(DMISLevelId);
+        }
+
         const jsonData = {
             personnel_id: document.getElementById('username').value,
             personnel_secret: document.getElementById('password').value,
@@ -47,22 +57,22 @@ export default function UserPageNewUser() {
             personnel_lastname: document.getElementById('lastname').value,
             personnel_isactive: "1",
             position_id: positionId,
-            level_id: levelId
+            level_list: levelList,
         }
 
-        console.log(`id : ${jsonData.personnel_id}`);
-        console.log(`pass : ${jsonData.personnel_secret}`);
-        console.log(`firstname : ${jsonData.personnel_firstname}`);
-        console.log(`lastname : ${jsonData.personnel_lastname}`);
-        console.log(`position id : ${jsonData.position_id}`);
-        console.log(`level id : ${jsonData.level_id}`);
+        // console.log(`id : ${jsonData.personnel_id}`);
+        // console.log(`pass : ${jsonData.personnel_secret}`);
+        // console.log(`firstname : ${jsonData.personnel_firstname}`);
+        // console.log(`lastname : ${jsonData.personnel_lastname}`);
+        // console.log(`position id : ${jsonData.position_id}`);
+        // console.log(`level_list : ${jsonData.level_list}`);
+        // console.log(`level list length = ${jsonData.level_list.length}`);
 
         if (jsonData.personnel_id === "" ||
             jsonData.personnel_secret === "" ||
             jsonData.personnel_firstname === "" ||
             jsonData.personnel_lastname === "" ||
-            jsonData.position_id === "" ||
-            jsonData.level_id === "") {
+            jsonData.position_id === "") {
 
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
             return;
@@ -72,7 +82,8 @@ export default function UserPageNewUser() {
             return;
         }
 
-        fetch('http://localhost:5001/api/addpersonnel', {
+        // fetch(`http://${process.env.host}:${process.env.userCrudPort}/api/addpersonnel`, {
+        fetch(`http://localhost:5002/api/addpersonnel`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,24 +102,38 @@ export default function UserPageNewUser() {
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูลผู้ใช้')
+                alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูลผู้ใช้');
             });
     };
+
+    const handleChangeDMIS = (event) => {
+        if (event.target.checked) {
+            setIsDMIS(true);
+        }
+        else {
+            setIsDMIS(false);
+            setDMISLevelId("");
+            setDMISLevelName("");
+            setDMISLevelDescription("");
+        }
+
+    }
 
     return (
         <>
             <Helmet>
-                <title> New user | MIH Center </title>
+                <title> เพิ่มผู้ใช้ใหม่ | MIH Center </title>
             </Helmet>
 
             <Container>
                 <Typography variant="h4" sx={{ mb: 5 }}>
-                    New User
+                    เพิ่มผู้ใช้ใหม่
                 </Typography>
                 <Card>
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
+                        <Typography variant='h5'>ข้อมูลส่วนตัว</Typography>
                         <TextField id="username" name="username" label="รหัสพนักงาน" />
-                        <TextField id="password" name="password" label="รหัสผ่าน (วันเดือนปีเกิด)" />                      
+                        <TextField id="password" name="password" label="รหัสผ่าน (วันเดือนปีเกิด)" />
                         <TextField id="firstname" name="firstname" label="ชื่อ" />
                         <TextField id="lastname" name="lastname" label="นามสกุล" />
 
@@ -131,29 +156,42 @@ export default function UserPageNewUser() {
                             renderInput={(params) => <TextField {...params} label="ตำแหน่ง" />}
                         />
 
+                    </Stack>
+
+                    <Box spacing={2} sx={{ width: 'auto', p: 2 }}>
+                        <Typography variant='h5'>การเข้าถึงระบบ</Typography>
+
+                        {/* ============================================= DMIS ================================================================= */}
+                        <Checkbox onChange={handleChangeDMIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบแจ้งซ่อม
                         {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
                         <Autocomplete
-                            value={levelDescription}
+                            disabled={!isDMIS}
+                            value={DMISLevelName}
                             onChange={(event, newValue) => {
-                                setLevelDescription(newValue);
+                                setDMISLevelName(newValue);
                                 if (newValue !== null) {
-                                    setLevelId(levels.find(o => o.level_description === newValue).level_id);
+                                    setDMISLevelId(levels.find(o => o.level_name === newValue).level_id);
+                                    setDMISLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue).level_description}`);
                                 }
                                 else {
-                                    setLevelId("");
+                                    setDMISLevelId("");
+                                    setDMISLevelDescription("");
                                 }
                             }}
-                            id="controllable-states-levels-id"
-                            options={Object.values(levels).map((option) => option.level_description)}
+                            id="controllable-states-DMIS-levels-id"
+                            options={Object.values(levels).map((option) => option.mihapp_id === "DMIS" ? `${option.level_name}` : '')}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField {...params} label="ระดับการเข้าถึง" />}
+                            renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งซ่อม" />}
                         />
-
-                        <Button variant="contained" onClick={handleSubmit}>
+                        <Typography sx={{ pl: 1.5 }}>{`${DMISLevelDescription}`}</Typography><br />
+                        {/* ============================================= END OF DMIS ========================================================== */}
+                    </Box>
+                    <Box textAlign='center'>
+                        <Button variant="contained" onClick={handleSubmit} align='center'>
                             เพิ่มข้อมูลผู้ใช้
                         </Button>
-                    </Stack>
+                    </Box>
                 </Card>
             </Container>
         </>

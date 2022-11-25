@@ -28,26 +28,32 @@ export default function DashboardAppPage() {
   const theme = useTheme();
   const [tokenData, setTokenData] = useState([]);
 
-    const navigate = useNavigate();
-  
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        setTokenData(jwtDecode(token));
-      
-      // if(tokenData[0].level_id === "DMISIT"){
-      //   navigate('/dmis', { replace: true });
-      // }
-    }, []);
+  const navigate = useNavigate();
 
-    const handleDMIS = () => {
-      console.log(tokenData);
-      console.log(tokenData.level_list[0].level_id);
-      for(let i=0;i<tokenData.level_list.length;i+=1){
-        if(tokenData.level_list[i].level_id === "DMIS_IT"){
-          navigate('/dmis/itmtindex', { replace: true });
-        }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setTokenData(jwtDecode(token));
+
+    // if(tokenData[0].level_id === "DMISIT"){
+    //   navigate('/dmis', { replace: true });
+    // }
+  }, []);
+
+  const handleDMIS = () => {
+    console.log(tokenData);
+    console.log(tokenData.level_list[0].level_id);
+    for (let i = 0; i < tokenData.level_list.length; i += 1) {
+      if (tokenData.level_list[i].level_id === "DMIS_IT" || tokenData.level_list[i].level_id === "DMIS_MT") {
+        console.log("it page");
+        navigate('/dmis/itmtindex', { replace: true, state: { level_id: tokenData.level_list[i].level_id, personnel_id: tokenData.personnel_id} });
       }
+      else {
+        console.log("user page");
+        navigate('/dmis/UserDashboard', { replace: true });
+      }
+
     }
+  }
 
   return (
     <>
@@ -59,7 +65,6 @@ export default function DashboardAppPage() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           ยินดีต้อนรับเข้าสู่ระบบ MIH Center
         </Typography>
-
         <Button variant="contained" onClick={handleDMIS}><Icon icon="ic:baseline-settings-suggest" width="50" height="50" />ระบบแจ้งซ่อม</Button>
       </Container>
     </>

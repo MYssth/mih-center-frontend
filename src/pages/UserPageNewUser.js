@@ -1,10 +1,11 @@
+import { Icon } from '@iconify/react';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Container, Stack, Typography, TextField, IconButton, InputAdornment, Card, Button, Checkbox, Box } from '@mui/material';
+import { Container, Stack, Typography, TextField, Card, Button, Checkbox, Box } from '@mui/material';
 
 export default function UserPageNewUser() {
     const navigate = useNavigate();
@@ -126,6 +127,7 @@ export default function UserPageNewUser() {
             </Helmet>
 
             <Container>
+            
                 <Typography variant="h4" sx={{ mb: 5 }}>
                     เพิ่มผู้ใช้ใหม่
                 </Typography>

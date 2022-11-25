@@ -14,6 +14,7 @@ import UserPageNewUser from './pages/UserPageNewUser';
 // DMIS
 import DMISDashboardLayout from './pages/DMIS/DMISDashboardLayout';
 import ITMTDashboard from './pages/DMIS/ITMTDashboard';
+import UserDashboard from './pages/DMIS/UserDashboard';
 
 // ----------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ export default function Router() {
       element: <DMISDashboardLayout />,
       children: [
         { path: 'itmtindex', element: <ITMTDashboard />},
-
+        { path: 'userdashboard', element: <UserDashboard />}
       ],
     },
     {

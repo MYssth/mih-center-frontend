@@ -9,14 +9,13 @@ import { Grid, Container, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export default function ITMTDashboard() {
+export default function UserDashboard() {
   const theme = useTheme();
   const [tokenData, setTokenData] = useState([]);
 
     const navigate = useNavigate();
   
     useEffect(() => {
-
       const token = localStorage.getItem('token');
       setTokenData(jwtDecode(token));
       console.log(tokenData);

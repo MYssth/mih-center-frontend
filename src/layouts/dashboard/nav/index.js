@@ -45,7 +45,7 @@ export default function Nav({ openNav, onCloseNav }) {
   useEffect(() => {
 
     const token = localStorage.getItem('token');
-        setTokenData(jwtDecode(token));
+    setTokenData(jwtDecode(token));
 
     if (openNav) {
       onCloseNav();

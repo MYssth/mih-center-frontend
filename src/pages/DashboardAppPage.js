@@ -33,26 +33,10 @@ export default function DashboardAppPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     setTokenData(jwtDecode(token));
-
-    // if(tokenData[0].level_id === "DMISIT"){
-    //   navigate('/dmis', { replace: true });
-    // }
   }, []);
 
   const handleDMIS = () => {
-    console.log(tokenData);
-    console.log(tokenData.level_list[0].level_id);
-    for (let i = 0; i < tokenData.level_list.length; i += 1) {
-      if (tokenData.level_list[i].level_id === "DMIS_IT" || tokenData.level_list[i].level_id === "DMIS_MT") {
-        console.log("it page");
-        navigate('/dmis/itmtindex', { replace: true, state: { level_id: tokenData.level_list[i].level_id, personnel_id: tokenData.personnel_id} });
-      }
-      else {
-        console.log("user page");
-        navigate('/dmis/UserDashboard', { replace: true });
-      }
-
-    }
+    navigate('/dmis', { replace: true });
   }
 
   return (

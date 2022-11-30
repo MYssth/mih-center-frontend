@@ -1,4 +1,3 @@
-import { Icon } from '@iconify/react';
 import * as React from 'react';
 import { useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -59,7 +58,7 @@ export default function UserPageNewUser() {
             personnel_isactive: "1",
             position_id: positionId,
             level_list: levelList,
-        }
+        };
 
         // console.log(`id : ${jsonData.personnel_id}`);
         // console.log(`pass : ${jsonData.personnel_secret}`);

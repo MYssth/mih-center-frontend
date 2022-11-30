@@ -13,7 +13,7 @@ export default function LoginForm() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
+  const handleSubmit = () => {
 
     const jsonData = {
       personnel_id: document.getElementById("username").value,
@@ -40,9 +40,17 @@ export default function LoginForm() {
       });
   };
 
+  const handleKeypress = e => {
+    // it triggers by pressing the enter key
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
   return (
     <>
       <Stack spacing={3}>
+
         <TextField id="username" name="username" label="รหัสพนักงาน" />
 
         <TextField
@@ -62,16 +70,12 @@ export default function LoginForm() {
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 3 }}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleSubmit} onKeyPress={handleKeypress}>
+          Login
+        </LoadingButton>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
-        Login
-      </LoadingButton>
     </>
   );
 }

@@ -1,39 +1,14 @@
 import { Icon } from '@iconify/react';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
 // @mui
-import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Button } from '@mui/material';
-// components
-import Iconify from '../components/iconify';
-// sections
-import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
-} from '../sections/@dashboard/app';
+import { Container, Typography, Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
-  const theme = useTheme();
-  const [tokenData, setTokenData] = useState([]);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    setTokenData(jwtDecode(token));
-  }, []);
 
   const handleDMIS = () => {
     navigate('/dmis', { replace: true });

@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UserPageNewUser from './pages/UserPageNewUser';
+import ProfileSetting from './pages/ProfileSetting';
 
 // DMIS
 import DMISDashboardLayout from './pages/DMIS/DMISDashboardLayout';
@@ -36,6 +37,10 @@ export default function Router() {
     {
       path: '/login',
       element: <LoginPage />,
+    },
+    {
+      path: '/profilesetting',
+      element: <ProfileSetting />,
     },
     {
       path: '/dmis',

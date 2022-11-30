@@ -1,9 +1,10 @@
+import jwtDecode from "jwt-decode";
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, IconButton, Popover } from '@mui/material';
 // mocks_
 import account from '../../../_mock/account';
 
@@ -11,15 +12,11 @@ import account from '../../../_mock/account';
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
+    label: 'กลับไปหน้าหลัก',
     icon: 'eva:home-fill',
   },
   {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
+    label: 'ตั้งค่าบัญชี',
     icon: 'eva:settings-2-fill',
   },
 ];
@@ -28,7 +25,14 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const [tokenData, setTokenData] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+    const token = localStorage.getItem('token');
+    setTokenData(jwtDecode(token));
+  }, []);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -36,6 +40,14 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
+  };
+
+  const handleBack = () => {
+    navigate('/dashboard', { replace: true });
+  };
+
+  const handleSetting = () => {
+    navigate('/profilesetting', { replace: true });
   };
 
   const handleLogout = () => {
@@ -87,27 +99,33 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {tokenData.personnel_name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {tokenData.personnel_id}
           </Typography>
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
-          {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+          {/* {MENU_OPTIONS.map((option) => (
+            <MenuItem key={option.label} onClick={handleMenu(option.label)}>
               {option.label}
             </MenuItem>
-          ))}
+          ))} */}
+          <MenuItem onClick={handleBack}>
+            กลับไปหน้าหลัก
+          </MenuItem>
+          <MenuItem onClick={handleSetting}>
+            ตั้งค่าบัญชี
+          </MenuItem>
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-          Logout
+          ออกจากระบบ
         </MenuItem>
       </Popover>
     </>

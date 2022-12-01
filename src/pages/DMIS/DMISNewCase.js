@@ -135,7 +135,7 @@ export default function dmisnewcase() {
                                 { label: 'งานช่าง' }]}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField {...params} label="กรุณาเลือกงานที่ต้องการแจ้งซ่อม" />}
+                            renderInput={(params) => <TextField required {...params} label="กรุณาเลือกงานที่ต้องการแจ้งซ่อม" />}
                         />
                     </Stack>
                     <Divider />
@@ -165,7 +165,7 @@ export default function dmisnewcase() {
                             options={Object.values(departments).map((option) => option.department_name)}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField {...params} label="แผนกที่มีปัญหา" />}
+                            renderInput={(params) => <TextField required {...params} label="แผนกที่มีปัญหา" />}
                         />
 
                     </Stack>

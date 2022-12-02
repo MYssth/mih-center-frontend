@@ -53,6 +53,7 @@ export default function dmisnewcase() {
             informer_id: informerId,
             issue_department_id: departmentId,
             department_name: departmentName,
+            phoneNumber: document.getElementById('phoneNumber').value,
         };
 
         console.log(`level_id: ${jsonData.level_id}`);
@@ -61,6 +62,9 @@ export default function dmisnewcase() {
         console.log(`task_device_id: ${jsonData.task_device_id}`);
         console.log(`informer_id: ${jsonData.informer_id}`);
         console.log(`issue_department_id: ${jsonData.issue_department_id}`);
+        console.log(`department_name: ${jsonData.department_name}`);
+        console.log(`phoneNumber: ${jsonData.phoneNumber}`);
+
 
         if (caseTypeName === "" ||
             jsonData.level_id === "") {
@@ -137,6 +141,7 @@ export default function dmisnewcase() {
                             required
                             renderInput={(params) => <TextField required {...params} label="กรุณาเลือกงานที่ต้องการแจ้งซ่อม" />}
                         />
+                        <TextField id="phoneNumber" name="phoneNumber" label="เบอร์โทรติดต่อ" />
                     </Stack>
                     <Divider />
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>

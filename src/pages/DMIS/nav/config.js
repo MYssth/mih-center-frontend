@@ -1,10 +1,7 @@
 // component
 import { Icon } from '@iconify/react';
-import SvgColor from '../../../components/svg-color';
 
 // ----------------------------------------------------------------------
-
-const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 const navConfig = [
   {
@@ -19,7 +16,7 @@ const navConfig = [
   },
   {
     title: 'รายงาน',
-    path: '/dmis/<ยังไม่ทำ>',
+    path: '/dmis/dmisreport',
     icon: <Icon icon="ic:baseline-folder-copy" width="30" height="30" />,
   },
   {

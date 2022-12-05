@@ -17,6 +17,7 @@ import DMISDashboardLayout from './pages/DMIS/DMISDashboardLayout';
 import ITMTDashboard from './pages/DMIS/ITMTDashboard';
 import UserDashboard from './pages/DMIS/UserDashboard';
 import DMISNewCase from './pages/DMIS/DMISNewCase';
+import DMISReport from './pages/DMIS/DMISReport'
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +51,8 @@ export default function Router() {
         { path: 'app', element: <DMISDashboardLayout /> },
         { path: 'itmtdashboard', element: <ITMTDashboard />},
         { path: 'userdashboard', element: <UserDashboard />},
-        { path: 'dmisnewcase', element: <DMISNewCase />}
+        { path: 'dmisnewcase', element: <DMISNewCase />},
+        { path: 'dmisreport', element: <DMISReport />},
       ],
     },
     {

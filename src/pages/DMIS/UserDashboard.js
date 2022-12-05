@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
 // @mui
-import { useTheme } from '@mui/material/styles';
-import { Container, Typography, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { Container, Typography, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Stack, CardActionArea, CardContent } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function UserDashboard() {
-  const theme = useTheme();
   const [taskList, setTaskList] = useState([]);
-
-  const navigate = useNavigate();
+  const [completeTaskList, setCompleteTaskList] = useState([]);
+  const [filterTaskList, setFilterTaskList] = useState([]);
+  const [filterStatusId, setFilterStatusId] = useState('all');
+  const [taskCount, setTaskCount] = useState([]);
 
   useEffect(() => {
 
@@ -29,6 +27,25 @@ export default function UserDashboard() {
           .then((response) => response.json())
           .then((data) => {
             setTaskList(data);
+            setFilterTaskList(data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+
+        fetch(`http://localhost:5003/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setTaskCount(data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+
+        fetch(`http://localhost:5003/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setCompleteTaskList(data);
           })
           .catch((error) => {
             console.error('Error:', error);
@@ -38,7 +55,16 @@ export default function UserDashboard() {
 
   }, []);
 
+  useEffect(() => {
+    if (filterStatusId === 5) {
+      setFilterTaskList(completeTaskList);
+    }
+    else {
+      setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+    }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterStatusId])
 
   return (
     <>
@@ -50,10 +76,74 @@ export default function UserDashboard() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           ระบบแจ้งซ่อมอุปกรณ์ - Device Maintenance Inform Service(DMIS)
         </Typography>
+
+        <Stack direction="row" align="center" sx={{ margin: 1, maxHeight: 100 }}>
+          <Card sx={{ width: 200, mr: 2, backgroundColor: 'error.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(1)}>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  รอรับเรื่อง
+                </Typography>
+                <Typography variant="body1">
+                  {taskCount.inform} รายการ
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+          <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(2)}>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  กำลังดำเนินการ
+                </Typography>
+                <Typography variant="body1">
+                  {taskCount.accept} รายการ
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+          <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(3)}>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  รออะไหล่
+                </Typography>
+                <Typography variant="body1">
+                  {taskCount.wait} รายการ
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+          <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(4)}>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  ส่งซ่อมภายนอก
+                </Typography>
+                <Typography variant="body1">
+                  {taskCount.outside} รายการ
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+          <Card sx={{ width: 200, backgroundColor: 'success.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(5)}>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  เสร็จสิ้น
+                </Typography>
+                <Typography variant="body1">
+                  {taskCount.complete} รายการ
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Stack>
+
         <Card>
           <TableContainer component={Paper}>
             <Typography
-              sx={{ flex: '1 1 100%' }}
+              sx={{ flex: '1 1 100%', p:1 }}
               variant="h6"
               id="tableTitle"
               component="div"
@@ -63,6 +153,8 @@ export default function UserDashboard() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
+                  <TableCell>เลขที่</TableCell>
+                  <TableCell>ประเภทงาน</TableCell>
                   <TableCell>รายละเอียด</TableCell>
                   <TableCell>แผนก</TableCell>
                   <TableCell>ผู้แจ้ง</TableCell>
@@ -72,17 +164,19 @@ export default function UserDashboard() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {taskList.map((row) => (
+                {filterTaskList.map((row) => (
                   <TableRow
                     key={`${row.task_id} ${row.level_id}`}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
+                    <TableCell>{row.task_id}</TableCell>
+                    <TableCell>{row.level_id==="DMIS_IT"?"IT":"งานช่าง"}</TableCell>
                     <TableCell sx={{ maxWidth: 300 }} >
                       {row.task_issue}
                     </TableCell>
                     <TableCell>{row.department_name}</TableCell>
                     <TableCell>{row.informer_name}</TableCell>
-                    <TableCell sx={{ maxWidth: 90 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
+                    <TableCell sx={{ maxWidth: 100 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
                     <TableCell>{row.operator_name}</TableCell>
                     <TableCell>{row.status_name}</TableCell>
                   </TableRow>

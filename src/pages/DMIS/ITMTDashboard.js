@@ -3,7 +3,7 @@ import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Card, Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Autocomplete, Stack, Divider, CardActionArea, CardContent } from '@mui/material';
+import { Card, Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Autocomplete, Stack, Divider, CardActionArea, CardContent, TablePagination } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +38,19 @@ export default function ITMTDashboard() {
 
   const [filterTaskList, setFilterTaskList] = useState([]);
   const [filterStatusId, setFilterStatusId] = useState('all');
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
 
   useEffect(() => {
 
@@ -98,7 +111,7 @@ export default function ITMTDashboard() {
       setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatusId])
   // ========================================================
 
@@ -249,7 +262,7 @@ export default function ITMTDashboard() {
     }
 
     if (jsonData.category_id === "") {
-      alert("กรุณาเลือกประเภทของงาน");
+      alert("กรุณาเลือกหมวดหมู่งาน");
       return;
     }
 
@@ -383,7 +396,7 @@ export default function ITMTDashboard() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filterTaskList.map((row) => (
+                {Object.values(filterTaskList).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                   <TableRow
                     key={row.task_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -392,10 +405,10 @@ export default function ITMTDashboard() {
                     <TableCell sx={{ maxWidth: 300 }} >
                       {row.task_issue}
                     </TableCell>
-                    <TableCell>{row.department_name}</TableCell>
-                    <TableCell>{row.informer_name}</TableCell>
+                    <TableCell>{row.issue_department_name}</TableCell>
+                    <TableCell>{row.informer_firstname}</TableCell>
                     <TableCell sx={{ maxWidth: 100 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
-                    <TableCell>{row.operator_name}</TableCell>
+                    <TableCell>{row.operator_firstname}</TableCell>
                     <TableCell>{row.status_name}</TableCell>
                     <TableCell><Button variant="contained" disabled={processTaskButton} onClick={() => { handleOpenTaskDialog(row.task_id, row.level_id, row.status_id, row.operator_id) }}>ดำเนินการ</Button></TableCell>
                   </TableRow>
@@ -403,6 +416,15 @@ export default function ITMTDashboard() {
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[10, 25, 100]}
+            count={filterTaskList.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Card>
       </Container>
 
@@ -476,7 +498,7 @@ export default function ITMTDashboard() {
               multiline
             />
             <TextField id="serialnumber" name="serialnumber" defaultValue={serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
-            <TextField id="cost" name="cost" defaultValue={taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้ในงาน" />
+            <TextField id="cost" name="cost" defaultValue={taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
             <Autocomplete
               value={operatorName}
               onChange={(event, newValue) => {
@@ -509,7 +531,7 @@ export default function ITMTDashboard() {
               options={Object.values(categories).map((option) => option.category_name)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="ประเภทงาน" />}
+              renderInput={(params) => <TextField {...params} label="หมวดหมู่งาน" />}
             />
             <TextField
               id="taskNote"

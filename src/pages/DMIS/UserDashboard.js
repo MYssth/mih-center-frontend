@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Container, Typography, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Stack, CardActionArea, CardContent } from '@mui/material';
+import { Container, Typography, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Stack, CardActionArea, CardContent, TablePagination } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -12,6 +12,18 @@ export default function UserDashboard() {
   const [filterTaskList, setFilterTaskList] = useState([]);
   const [filterStatusId, setFilterStatusId] = useState('all');
   const [taskCount, setTaskCount] = useState([]);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
 
@@ -143,7 +155,7 @@ export default function UserDashboard() {
         <Card>
           <TableContainer component={Paper}>
             <Typography
-              sx={{ flex: '1 1 100%', p:1 }}
+              sx={{ flex: '1 1 100%', p: 1 }}
               variant="h6"
               id="tableTitle"
               component="div"
@@ -164,26 +176,35 @@ export default function UserDashboard() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filterTaskList.map((row) => (
+                {Object.values(filterTaskList).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                   <TableRow
                     key={`${row.task_id} ${row.level_id}`}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell>{row.task_id}</TableCell>
-                    <TableCell>{row.level_id==="DMIS_IT"?"IT":"งานช่าง"}</TableCell>
+                    <TableCell>{row.level_id === "DMIS_IT" ? "IT" : "งานช่าง"}</TableCell>
                     <TableCell sx={{ maxWidth: 300 }} >
                       {row.task_issue}
                     </TableCell>
-                    <TableCell>{row.department_name}</TableCell>
-                    <TableCell>{row.informer_name}</TableCell>
+                    <TableCell>{row.issue_department_name}</TableCell>
+                    <TableCell>{row.informer_firstname}</TableCell>
                     <TableCell sx={{ maxWidth: 100 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
-                    <TableCell>{row.operator_name}</TableCell>
+                    <TableCell>{row.operator_firstname}</TableCell>
                     <TableCell>{row.status_name}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[10, 25, 100]}
+            count={filterTaskList.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Card>
       </Container>
     </>

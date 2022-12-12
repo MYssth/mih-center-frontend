@@ -15,6 +15,8 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    
+    if(token !== null){
     // fetch(`http://${process.env.host}:${process.env.loginPort}/api/authen`, {
     fetch(`http://localhost:5000/api/authen`, {
       method: 'POST',
@@ -26,12 +28,14 @@ export default function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          // alert('authen success');
+          // alert('complete');
+          navigate('/dashboard', { replace: true });
         }
         else {
           alert('กรุณาเข้าสู่ระบบ');
           localStorage.removeItem('token');
           navigate('/login', { replace: true });
+          
         }
       })
       .catch((error) => {
@@ -39,6 +43,10 @@ export default function App() {
         alert('authen failed');
         navigate('/login', { replace: true });
       });
+    }
+    else{
+      navigate('/login', { replace: true });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

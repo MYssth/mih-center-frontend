@@ -3,7 +3,29 @@ import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Card, Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Autocomplete, Stack, Divider, CardActionArea, CardContent, TablePagination } from '@mui/material';
+import { Card, 
+  Container, 
+  Typography, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Paper, 
+  Button, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogContentText, 
+  DialogActions, 
+  TextField, 
+  Autocomplete, 
+  Stack, 
+  Divider, 
+  CardActionArea, 
+  CardContent, 
+  TablePagination, } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -119,6 +141,7 @@ export default function ITMTDashboard() {
     fetch(`http://localhost:5003/api/dmis/gettask/${taskId}/${levelId}`)
       .then((response) => response.json())
       .then((data) => {
+        // console.log(`data receiveeee = ${data.task}`);
         setDeviceId(data.task_device_id);
         setSerialnumber(data.task_serialnumber);
         setPhoneNo(data.task_phone_no);
@@ -126,6 +149,8 @@ export default function ITMTDashboard() {
         setStatusId(data.status_id);
         setStatusName(data.status_name);
         setTaskCost(data.task_cost);
+        setCategoryId(data.category_id);
+        setCategoryName(data.category_name);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -154,6 +179,7 @@ export default function ITMTDashboard() {
 
     setTaskId(taskId);
     setLevelId(levelId);
+    console.log(`statusID = ${statusId} levelID = ${levelId}`);
     if (statusId === 1) {
       setOperatorName(`${operatorList.find(o => o.personnel_id === recvId).personnel_firstname} ${operatorList.find(o => o.personnel_id === recvId).personnel_lastname}`);
       setOperatorId(recvId);
@@ -175,6 +201,8 @@ export default function ITMTDashboard() {
   };
 
   const handleCloseProcessTaskDialog = () => {
+    setTaskId("");
+    setLevelId("");
     setPhoneNo("");
     setDeviceId("");
     setTaskCost("");
@@ -381,7 +409,7 @@ export default function ITMTDashboard() {
             >
               รายการงานแจ้งซ่อมอุปกรณ์
             </Typography>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 700 }} aria-label="simple table">
 
               <TableHead>
                 <TableRow>
@@ -405,9 +433,9 @@ export default function ITMTDashboard() {
                     <TableCell sx={{ maxWidth: 300 }} >
                       {row.task_issue}
                     </TableCell>
-                    <TableCell>{row.issue_department_name}</TableCell>
+                    <TableCell sx={{ maxWidth: 150 }}>{row.issue_department_name}</TableCell>
                     <TableCell>{row.informer_firstname}</TableCell>
-                    <TableCell sx={{ maxWidth: 100 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
+                    <TableCell sx={{ maxWidth: 110 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
                     <TableCell>{row.operator_firstname}</TableCell>
                     <TableCell>{row.status_name}</TableCell>
                     <TableCell><Button variant="contained" disabled={processTaskButton} onClick={() => { handleOpenTaskDialog(row.task_id, row.level_id, row.status_id, row.operator_id) }}>ดำเนินการ</Button></TableCell>
@@ -430,7 +458,7 @@ export default function ITMTDashboard() {
 
 
       {/* ==================================รับเรื่อง============================================= */}
-      <Dialog fullWidth={120} open={acceptTaskDialogOpen} onClose={handleCloseAcceptTaskDialog}>
+      <Dialog fullWidth maxWidth="md" open={acceptTaskDialogOpen} onClose={handleCloseAcceptTaskDialog}>
         <DialogTitle>รับเรื่อง</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -456,13 +484,13 @@ export default function ITMTDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAcceptTaskDialog}>ยกเลิก</Button>
-          <Button onClick={handleAcceptTask}>รับเรื่อง</Button>
+          <Button variant="contained" onClick={handleAcceptTask}>รับเรื่อง</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}
 
       {/* ====================================ดำเนินงาน========================================= */}
-      <Dialog fullWidth={120} open={processTaskDialogOpen} onClose={handleCloseProcessTaskDialog}>
+      <Dialog fullWidth maxWidth="md" open={processTaskDialogOpen} onClose={handleCloseProcessTaskDialog}>
         <DialogTitle>บันทึกงานแจ้งซ่อม</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -489,16 +517,16 @@ export default function ITMTDashboard() {
           </Stack>
           <Divider />
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-            <TextField id="phoneNo" name="phoneNo" defaultValue={phoneNo} onChange={(event) => { setPhoneNo(event.target.value) }} label="เบอร์โทรติดต่อ" />
-            <TextField id="deviceId" name="deviceId" defaultValue={deviceId} onChange={(event) => { setDeviceId(event.target.value) }} label="รหัสทรัพย์สิน" />
+            <TextField id="phoneNo" name="phoneNo" value={phoneNo===null?"":phoneNo} onChange={(event) => { setPhoneNo(event.target.value) }} label="เบอร์โทรติดต่อ" />
+            <TextField id="deviceId" name="deviceId" value={deviceId===null?"":deviceId} onChange={(event) => { setDeviceId(event.target.value) }} label="รหัสทรัพย์สิน" />
             <TextField
               id="solution"
               name="solution"
               label="รายละเอียดของการแก้ปัญหา"
               multiline
             />
-            <TextField id="serialnumber" name="serialnumber" defaultValue={serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
-            <TextField id="cost" name="cost" defaultValue={taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
+            <TextField id="serialnumber" name="serialnumber" value={serialnumber===null?"":serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
+            <TextField id="cost" name="cost" value={taskCost===null?"":taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
             <Autocomplete
               value={operatorName}
               onChange={(event, newValue) => {
@@ -517,7 +545,7 @@ export default function ITMTDashboard() {
               renderInput={(params) => <TextField {...params} label="ผู้รับผิดชอบงาน" />}
             />
             <Autocomplete
-              value={categoryName}
+              value={categoryName===null?"":categoryName}
               onChange={(event, newValue) => {
                 setCategoryName(newValue);
                 if (newValue !== null) {
@@ -537,7 +565,7 @@ export default function ITMTDashboard() {
               id="taskNote"
               name="taskNote"
               label="หมายเหตุ"
-              defaultValue={taskNote}
+              value={taskNote===null?"":taskNote}
               onChange={(event) => { setTaskNote(event.target.value) }}
               multiline
             />
@@ -545,7 +573,7 @@ export default function ITMTDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseProcessTaskDialog}>ยกเลิก</Button>
-          <Button onClick={handleProcessTask}>ดำเนินการ</Button>
+          <Button variant="contained" onClick={handleProcessTask}>ดำเนินการ</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

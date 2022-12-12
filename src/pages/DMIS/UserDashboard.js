@@ -186,9 +186,9 @@ export default function UserDashboard() {
                     <TableCell sx={{ maxWidth: 300 }} >
                       {row.task_issue}
                     </TableCell>
-                    <TableCell>{row.issue_department_name}</TableCell>
+                    <TableCell sx={{ maxWidth: 150 }}>{row.issue_department_name}</TableCell>
                     <TableCell>{row.informer_firstname}</TableCell>
-                    <TableCell sx={{ maxWidth: 100 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
+                    <TableCell sx={{ maxWidth: 110 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
                     <TableCell>{row.operator_firstname}</TableCell>
                     <TableCell>{row.status_name}</TableCell>
                   </TableRow>

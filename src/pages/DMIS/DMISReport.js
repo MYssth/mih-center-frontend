@@ -200,7 +200,7 @@ function printPDF(data) {
                 table: {
                     widths: ['auto', '*', 'auto'],
                     body: [
-                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id==='DMIS_IT'?'(เทคโนโลยีสารสนเทศ)':'(กองช่าง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 1 ม.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 1 ม.ค. 2565' }]
+                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id==='DMIS_IT'?'(งานเทคโนโลยีสารสนเทศ)':'(งานซ่อมบำรุง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 1 ม.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 1 ม.ค. 2565' }]
                     ]
                 },
 
@@ -259,7 +259,7 @@ function printPDF(data) {
                         text: [
                             { text: '\n', lineHeight: 1 },
                             { text: 'ลงชื่อ............................................ผู้รับเรื่อง\n', alignment: 'center' },
-                            { text: `(${data.receiver_firstname} ${data.receiver_lastname})\n`, alignment: 'center' },
+                            { text: `${data.receiver_firstname===null||data.receiver_firstname===""?"(...............................................)":`(${data.receiver_firstname} ${data.receiver_lastname})`}\n`, alignment: 'center' },
                             { text: 'วันที่.............................................\n', alignment: 'center' },
                         ]
                     }
@@ -293,7 +293,7 @@ function printPDF(data) {
                         text: [
                             { text: '\n', lineHeight: 1 },
                             { text: 'ลงชื่อ............................................ผู้ดำเนินงาน\n', alignment: 'center' },
-                            { text: `(${data.operator_firstname} ${data.operator_lastname})\n`, alignment: 'center' },
+                            { text: `${data.operator_firstname===null||data.operator_firstname===""?"(...............................................)":`(${data.operator_firstname} ${data.operator_lastname})`}\n`, alignment: 'center' },
                             { text: 'วันที่.............................................\n', alignment: 'center' },
                         ]
                     },
@@ -342,7 +342,9 @@ export default function DMISReport() {
         const token = jwtDecode(localStorage.getItem('token'));
 
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT") {
+            if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" ||
+            token.level_list[i].level_id === "DMIS_U1" || token.level_list[i].level_id === "DMIS_U2" ||
+            token.level_list[i].level_id === "DMIS_U3" || token.level_list[i].level_id === "DMIS_U4") {
                 fetch(`http://localhost:5003/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
                     .then((response) => response.json())
                     .then((data) => {

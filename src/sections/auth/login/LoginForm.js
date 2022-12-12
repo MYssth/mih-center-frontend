@@ -51,13 +51,14 @@ export default function LoginForm() {
     <>
       <Stack spacing={3}>
 
-        <TextField id="username" name="username" label="รหัสพนักงาน" />
+        <TextField id="username" name="username" label="รหัสพนักงาน" onKeyPress={handleKeypress} />
 
         <TextField
           id="password"
           name="password"
           label="วันเดือนปีเกิด(พ.ศ.) เช่น 18ม.ค.2566 = 18012566"
           type={showPassword ? 'text' : 'password'}
+          onKeyPress={handleKeypress}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

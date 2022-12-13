@@ -66,8 +66,10 @@ export default function UserPage() {
   const [open, setOpen] = useState(null);
   const [personnel, setPersonnel] = useState([]);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [psnDelDialogOpen, setPsnDelDialogOpen] = useState(false);
   const [personnelId, setPersonnelId] = useState('');
   const [personnelIsactive, setPersonnelIsactive] = useState('');
+  const [pageSize, setPageSize] = useState(25);
 
   const navigate = useNavigate();
 
@@ -138,8 +140,12 @@ export default function UserPage() {
 
   useEffect(() => {
 
-    // fetch(`http://${process.env.host}:${process.env.psnDataDistPort}/api/getpersonnel`)
-    fetch(`http://localhost:5001/api/getpersonnel`)
+    refreshTable();
+
+  }, []);
+
+  const refreshTable = () => {
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpersonnel`)
       .then((response) => response.json())
       .then((data) => {
         setPersonnel(data);
@@ -147,29 +153,104 @@ export default function UserPage() {
       .catch((error) => {
         console.error('Error:', error);
       });
-
-  }, []);
+  }
 
   const handleNewUser = () => {
     navigate('/dashboard/newuser', { replace: true });
   };
 
-  const handleCloseMenu = () => {
-    setOpen(null);
+  const handleEditUser = () => {
+    navigate('/dashboard/edituser', { replace: true, state: { personnel_id: personnelId, } });
   };
 
-  const handleCloseStatusDialog = () => {
+  const handleCloseMenu = () => {
     setPersonnelId('');
     setPersonnelIsactive('');
-    setStatusDialogOpen(false);
-  };
-
-  const handleStatus = () => {
-    // RESUME HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    setOpen(null);
   };
 
   const handleOpenStatusDialog = () => {
     setStatusDialogOpen(true);
+  };
+
+  const handleCloseStatusDialog = () => {
+    setStatusDialogOpen(false);
+  };
+
+  const handleOpenPsnDelDialog = () => {
+    setPsnDelDialogOpen(true);
+  };
+
+  const handleClosePsnDelDialog = () => {
+    setPsnDelDialogOpen(false);
+  }
+
+  const handleStatus = () => {
+    const jsonData = {
+      personnel_id: personnelId,
+      personnel_isactive: personnelIsactive,
+    };
+
+    if (jsonData.personnel_isactive === "" || jsonData.personnel_isactive === null) {
+      alert("กรุณาเลือกสถานะ");
+      return;
+    }
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnCrudPort}/api/setpersonnelactivate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData)
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 'ok') {
+          alert('เปลี่ยนแปลงสถานะสำเร็จ');
+          handleCloseStatusDialog();
+          handleCloseMenu();
+          refreshTable();
+        }
+        else {
+          alert('ไม่สามารถทำการเปลี่ยนแปลงสถานะได้');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการเปลี่ยนแปลงสถานะ');
+        handleCloseStatusDialog();
+        handleCloseMenu();
+        refreshTable();
+      });
+  };
+
+  const handlePsnDel = () => {
+    if (document.getElementById('personnel_id').value !== personnelId) {
+      alert("รหัสพนักงานยืนยันการลบไม่ถูกต้องไม่สามารถลบชื่อผู้ใช้ได้");
+      return;
+    }
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnCrudPort}/api/deletepersonnel/${personnelId}`, {
+      method: 'DELETE'
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 'ok') {
+          alert('ลบชื่อผู้ใช้สำเร็จ');
+          handleClosePsnDelDialog();
+          handleCloseMenu();
+          refreshTable();
+        }
+        else {
+          alert('ไม่สามารถทำการลบชื่อผู้ใช้ได้');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการลบชื่อผู้ใช้');
+        handleClosePsnDelDialog();
+        handleCloseMenu();
+        refreshTable();
+      });
   };
 
   return (
@@ -201,6 +282,8 @@ export default function UserPage() {
                 getRowHeight={() => 'auto'}
                 columns={columns}
                 rows={personnel}
+                pageSize={pageSize}
+                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                 components={{
                   Toolbar: GridToolbar,
                 }}
@@ -238,17 +321,17 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-        <Icon icon="ic:sharp-mode-edit" width="20" height="20" />
-        <Typography sx={{ ml: 1 }}>แก้ไขข้อมูล</Typography>
+        <MenuItem onClick={handleEditUser}>
+          <Icon icon="ic:sharp-mode-edit" width="20" height="20" />
+          <Typography sx={{ ml: 1 }}>แก้ไขข้อมูล</Typography>
         </MenuItem>
         <MenuItem onClick={handleOpenStatusDialog}>
-        <Icon icon="ic:baseline-check-circle" width="20" height="20" />
-        <Typography sx={{ ml: 1 }}>ตั้งค่าสถานะ</Typography>
+          <Icon icon="ic:baseline-check-circle" width="20" height="20" />
+          <Typography sx={{ ml: 1 }}>ตั้งค่าสถานะ</Typography>
         </MenuItem>
-        <MenuItem sx={{ color: 'error.main' }}>
-        <Icon icon="ic:baseline-delete-forever" width="20" height="20" />
-        <Typography sx={{ ml: 1 }}>ลบชื่อผู้ใช้</Typography>
+        <MenuItem onClick={handleOpenPsnDelDialog} sx={{ color: 'error.main' }}>
+          <Icon icon="ic:baseline-delete-forever" width="20" height="20" />
+          <Typography sx={{ ml: 1 }}>ลบชื่อผู้ใช้</Typography>
         </MenuItem>
       </Popover>
 
@@ -259,19 +342,38 @@ export default function UserPage() {
           <DialogContentText>
             กรุณาเลือกสถานะ
           </DialogContentText>
-          <Autocomplete 
-            value={personnelIsactive===true?"Active":"Deactive"}
+          <Autocomplete
+            value={personnelIsactive === true ? "Active" : "Deactive"}
             onChange={(event, newValue) => {
               console.log(personnelId);
-              setPersonnelIsactive(newValue==="Active");
+              setPersonnelIsactive(newValue === "Active");
             }}
-            options = {["Active","Deactive"]}
+            options={["Active", "Deactive"]}
             renderInput={(params) => <TextField {...params} label="" />}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseStatusDialog}>ยกเลิก</Button>
           <Button variant="contained" onClick={handleStatus}>ยืนยัน</Button>
+        </DialogActions>
+      </Dialog>
+      {/* ================================================================================== */}
+
+      {/* ==================================ลบชื่อผู้ใช้============================================= */}
+      <Dialog fullWidth maxWidth="md" open={psnDelDialogOpen} onClose={handleClosePsnDelDialog}>
+        <DialogTitle>ลบชื่อผู้ใช้</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            กรุณากรอกรหัสพนักงานที่เลือกเพื่อยืนยันการลบข้อมูล
+          </DialogContentText>
+          <TextField id="personnel_id" name="personnel_id" label="รหัสพนักงาน" />
+          <DialogContentText sx={{ color: 'error.main' }}>
+            *คำเตือน: หากลบชื่อผู้ใช้แล้วข้อมูลผู้ใช้จะหายไปอย่างถาวรไม่สามารถกู้คืนได้*
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePsnDelDialog}>ยกเลิก</Button>
+          <Button variant="contained" onClick={handlePsnDel}>ยืนยัน</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

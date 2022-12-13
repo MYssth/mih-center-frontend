@@ -35,7 +35,7 @@ export default function UserDashboard() {
         token.level_list[i].level_id === "DMIS_U3" ||
         token.level_list[i].level_id === "DMIS_U4") {
 
-        fetch(`http://localhost:5003/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setTaskList(data);
@@ -45,7 +45,7 @@ export default function UserDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://localhost:5003/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setTaskCount(data);
@@ -54,7 +54,7 @@ export default function UserDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://localhost:5003/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setCompleteTaskList(data);

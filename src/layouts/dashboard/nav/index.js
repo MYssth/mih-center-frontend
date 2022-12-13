@@ -43,6 +43,18 @@ export default function Nav({ openNav, onCloseNav }) {
 
   useEffect(() => {
 
+    const reloadCount = sessionStorage.getItem('reloadCount');
+    if (reloadCount === "1") {
+      sessionStorage.setItem('reloadCount', String(2));
+      window.location.reload();
+    } else {
+      sessionStorage.removeItem('reloadCount');
+    }
+
+  }, []);
+
+  useEffect(() => {
+
     const token = localStorage.getItem('token');
     setTokenData(jwtDecode(token));
 

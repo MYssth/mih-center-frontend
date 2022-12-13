@@ -22,7 +22,7 @@ export default function dmisnewcase() {
 
         const token = jwtDecode(localStorage.getItem('token'));
 
-        fetch(`http://localhost:5001/api/getpersonnel/${token.personnel_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpersonnel/${token.personnel_id}`)
             .then((response) => response.json())
             .then((data) => {
                 setInformerId(data.personnel_id);
@@ -33,7 +33,7 @@ export default function dmisnewcase() {
                 console.error('Error:', error);
             });
 
-        fetch(`http://localhost:5001/api/getdepartments`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getdepartments`)
             .then((response) => response.json())
             .then((data) => {
                 setDepartments(data);
@@ -80,7 +80,7 @@ export default function dmisnewcase() {
             return;
         }
 
-        fetch(`http://localhost:5003/api/dmis/addtask`, {
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/addtask`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

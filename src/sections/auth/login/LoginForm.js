@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import { Stack, IconButton, InputAdornment, TextField} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
@@ -20,7 +20,7 @@ export default function LoginForm() {
       personnel_secret: document.getElementById("password").value,
     };
 
-    fetch('http://localhost:5000/api/login', {
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_loginPort}/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,6 +32,7 @@ export default function LoginForm() {
         alert(data.message);
         if (data.status === 'ok') {
           localStorage.setItem('token', data.token);
+          sessionStorage.setItem('reloadCount', String(1));
           navigate('/dashboard', { replace: true });
         }
       })

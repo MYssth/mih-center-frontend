@@ -5,23 +5,9 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, IconButton, Popover } from '@mui/material';
-// mocks_
-import account from '../../../_mock/account';
 
 // ----------------------------------------------------------------------
 
-const MENU_OPTIONS = [
-  {
-    label: 'กลับไปหน้าหลัก',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'ตั้งค่าบัญชี',
-    icon: 'eva:settings-2-fill',
-  },
-];
-
-// ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
@@ -109,11 +95,6 @@ export default function AccountPopover() {
           <Divider sx={{ borderStyle: 'dashed' }} />
 
           <Stack sx={{ p: 1 }}>
-            {/* {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleMenu(option.label)}>
-              {option.label}
-            </MenuItem>
-          ))} */}
             <MenuItem onClick={handleBack}>
               กลับไปหน้าหลัก
             </MenuItem>

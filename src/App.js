@@ -15,36 +15,34 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    
-    if(token !== null){
-    // fetch(`http://${process.env.host}:${process.env.loginPort}/api/authen`, {
-    fetch(`http://localhost:5000/api/authen`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 'ok') {
-          // alert('complete');
-          navigate('/dashboard', { replace: true });
-        }
-        else {
-          alert('กรุณาเข้าสู่ระบบ');
-          localStorage.removeItem('token');
-          navigate('/login', { replace: true });
-          
-        }
+    if (token !== null) {
+      fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_loginPort}/api/authen`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('authen failed');
-        navigate('/login', { replace: true });
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === 'ok') {
+            // alert('complete');
+            navigate('/dashboard', { replace: true });
+          }
+          else {
+            alert('กรุณาเข้าสู่ระบบ');
+            localStorage.removeItem('token');
+            navigate('/login', { replace: true });
+
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('authen failed');
+          navigate('/login', { replace: true });
+        });
     }
-    else{
+    else {
       navigate('/login', { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

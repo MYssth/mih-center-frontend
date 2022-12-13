@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { Container, Typography, Button } from '@mui/material';
-
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {

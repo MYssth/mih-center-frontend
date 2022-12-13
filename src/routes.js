@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UserPageNewUser from './pages/UserPageNewUser';
+import UserPageEditUser from './pages/UserPageEditUser';
 import ProfileSetting from './pages/ProfileSetting';
 
 // DMIS
@@ -32,6 +33,7 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'newuser', element: <UserPageNewUser />},
+        { path: 'edituser', element: <UserPageEditUser />},
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],

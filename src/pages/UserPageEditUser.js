@@ -2,12 +2,15 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // @mui
 import { Container, Stack, Typography, TextField, Card, Button, Checkbox, Box } from '@mui/material';
 
-export default function UserPageNewUser() {
+export default function UserPageEditUser() {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const [personnel, setPersonnel] = React.useState([]);
 
     const [positionName, setPositionName] = React.useState('');
     const [positionId, setPositionId] = React.useState('');
@@ -24,9 +27,18 @@ export default function UserPageNewUser() {
     const [PMSLevelDescription, setPMSLevelDescription] = React.useState('');
     const [isPMS, setIsPMS] = React.useState(false);
 
-    const isSkip = (value) => value!=='';
+    const isSkip = (value) => value !== '';
 
     useEffect(() => {
+
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpersonnel/${location.state.personnel_id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setPersonnel(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpositions`)
             .then((response) => response.json())
@@ -156,13 +168,13 @@ export default function UserPageNewUser() {
     return (
         <>
             <Helmet>
-                <title> เพิ่มผู้ใช้ใหม่ | MIH Center </title>
+                <title> แก้ไขข้อมูลผู้ใช้ | MIH Center </title>
             </Helmet>
 
             <Container>
 
                 <Typography variant="h4" sx={{ mb: 5 }}>
-                    เพิ่มผู้ใช้ใหม่
+                    แก้ไขข้อมูลผู้ใช้
                 </Typography>
                 <Card>
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
@@ -215,7 +227,7 @@ export default function UserPageNewUser() {
                             }}
                             id="controllable-states-PMS-levels-id"
                             // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
-                            options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}`: '').filter(isSkip)}
+                            options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '').filter(isSkip)}
                             fullWidth
                             required
                             renderInput={(params) => <TextField {...params} label="ระบบจัดการข้อมูลบุคลากร" />}

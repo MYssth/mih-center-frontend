@@ -77,10 +77,10 @@ export default function ITMTDashboard() {
   useEffect(() => {
 
     const token = jwtDecode(localStorage.getItem('token'));
-
+    
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT") {
-        fetch(`http://localhost:5003/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setTaskList(data);
@@ -90,7 +90,7 @@ export default function ITMTDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://localhost:5003/api/dmis/getoperator/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setOperatorList(data);
@@ -99,7 +99,7 @@ export default function ITMTDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://localhost:5003/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setTaskCount(data);
@@ -108,7 +108,7 @@ export default function ITMTDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://localhost:5003/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
           .then((response) => response.json())
           .then((data) => {
             setCompleteTaskList(data);
@@ -138,7 +138,7 @@ export default function ITMTDashboard() {
   // ========================================================
 
   const setTempTask = (taskId, levelId) => {
-    fetch(`http://localhost:5003/api/dmis/gettask/${taskId}/${levelId}`)
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettask/${taskId}/${levelId}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log(`data receiveeee = ${data.task}`);
@@ -156,7 +156,7 @@ export default function ITMTDashboard() {
         console.error('Error:', error);
       });
 
-    fetch(`http://localhost:5003/api/dmis/getcategories/${levelId}`)
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcategories/${levelId}`)
       .then((response) => response.json())
       .then((data) => {
         setCategories(data);
@@ -165,7 +165,7 @@ export default function ITMTDashboard() {
         console.error('Error:', error);
       });
 
-    fetch(`http://localhost:5003/api/dmis/getstatus`)
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getstatus`)
       .then((response) => response.json())
       .then((data) => {
         setStatus(data);
@@ -227,7 +227,7 @@ export default function ITMTDashboard() {
       return;
     }
 
-    fetch(`http://localhost:5003/api/dmis/accepttask`, {
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/accepttask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -301,7 +301,7 @@ export default function ITMTDashboard() {
       }
     }
 
-    fetch(`http://localhost:5003/api/dmis/processtask`, {
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

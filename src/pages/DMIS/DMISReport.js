@@ -345,7 +345,7 @@ export default function DMISReport() {
             if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" ||
             token.level_list[i].level_id === "DMIS_U1" || token.level_list[i].level_id === "DMIS_U2" ||
             token.level_list[i].level_id === "DMIS_U3" || token.level_list[i].level_id === "DMIS_U4") {
-                fetch(`http://localhost:5003/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
                     .then((response) => response.json())
                     .then((data) => {
                         setCompleteTaskList(data);

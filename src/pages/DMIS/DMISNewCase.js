@@ -4,8 +4,32 @@ import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import InputMask from "react-input-mask";
 // @mui
-import { Container, Stack, Typography, TextField, Card, Divider, Button, Box } from '@mui/material';
+import { Container, Stack, Typography, TextField, Card, Divider, Button, Box, styled } from '@mui/material';
+
+const ValidationTextField = styled(TextField)({
+    '& input:valid + fieldset': {
+      borderColor: 'green'
+    },
+    '& input:invalid + fieldset': {
+      borderColor: 'red'
+    },
+  });
+
+  const ValidationAutocomplete = styled(Autocomplete)({
+    '& input:valid + fieldset': {
+      borderColor: 'green',
+      borderWidth: 2,
+    },
+    '& input:invalid + fieldset': {
+      borderColor: 'red',
+      borderWidth: 2,
+    },
+    '& .MuiAutocomplete-input': {
+        borderColor: 'red'
+     },
+  });
 
 export default function dmisnewcase() {
 
@@ -56,19 +80,23 @@ export default function dmisnewcase() {
             phoneNumber: document.getElementById('phoneNumber').value,
         };
 
-        console.log(`level_id: ${jsonData.level_id}`);
-        console.log(`task_issue: ${jsonData.task_issue}`);
-        console.log(`task_serialnumber: ${jsonData.task_serialnumber}`);
-        console.log(`task_device_id: ${jsonData.task_device_id}`);
-        console.log(`informer_id: ${jsonData.informer_id}`);
-        console.log(`issue_department_id: ${jsonData.issue_department_id}`);
-        console.log(`department_name: ${jsonData.department_name}`);
-        console.log(`phoneNumber: ${jsonData.phoneNumber}`);
+        // console.log(`level_id: ${jsonData.level_id}`);
+        // console.log(`task_issue: ${jsonData.task_issue}`);
+        // console.log(`task_serialnumber: ${jsonData.task_serialnumber}`);
+        // console.log(`task_device_id: ${jsonData.task_device_id}`);
+        // console.log(`informer_id: ${jsonData.informer_id}`);
+        // console.log(`issue_department_id: ${jsonData.issue_department_id}`);
+        // console.log(`department_name: ${jsonData.department_name}`);
+        // console.log(`phoneNumber: ${jsonData.phoneNumber}`);
 
 
         if (caseTypeName === "" ||
             jsonData.level_id === "") {
             alert("กรุณาเลือกงานที่ต้องการแจ้งซ่อม");
+            return;
+        }
+        if (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) {
+            alert("กรุณาใส่รหัสทรัพย์สินให้ถูกต้อง");
             return;
         }
         if (jsonData.task_issue === "") {
@@ -118,11 +146,11 @@ export default function dmisnewcase() {
                 <Card>
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
                         {/* กรุณาเลือกงานที่ต้องการแจ้งซ่อม */}
-                        <Autocomplete
+                        <ValidationAutocomplete
                             value={caseTypeName}
                             onChange={(event, newValue) => {
                                 setCaseTypeName(newValue);
-                                console.log(`caseTypeName = ${caseTypeName}`)
+                                // console.log(`caseTypeName = ${caseTypeName}`)
                                 if (newValue.label === 'งาน IT') {
                                     setCaseTypeId("DMIS_IT");
                                 }
@@ -146,13 +174,18 @@ export default function dmisnewcase() {
                     <Divider />
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
                         <Typography variant='h5'>รายละเอียด</Typography>
-                        <TextField id="deviceId" name="deviceId" label="รหัสทรัพย์สิน" />
-                        <TextField
+                        <InputMask
+                            mask="99-99-999-999-9999"
+                            disabled={false}
+                            maskChar=""
+                        >
+                            {() => <TextField id="deviceId" name="deviceId" label="รหัสทรัพย์สิน" placeholder='xx-xx-xxx-xxx-xxxx' />}
+                        </InputMask>
+                        <ValidationTextField
                             required
                             id="issue"
                             name="issue"
                             label="รายละเอียดของปัญหา (ระบุยี่ห้อ, รุ่นของเครื่อง)"
-                            multiline
                         />
                         <TextField id="serialnumber" name="serialnumber" label="Serial Number" />
                         <Autocomplete
@@ -170,7 +203,7 @@ export default function dmisnewcase() {
                             options={Object.values(departments).map((option) => option.department_name)}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField required {...params} label="แผนกที่มีปัญหา" />}
+                            renderInput={(params) => <TextField required {...params} label="แผนกที่แจ้งปัญหา" />}
                         />
 
                     </Stack>

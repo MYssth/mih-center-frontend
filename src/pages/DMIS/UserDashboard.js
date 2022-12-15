@@ -33,9 +33,11 @@ export default function UserDashboard() {
       if (token.level_list[i].level_id === "DMIS_U1" ||
         token.level_list[i].level_id === "DMIS_U2" ||
         token.level_list[i].level_id === "DMIS_U3" ||
-        token.level_list[i].level_id === "DMIS_U4") {
+        token.level_list[i].level_id === "DMIS_U4" ||
+        token.level_list[i].level_id === "DMIS_IT" ||
+        token.level_list[i].level_id === "DMIS_MT") {
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${true}`)
           .then((response) => response.json())
           .then((data) => {
             setTaskList(data);
@@ -45,7 +47,7 @@ export default function UserDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}/${true}`)
           .then((response) => response.json())
           .then((data) => {
             setTaskCount(data);
@@ -54,7 +56,7 @@ export default function UserDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}/${true}`)
           .then((response) => response.json())
           .then((data) => {
             setCompleteTaskList(data);
@@ -172,6 +174,7 @@ export default function UserDashboard() {
                   <TableCell>ผู้แจ้ง</TableCell>
                   <TableCell>วันที่แจ้ง</TableCell>
                   <TableCell>ผู้รับผิดชอบ</TableCell>
+                  <TableCell>หมายเหตุ</TableCell>
                   <TableCell>สถานะ</TableCell>
                 </TableRow>
               </TableHead>
@@ -182,14 +185,17 @@ export default function UserDashboard() {
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell>{row.task_id}</TableCell>
-                    <TableCell>{row.level_id === "DMIS_IT" ? "IT" : "งานช่าง"}</TableCell>
-                    <TableCell sx={{ maxWidth: 300 }} >
+                    <TableCell sx={{ maxWidth: 50 }} >{row.level_id === "DMIS_IT" ? "IT" : "งานช่าง"}</TableCell>
+                    <TableCell sx={{ maxWidth: 250 }} >
                       {row.task_issue}
                     </TableCell>
-                    <TableCell sx={{ maxWidth: 150 }}>{row.issue_department_name}</TableCell>
+                    <TableCell sx={{ maxWidth: 150 }} >{row.issue_department_name}</TableCell>
                     <TableCell>{row.informer_firstname}</TableCell>
-                    <TableCell sx={{ maxWidth: 110 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
-                    <TableCell>{row.operator_firstname}</TableCell>
+                    <TableCell sx={{ maxWidth: 110 }} >{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
+                    <TableCell sx={{ maxWidth: 50 }} >{row.operator_firstname}</TableCell>
+                    <TableCell sx={{ maxWidth: 150 }} >
+                      {row.task_note}
+                    </TableCell>
                     <TableCell>{row.status_name}</TableCell>
                   </TableRow>
                 ))}

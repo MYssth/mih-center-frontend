@@ -116,6 +116,20 @@ const columns = [
             `${(params.row.task_date_start).replace("T", " ").replace(".000Z", " น.")}`,
     },
     {
+        field: 'task_date_accept',
+        headerName: 'วันที่รับเรื่อง',
+        width: 120,
+        valueGetter: (params) =>
+            `${(params.row.task_date_accept).replace("T", " ").replace(".000Z", " น.")}`,
+    },
+    {
+        field: 'task_date_process',
+        headerName: 'วันที่ดำเนินการล่าสุด',
+        width: 120,
+        valueGetter: (params) =>
+            `${(params.row.task_date_process).replace("T", " ").replace(".000Z", " น.")}`,
+    },
+    {
         field: 'task_date_end',
         headerName: 'วันที่เสร็จสิ้น',
         width: 120,
@@ -127,7 +141,7 @@ const columns = [
         headerName: 'งบประมาณที่ใช้',
         width: 120,
         valueGetter: (params) =>
-            `${params.row.task_cost===null||params.row.task_cost===""?"0":params.row.task_cost}`,
+            `${params.row.task_cost === null || params.row.task_cost === "" ? "0" : params.row.task_cost}`,
     },
     {
         field: 'task_serialnumber',
@@ -171,14 +185,14 @@ const columns = [
         headerName: 'ผู้รับเรื่อง',
         width: 100,
         valueGetter: (params) =>
-            `${params.row.receiver_firstname===null||params.row.receiver_firstname===""?"":`${params.row.receiver_firstname} ${params.row.receiver_lastname}`}`,
+            `${params.row.receiver_firstname === null || params.row.receiver_firstname === "" ? "" : `${params.row.receiver_firstname} ${params.row.receiver_lastname}`}`,
     },
     {
         field: 'operator_firstname',
         headerName: 'ผู้รับผิดชอบ',
         width: 100,
         valueGetter: (params) =>
-        `${params.row.operator_firstname===null||params.row.operator_firstname===""?"":`${params.row.operator_firstname} ${params.row.operator_lastname}`}`,
+            `${params.row.operator_firstname === null || params.row.operator_firstname === "" ? "" : `${params.row.operator_firstname} ${params.row.operator_lastname}`}`,
     },
     {
         field: 'category_name',
@@ -200,7 +214,7 @@ function printPDF(data) {
                 table: {
                     widths: ['auto', '*', 'auto'],
                     body: [
-                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id==='DMIS_IT'?'(งานเทคโนโลยีสารสนเทศ)':'(งานซ่อมบำรุง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 1 ม.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 1 ม.ค. 2565' }]
+                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : '(งานซ่อมบำรุง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 1 ม.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 1 ม.ค. 2565' }]
                     ]
                 },
 
@@ -216,7 +230,7 @@ function printPDF(data) {
                         [{ text: 'ผู้ขอใช้บริการ', style: 'header2' }],
                         [{
                             text: [
-                                `ชื่อ: ${data.informer_firstname}\tนามสกุล: ${data.informer_lastname}\tเบอร์โทรศัพท์: ${data.task_phone_no===null||data.task_phone_no===""?"ไม่ได้ระบุ":data.task_phone_no}\n`,
+                                `ชื่อ: ${data.informer_firstname}\tนามสกุล: ${data.informer_lastname}\tเบอร์โทรศัพท์: ${data.task_phone_no === null || data.task_phone_no === "" ? "ไม่ได้ระบุ" : data.task_phone_no}\n`,
                                 `ตำแหน่ง: ${data.informer_position_name}\tแผนก: ${data.informer_department_name}\tฝ่าย: ${data.informer_faction_name}`,
                             ]
                         }],
@@ -233,10 +247,10 @@ function printPDF(data) {
                         [{ text: 'รายละเอียด', style: 'header2' }],
                         [{
                             text: [
-                                `วันที่แจ้ง: ${dateFns.format(dateFns.addYears(new Date(data.task_date_start),543), 'dd/MM/yyyy')}\n`,
+                                `วันที่แจ้ง: ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}\n`,
                                 `แผนกที่มีปัญหา: ${data.issue_department_name}\n`,
-                                `รหัสทรัพย์สิน: ${data.task_device_id===null||data.task_device_id===""?"ไม่ได้ระบุ":data.task_device_id}\n`,
-                                `Serial number: ${data.task_serialnumber===null||data.task_serialnumber===""?"ไม่ได้ระบุ":data.task_serialnumber}\n`,
+                                `รหัสทรัพย์สิน: ${data.task_device_id === null || data.task_device_id === "" ? "ไม่ได้ระบุ" : data.task_device_id}\n`,
+                                `Serial number: ${data.task_serialnumber === null || data.task_serialnumber === "" ? "ไม่ได้ระบุ" : data.task_serialnumber}\n`,
                                 `รายละเอียดของปัญหา: ${data.task_issue}\n`,
                             ]
                         }],
@@ -249,18 +263,18 @@ function printPDF(data) {
                 columns: [
                     {
                         text: [
-                            { text: '\n', lineHeight: 1 },
+                            // { text: '\n', lineHeight: 1 },
                             { text: 'ลงชื่อ............................................ผู้แจ้ง\n', alignment: 'center' },
                             { text: `(${data.informer_firstname} ${data.informer_lastname})\n`, alignment: 'center' },
-                            { text: 'วันที่.............................................\n', alignment: 'center' },
+                            { text: `วันที่ ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}\n`, alignment: 'center' },
                         ]
                     },
                     {
                         text: [
-                            { text: '\n', lineHeight: 1 },
+                            // { text: '\n', lineHeight: 1 },
                             { text: 'ลงชื่อ............................................ผู้รับเรื่อง\n', alignment: 'center' },
-                            { text: `${data.receiver_firstname===null||data.receiver_firstname===""?"(...............................................)":`(${data.receiver_firstname} ${data.receiver_lastname})`}\n`, alignment: 'center' },
-                            { text: 'วันที่.............................................\n', alignment: 'center' },
+                            { text: `${data.receiver_firstname === null || data.receiver_firstname === "" ? "(...............................................)" : `(${data.receiver_firstname} ${data.receiver_lastname})`}\n`, alignment: 'center' },
+                            { text: `วันที่${data.task_date_accept === null || data.task_date_accept === "" ? "............................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_accept), 543), 'dd/MM/yyyy')}`}\n`, alignment: 'center' },
                         ]
                     }
                 ]
@@ -276,10 +290,10 @@ function printPDF(data) {
                         [{
                             text: [
                                 `สถานะ: ${data.status_name}\n`,
-                                `วันที่เสร็จสิ้นการดำเนินงาน: ${data.task_date_end===null||data.task_date_end===""?"สถานะงานยังไม่เสร็จสิ้น":dateFns.format(dateFns.addYears(new Date(data.task_date_end),543), 'dd/MM/yyyy')}\n`,
-                                `รายละเอียดการแก้ไขปัญหา: ${data.task_solution===null||data.task_solution===""?"สถานะงานยังไม่เสร็จสิ้น":data.task_solution}\n`,
-                                `งบประมาณที่ใช้: ${data.task_cost===null||data.task_cost===""?"0":data.task_cost}\n`,
-                                `หมายเหตุ: ${data.task_note===null||data.task_note===""?"":data.task_note}\n`,
+                                `วันที่เสร็จสิ้นการดำเนินงาน: ${data.task_date_end === null || data.task_date_end === "" ? "สถานะงานยังไม่เสร็จสิ้น" : dateFns.format(dateFns.addYears(new Date(data.task_date_end), 543), 'dd/MM/yyyy')}\n`,
+                                `รายละเอียดการแก้ไขปัญหา: ${data.task_solution === null || data.task_solution === "" ? "สถานะงานยังไม่เสร็จสิ้น" : data.task_solution}\n`,
+                                `งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}\n`,
+                                `หมายเหตุ: ${data.task_note === null || data.task_note === "" ? "" : data.task_note}\n`,
                             ]
                         }],
                     ]
@@ -291,15 +305,15 @@ function printPDF(data) {
                 columns: [
                     {
                         text: [
-                            { text: '\n', lineHeight: 1 },
+                            // { text: '\n', lineHeight: 1 },
                             { text: 'ลงชื่อ............................................ผู้ดำเนินงาน\n', alignment: 'center' },
-                            { text: `${data.operator_firstname===null||data.operator_firstname===""?"(...............................................)":`(${data.operator_firstname} ${data.operator_lastname})`}\n`, alignment: 'center' },
-                            { text: 'วันที่.............................................\n', alignment: 'center' },
+                            { text: `${data.operator_firstname === null || data.operator_firstname === "" ? "(...............................................)" : `(${data.operator_firstname} ${data.operator_lastname})`}\n`, alignment: 'center' },
+                            { text: `วันที่${data.task_date_process === null || data.task_date_process === "" ? "............................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_process), 543), 'dd/MM/yyyy')}`}\n`, alignment: 'center' },
                         ]
                     },
                     {
                         text: [
-                            { text: '\n', lineHeight: 1 },
+                            // { text: '\n', lineHeight: 1 },
                             { text: 'ลงชื่อ............................................ผู้ตรวจสอบ\n', alignment: 'center' },
                             { text: '(...............................................)\n', alignment: 'center' },
                             { text: 'วันที่.............................................\n', alignment: 'center' },
@@ -337,14 +351,16 @@ export default function DMISReport() {
     const [completeTaskList, setCompleteTaskList] = useState([]);
     const [filterTaskList, setFilterTaskList] = useState([]);
 
+    const [pageSize, setPageSize] = useState(25);
+
     useEffect(() => {
 
         const token = jwtDecode(localStorage.getItem('token'));
 
         for (let i = 0; i < token.level_list.length; i += 1) {
             if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" ||
-            token.level_list[i].level_id === "DMIS_U1" || token.level_list[i].level_id === "DMIS_U2" ||
-            token.level_list[i].level_id === "DMIS_U3" || token.level_list[i].level_id === "DMIS_U4") {
+                token.level_list[i].level_id === "DMIS_U1" || token.level_list[i].level_id === "DMIS_U2" ||
+                token.level_list[i].level_id === "DMIS_U3" || token.level_list[i].level_id === "DMIS_U4") {
                 fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
                     .then((response) => response.json())
                     .then((data) => {
@@ -431,6 +447,8 @@ export default function DMISReport() {
                                 getRowHeight={() => 'auto'}
                                 columns={columns}
                                 rows={filterTaskList}
+                                pageSize={pageSize}
+                                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                 components={{
                                     Toolbar: GridToolbar,
                                 }}
@@ -439,6 +457,8 @@ export default function DMISReport() {
                                         columnVisibilityModel: {
                                             // Hide columns status and traderName, the other columns will remain visible
                                             task_cost: false,
+                                            task_date_accept: false,
+                                            task_date_process: false,
                                             task_serialnumber: false,
                                             task_device_id: false,
                                             receiver_firstname: false,

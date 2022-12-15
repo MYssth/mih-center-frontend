@@ -100,7 +100,6 @@ export default function UserPageNewUser() {
             return;
         }
 
-        // fetch(`http://${process.env.host}:${process.env.userCrudPort}/api/addpersonnel`, {
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnCrudPort}/api/addpersonnel`, {
             method: 'POST',
             headers: {

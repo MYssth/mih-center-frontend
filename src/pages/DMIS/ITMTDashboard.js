@@ -2,30 +2,33 @@ import { useEffect, useState } from 'react';
 import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import InputMask from "react-input-mask";
 // @mui
-import { Card, 
-  Container, 
-  Typography, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
-  Button, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogContentText, 
-  DialogActions, 
-  TextField, 
-  Autocomplete, 
-  Stack, 
-  Divider, 
-  CardActionArea, 
-  CardContent, 
-  TablePagination, } from '@mui/material';
+import {
+  Card,
+  Container,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  TextField,
+  Autocomplete,
+  Stack,
+  Divider,
+  CardActionArea,
+  CardContent,
+  TablePagination,
+} from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +37,9 @@ export default function ITMTDashboard() {
   const navigate = useNavigate();
 
   // =========================================================
+
+  const [psnId, setPsnId] = useState('');
+
   const [taskList, setTaskList] = useState([]);
   const [completeTaskList, setCompleteTaskList] = useState([]);
   const [operatorList, setOperatorList] = useState([]);
@@ -44,6 +50,7 @@ export default function ITMTDashboard() {
   const [taskId, setTaskId] = useState('');
   const [levelId, setLevelId] = useState('');
   const [recvId, setRecvId] = useState('');
+  const [recvName, setRecvName] = useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [taskNote, setTaskNote] = useState('');
   const [status, setStatus] = useState([]);
@@ -77,18 +84,12 @@ export default function ITMTDashboard() {
   useEffect(() => {
 
     const token = jwtDecode(localStorage.getItem('token'));
-    
+
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT") {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setTaskList(data);
-            setFilterTaskList(data);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
+
+        setPsnId(token.personnel_id);
+        refreshTable(token.personnel_id, token.level_list[i].level_id);
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`)
           .then((response) => response.json())
@@ -99,26 +100,9 @@ export default function ITMTDashboard() {
             console.error('Error:', error);
           });
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setTaskCount(data);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setCompleteTaskList(data);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
       }
     }
-
+    
     setRecvId(token.personnel_id);
 
   }, []);
@@ -135,6 +119,38 @@ export default function ITMTDashboard() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatusId])
+
+  const refreshTable = (tempPersonnelId, tempLevelId) => {
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${tempPersonnelId}/${tempLevelId}/${false}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setTaskList(data);
+        setFilterTaskList(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${tempPersonnelId}/${tempLevelId}/${false}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setTaskCount(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${tempPersonnelId}/${tempLevelId}/${false}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setCompleteTaskList(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+  }
   // ========================================================
 
   const setTempTask = (taskId, levelId) => {
@@ -179,10 +195,9 @@ export default function ITMTDashboard() {
 
     setTaskId(taskId);
     setLevelId(levelId);
-    console.log(`statusID = ${statusId} levelID = ${levelId}`);
+    // console.log(`statusID = ${statusId} levelID = ${levelId}`);
     if (statusId === 1) {
-      setOperatorName(`${operatorList.find(o => o.personnel_id === recvId).personnel_firstname} ${operatorList.find(o => o.personnel_id === recvId).personnel_lastname}`);
-      setOperatorId(recvId);
+      setRecvName(`${operatorList.find(o => o.personnel_id === recvId).personnel_firstname} ${operatorList.find(o => o.personnel_id === recvId).personnel_lastname}`);
       setAcceptTaskDialogOpen(true);
     }
     else if (statusId === 2 || statusId === 3 || statusId === 4) {
@@ -219,13 +234,10 @@ export default function ITMTDashboard() {
       task_id: taskId,
       level_id: levelId,
       receiver_id: recvId,
+      receiver_name: recvName,
       operator_id: operatorId,
+      operator_name: operatorName,
     };
-
-    if (jsonData.operator_id === "") {
-      alert("กรุณาเลือกผู้รับผิดชอบงาน");
-      return;
-    }
 
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/accepttask`, {
       method: 'POST',
@@ -238,7 +250,8 @@ export default function ITMTDashboard() {
       .then((data) => {
         if (data.status === 'ok') {
           alert('รับเรื่องสำเร็จ');
-          navigate('/dmis', { replace: true });
+          handleCloseAcceptTaskDialog();
+          refreshTable(psnId, levelId);
         }
         else {
           alert('ไม่สามารถทำการรับเรื่องได้');
@@ -267,17 +280,17 @@ export default function ITMTDashboard() {
       task_note: taskNote,
     }
 
-    console.log(`task_id ${jsonData.task_id}`);
-    console.log(`level_id ${jsonData.level_id}`);
-    console.log(`task_solution ${jsonData.task_solution}`);
-    console.log(`task_cost ${jsonData.task_cost}`);
-    console.log(`task_serialnumber ${jsonData.task_serialnumber}`);
-    console.log(`task_device_id ${jsonData.task_device_id}`);
-    console.log(`status_id ${jsonData.status_id}`);
-    console.log(`operator_id ${jsonData.operator_id}`);
-    console.log(`category_id ${jsonData.category_id}`);
-    console.log(`task_phone_no ${jsonData.task_phone_no}`);
-    console.log(`task_note ${jsonData.task_note}`);
+    // console.log(`task_id ${jsonData.task_id}`);
+    // console.log(`level_id ${jsonData.level_id}`);
+    // console.log(`task_solution ${jsonData.task_solution}`);
+    // console.log(`task_cost ${jsonData.task_cost}`);
+    // console.log(`task_serialnumber ${jsonData.task_serialnumber}`);
+    // console.log(`task_device_id ${jsonData.task_device_id}`);
+    // console.log(`status_id ${jsonData.status_id}`);
+    // console.log(`operator_id ${jsonData.operator_id}`);
+    // console.log(`category_id ${jsonData.category_id}`);
+    // console.log(`task_phone_no ${jsonData.task_phone_no}`);
+    // console.log(`task_note ${jsonData.task_note}`);
 
     if (jsonData.status_id === 5 && jsonData.task_solution === "") {
       alert("กรุณาระบุรายละเอียดการแก้ปัญหา ");
@@ -289,16 +302,21 @@ export default function ITMTDashboard() {
       return;
     }
 
-    if (jsonData.category_id === "") {
+    if (jsonData.category_id === "" || jsonData.category_id === null) {
       alert("กรุณาเลือกหมวดหมู่งาน");
       return;
     }
 
     if (jsonData.status_id === 3 || jsonData.status_id === 4) {
-      if (jsonData.task_note === "") {
+      if (jsonData.task_note === "" || jsonData.task_note === null) {
         alert("กรุณาระบุข้อมูลในหมายเหตุ");
         return;
       }
+    }
+
+    if (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) {
+      alert("กรุณาใส่รหัสทรัพย์สินให้ถูกต้อง");
+      return;
     }
 
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
@@ -311,16 +329,17 @@ export default function ITMTDashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('จบงานเรียบร้อย');
-          navigate('/dmis', { replace: true });
+          alert('ดำเนินการเรียบร้อย');
+          handleCloseProcessTaskDialog();
+          refreshTable(psnId, levelId);
         }
         else {
-          alert('ไม่สามารถทำการจบงานได้');
+          alert('ไม่สามารถดำเนินการได้');
         }
       })
       .catch((error) => {
         console.error('Error:', error);
-        alert('เกิดข้อผิดพลาดในการจบงาน');
+        alert('เกิดข้อผิดพลาดในการดำเนินการ');
       });
 
   };
@@ -419,6 +438,7 @@ export default function ITMTDashboard() {
                   <TableCell>ผู้แจ้ง</TableCell>
                   <TableCell>วันที่แจ้ง</TableCell>
                   <TableCell>ผู้รับผิดชอบ</TableCell>
+                  <TableCell>หมายเหตุ</TableCell>
                   <TableCell>สถานะ</TableCell>
                   <TableCell> </TableCell>
                 </TableRow>
@@ -429,14 +449,17 @@ export default function ITMTDashboard() {
                     key={row.task_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell>{row.task_id}</TableCell>
-                    <TableCell sx={{ maxWidth: 300 }} >
+                    <TableCell sx={{ maxWidth: 100 }}>{row.task_id}</TableCell>
+                    <TableCell sx={{ maxWidth: 250 }} >
                       {row.task_issue}
                     </TableCell>
-                    <TableCell sx={{ maxWidth: 150 }}>{row.issue_department_name}</TableCell>
-                    <TableCell>{row.informer_firstname}</TableCell>
+                    <TableCell sx={{ maxWidth: 130 }} >{row.issue_department_name}</TableCell>
+                    <TableCell sx={{ maxWidth: 100 }} >{row.informer_firstname}</TableCell>
                     <TableCell sx={{ maxWidth: 110 }}>{(row.task_date_start).replace("T", " ").replace(".000Z", " น.")}</TableCell>
-                    <TableCell>{row.operator_firstname}</TableCell>
+                    <TableCell sx={{ maxWidth: 50 }} >{row.operator_firstname}</TableCell>
+                    <TableCell sx={{ maxWidth: 150 }} >
+                      {row.task_note}
+                    </TableCell>
                     <TableCell>{row.status_name}</TableCell>
                     <TableCell><Button variant="contained" disabled={processTaskButton} onClick={() => { handleOpenTaskDialog(row.task_id, row.level_id, row.status_id, row.operator_id) }}>ดำเนินการ</Button></TableCell>
                   </TableRow>
@@ -517,16 +540,24 @@ export default function ITMTDashboard() {
           </Stack>
           <Divider />
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-            <TextField id="phoneNo" name="phoneNo" value={phoneNo===null?"":phoneNo} onChange={(event) => { setPhoneNo(event.target.value) }} label="เบอร์โทรติดต่อ" />
-            <TextField id="deviceId" name="deviceId" value={deviceId===null?"":deviceId} onChange={(event) => { setDeviceId(event.target.value) }} label="รหัสทรัพย์สิน" />
+            <TextField id="phoneNo" name="phoneNo" value={phoneNo === null ? "" : phoneNo} onChange={(event) => { setPhoneNo(event.target.value) }} label="เบอร์โทรติดต่อ" />
+            <InputMask
+              value={(deviceId === null ? '' : deviceId)}
+              onChange={(event) => { setDeviceId(event.target.value) }}
+              mask="99-99-999-999-9999"
+              disabled={false}
+              maskChar=""
+            >
+              {() => <TextField id="deviceId" name="deviceId" label="รหัสทรัพย์สิน" placeholder='xx-xx-xxx-xxx-xxxx' />}
+            </InputMask>
             <TextField
               id="solution"
               name="solution"
               label="รายละเอียดของการแก้ปัญหา"
               multiline
             />
-            <TextField id="serialnumber" name="serialnumber" value={serialnumber===null?"":serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
-            <TextField id="cost" name="cost" value={taskCost===null?"":taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
+            <TextField id="serialnumber" name="serialnumber" value={serialnumber === null ? "" : serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
+            <TextField id="cost" name="cost" value={taskCost === null ? "" : taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
             <Autocomplete
               value={operatorName}
               onChange={(event, newValue) => {
@@ -545,7 +576,7 @@ export default function ITMTDashboard() {
               renderInput={(params) => <TextField {...params} label="ผู้รับผิดชอบงาน" />}
             />
             <Autocomplete
-              value={categoryName===null?"":categoryName}
+              value={categoryName === null ? "" : categoryName}
               onChange={(event, newValue) => {
                 setCategoryName(newValue);
                 if (newValue !== null) {
@@ -565,7 +596,7 @@ export default function ITMTDashboard() {
               id="taskNote"
               name="taskNote"
               label="หมายเหตุ"
-              value={taskNote===null?"":taskNote}
+              value={taskNote === null ? "" : taskNote}
               onChange={(event) => { setTaskNote(event.target.value) }}
               multiline
             />

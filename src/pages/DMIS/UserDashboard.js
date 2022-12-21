@@ -1,12 +1,34 @@
+/* eslint-disable import/no-unresolved */
 import { useEffect, useState } from 'react';
 import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Container, Typography, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Stack, CardActionArea, CardContent, TablePagination } from '@mui/material';
-
+import {
+  Container,
+  Typography,
+  Card,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  CardActionArea,
+  TablePagination,
+  CardMedia,
+  Grid,
+} from '@mui/material';
+// hooks
+import dmisCheckinBtn from 'src/img/DMIS/DMIS_checkin.jpg';
+import dmisCompleteBtn from 'src/img/DMIS/DMIS_complete.jpg';
+import dmisOutSourceBtn from 'src/img/DMIS/DMIS_outsource.jpg';
+import dmisSpareBtn from 'src/img/DMIS/DMIS_spare.jpg';
+import dmisWorkingBtn from 'src/img/DMIS/DMIS_working.jpg';
 // ----------------------------------------------------------------------
 
 export default function UserDashboard() {
+
   const [taskList, setTaskList] = useState([]);
   const [completeTaskList, setCompleteTaskList] = useState([]);
   const [filterTaskList, setFilterTaskList] = useState([]);
@@ -91,68 +113,83 @@ export default function UserDashboard() {
           ระบบแจ้งซ่อมอุปกรณ์ - Device Maintenance Inform Service(DMIS)
         </Typography>
 
-        <Stack direction="row" align="center" sx={{ margin: 1, maxHeight: 100 }}>
-          <Card sx={{ width: 200, mr: 2, backgroundColor: 'error.main' }}>
-            <CardActionArea onClick={() => setFilterStatusId(1)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  รอรับเรื่อง
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.inform} รายการ
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent='center'>
+              <Card sx={{ width: 200, mr: 2, backgroundColor: 'error.main' }}>
+                <CardActionArea onClick={() => setFilterStatusId(1)}>
+                  <div style={{ position: "relative" }}>
+                    <CardMedia
+                      component="img"
+                      image={dmisCheckinBtn}
+                      alt="checkin" />
+                    <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                      <Typography variant="h4">
+                        {taskCount.inform}
+                      </Typography>
+                    </div>
+                  </div>
+                </CardActionArea>
+              </Card>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(2)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  กำลังดำเนินการ
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.accept} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisWorkingBtn}
+                  alt="checkin" />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.accept}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(3)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  รออะไหล่
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.wait} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisSpareBtn}
+                  alt="checkin" />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.wait}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(4)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  ส่งซ่อมภายนอก
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.outside} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisOutSourceBtn}
+                  alt="checkin" />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.outside}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, backgroundColor: 'success.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(5)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  เสร็จสิ้น
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.complete} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisCompleteBtn}
+                  alt="checkin" />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.complete}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
-        </Stack>
+        </Grid>
 
         <Card>
           <TableContainer component={Paper}>

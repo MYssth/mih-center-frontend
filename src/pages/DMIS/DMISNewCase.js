@@ -10,26 +10,12 @@ import { Container, Stack, Typography, TextField, Card, Divider, Button, Box, st
 
 const ValidationTextField = styled(TextField)({
     '& input:valid + fieldset': {
-      borderColor: 'green'
+        borderColor: 'green'
     },
     '& input:invalid + fieldset': {
-      borderColor: 'red'
-    },
-  });
-
-  const ValidationAutocomplete = styled(Autocomplete)({
-    '& input:valid + fieldset': {
-      borderColor: 'green',
-      borderWidth: 2,
-    },
-    '& input:invalid + fieldset': {
-      borderColor: 'red',
-      borderWidth: 2,
-    },
-    '& .MuiAutocomplete-input': {
         borderColor: 'red'
-     },
-  });
+    },
+});
 
 export default function dmisnewcase() {
 
@@ -146,7 +132,7 @@ export default function dmisnewcase() {
                 <Card>
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
                         {/* กรุณาเลือกงานที่ต้องการแจ้งซ่อม */}
-                        <ValidationAutocomplete
+                        <Autocomplete
                             value={caseTypeName}
                             onChange={(event, newValue) => {
                                 setCaseTypeName(newValue);
@@ -168,6 +154,13 @@ export default function dmisnewcase() {
                             fullWidth
                             required
                             renderInput={(params) => <TextField required {...params} label="กรุณาเลือกงานที่ต้องการแจ้งซ่อม" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: caseTypeName ? 'green' : 'red'
+                                    }
+                                }
+                            }}
                         />
                         <TextField id="phoneNumber" name="phoneNumber" label="เบอร์โทรติดต่อ" />
                     </Stack>
@@ -186,6 +179,7 @@ export default function dmisnewcase() {
                             id="issue"
                             name="issue"
                             label="รายละเอียดของปัญหา (ระบุยี่ห้อ, รุ่นของเครื่อง)"
+                            inputProps={{ maxLength: 140 }}
                         />
                         <TextField id="serialnumber" name="serialnumber" label="Serial Number" />
                         <Autocomplete
@@ -204,6 +198,13 @@ export default function dmisnewcase() {
                             fullWidth
                             required
                             renderInput={(params) => <TextField required {...params} label="แผนกที่แจ้งปัญหา" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: departmentName ? 'green' : 'red'
+                                    }
+                                }
+                            }}
                         />
 
                     </Stack>

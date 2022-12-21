@@ -1,7 +1,7 @@
+/* eslint-disable import/no-unresolved */
 import { useEffect, useState } from 'react';
 import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
 import InputMask from "react-input-mask";
 // @mui
 import {
@@ -26,15 +26,18 @@ import {
   Stack,
   Divider,
   CardActionArea,
-  CardContent,
   TablePagination,
+  CardMedia,
+  Grid,
 } from '@mui/material';
-
+import dmisCheckinBtn from 'src/img/DMIS/DMIS_checkin.jpg';
+import dmisCompleteBtn from 'src/img/DMIS/DMIS_complete.jpg';
+import dmisOutSourceBtn from 'src/img/DMIS/DMIS_outsource.jpg';
+import dmisSpareBtn from 'src/img/DMIS/DMIS_spare.jpg';
+import dmisWorkingBtn from 'src/img/DMIS/DMIS_working.jpg';
 // ----------------------------------------------------------------------
 
 export default function ITMTDashboard() {
-
-  const navigate = useNavigate();
 
   // =========================================================
 
@@ -57,6 +60,7 @@ export default function ITMTDashboard() {
   const [statusId, setStatusId] = useState('');
   const [statusName, setStatusName] = useState('');
   const [deviceId, setDeviceId] = useState('');
+  const [solution, setSolution] = useState('');
   const [serialnumber, setSerialnumber] = useState('');
   const [taskCost, setTaskCost] = useState('');
   const [categories, setCategories] = useState([]);
@@ -102,7 +106,7 @@ export default function ITMTDashboard() {
 
       }
     }
-    
+
     setRecvId(token.personnel_id);
 
   }, []);
@@ -201,8 +205,10 @@ export default function ITMTDashboard() {
       setAcceptTaskDialogOpen(true);
     }
     else if (statusId === 2 || statusId === 3 || statusId === 4) {
-      setOperatorName(`${operatorList.find(o => o.personnel_id === operatorId).personnel_firstname} ${operatorList.find(o => o.personnel_id === operatorId).personnel_lastname}`);
-      setOperatorId(operatorId);
+      if (operatorId !== '' && operatorId !== null) {
+        setOperatorName(`${operatorList.find(o => o.personnel_id === operatorId).personnel_firstname} ${operatorList.find(o => o.personnel_id === operatorId).personnel_lastname}`);
+        setOperatorId(operatorId);
+      }
       setTempTask(taskId, levelId);
       setCategories(levelId);
       setProcessTaskDialogOpen(true);
@@ -212,14 +218,19 @@ export default function ITMTDashboard() {
   const handleCloseAcceptTaskDialog = () => {
     setTaskId("");
     setLevelId("");
+    setOperatorId("");
+    setOperatorName("");
     setAcceptTaskDialogOpen(false);
   };
 
   const handleCloseProcessTaskDialog = () => {
     setTaskId("");
     setLevelId("");
+    setOperatorId("");
+    setOperatorName("");
     setPhoneNo("");
     setDeviceId("");
+    setSolution("");
     setTaskCost("");
     setSerialnumber("");
     setCategoryName("");
@@ -269,7 +280,7 @@ export default function ITMTDashboard() {
     const jsonData = {
       task_id: taskId,
       level_id: levelId,
-      task_solution: document.getElementById('solution').value,
+      task_solution: solution,
       task_cost: document.getElementById('cost').value,
       task_serialnumber: serialnumber,
       task_device_id: deviceId,
@@ -292,9 +303,8 @@ export default function ITMTDashboard() {
     // console.log(`task_phone_no ${jsonData.task_phone_no}`);
     // console.log(`task_note ${jsonData.task_note}`);
 
-    if (jsonData.status_id === 5 && jsonData.task_solution === "") {
-      alert("กรุณาระบุรายละเอียดการแก้ปัญหา ");
-      return;
+    if (jsonData.status_id === "" || jsonData.status_id === null) {
+      alert("กรุณาระบุสถานะของงาน");
     }
 
     if (jsonData.operator_id === "") {
@@ -307,16 +317,21 @@ export default function ITMTDashboard() {
       return;
     }
 
+    if (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) {
+      alert("กรุณาใส่รหัสทรัพย์สินให้ถูกต้อง");
+      return;
+    }
+
+    if (jsonData.status_id === 5 && jsonData.task_solution === "") {
+      alert("กรุณาระบุรายละเอียดการแก้ปัญหา ");
+      return;
+    }
+
     if (jsonData.status_id === 3 || jsonData.status_id === 4) {
       if (jsonData.task_note === "" || jsonData.task_note === null) {
         alert("กรุณาระบุข้อมูลในหมายเหตุ");
         return;
       }
-    }
-
-    if (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) {
-      alert("กรุณาใส่รหัสทรัพย์สินให้ถูกต้อง");
-      return;
     }
 
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
@@ -350,73 +365,94 @@ export default function ITMTDashboard() {
         <title> ระบบแจ้งซ่อมอุปกรณ์ | MIH Center </title>
       </Helmet>
 
-      <Container>
+      <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           ระบบแจ้งซ่อมอุปกรณ์ - Device Maintenance Inform Service(DMIS)
         </Typography>
 
-        <Stack direction="row" align="center" sx={{ margin: 1, maxHeight: 100 }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent='center'>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'error.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(1)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  รอรับเรื่อง
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.inform} รายการ
-                </Typography>
-              </CardContent>
+
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisCheckinBtn}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.inform}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(2)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  กำลังดำเนินการ
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.accept} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisWorkingBtn}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.accept}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(3)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  รออะไหล่
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.wait} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisSpareBtn}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.wait}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(4)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  ส่งซ่อมภายนอก
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.outside} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisOutSourceBtn}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.outside}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
           <Card sx={{ width: 200, backgroundColor: 'success.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(5)}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  เสร็จสิ้น
-                </Typography>
-                <Typography variant="body1">
-                  {taskCount.complete} รายการ
-                </Typography>
-              </CardContent>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={dmisCompleteBtn}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.complete}
+                  </Typography>
+                </div>
+              </div>
             </CardActionArea>
           </Card>
-        </Stack>
+        </Grid>
 
         <Card>
           <TableContainer component={Paper}>
@@ -491,7 +527,7 @@ export default function ITMTDashboard() {
             value={operatorName}
             onChange={(event, newValue) => {
               setOperatorName(newValue);
-              if (newValue !== null) {
+              if (newValue !== null && newValue !== "") {
                 setOperatorId(operatorList.find(o => `${o.personnel_firstname} ${o.personnel_lastname}` === newValue).personnel_id);
               }
               else {
@@ -526,6 +562,9 @@ export default function ITMTDashboard() {
                 setStatusName(newValue);
                 if (newValue !== null) {
                   setStatusId(status.find(o => o.status_name === newValue).status_id);
+                  if(status.find(o => o.status_name === newValue).status_id!==5){
+                    setSolution('');
+                  }
                 }
                 else {
                   setStatusId("");
@@ -536,6 +575,13 @@ export default function ITMTDashboard() {
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="สถานะของงาน" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: statusName ? 'green' : 'red'
+                  }
+                }
+              }}
             />
           </Stack>
           <Divider />
@@ -554,7 +600,15 @@ export default function ITMTDashboard() {
               id="solution"
               name="solution"
               label="รายละเอียดของการแก้ปัญหา"
-              multiline
+              value={solution === null ? "" : solution}
+              onChange={(event) => { setSolution(event.target.value) }}
+              inputProps={{ maxLength: 140 }}
+              disabled={!(statusId === 5)}
+              sx={{
+                '& input:valid + fieldset': {
+                  borderColor: solution ? 'green' : 'red'
+                },
+              }}
             />
             <TextField id="serialnumber" name="serialnumber" value={serialnumber === null ? "" : serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
             <TextField id="cost" name="cost" value={taskCost === null ? "" : taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
@@ -574,6 +628,13 @@ export default function ITMTDashboard() {
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="ผู้รับผิดชอบงาน" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: operatorName ? 'green' : 'red'
+                  }
+                }
+              }}
             />
             <Autocomplete
               value={categoryName === null ? "" : categoryName}
@@ -591,6 +652,13 @@ export default function ITMTDashboard() {
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="หมวดหมู่งาน" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: categoryName ? 'green' : 'red'
+                  }
+                }
+              }}
             />
             <TextField
               id="taskNote"
@@ -598,7 +666,12 @@ export default function ITMTDashboard() {
               label="หมายเหตุ"
               value={taskNote === null ? "" : taskNote}
               onChange={(event) => { setTaskNote(event.target.value) }}
-              multiline
+              inputProps={{ maxLength: 140 }}
+              sx={{
+                '& input:valid + fieldset': {
+                  borderColor: statusId === 3 || statusId === 4 ? (taskNote ? 'green' : 'red') : ''
+                },
+              }}
             />
           </Stack>
         </DialogContent>

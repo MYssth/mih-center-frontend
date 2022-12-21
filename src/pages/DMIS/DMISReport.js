@@ -214,7 +214,7 @@ function printPDF(data) {
                 table: {
                     widths: ['auto', '*', 'auto'],
                     body: [
-                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : '(งานซ่อมบำรุง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 1 ม.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 1 ม.ค. 2565' }]
+                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : '(งานซ่อมบำรุง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 19 ธ.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 19 ธ.ค. 2565' }]
                     ]
                 },
 
@@ -248,7 +248,7 @@ function printPDF(data) {
                         [{
                             text: [
                                 `วันที่แจ้ง: ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}\n`,
-                                `แผนกที่มีปัญหา: ${data.issue_department_name}\n`,
+                                `แผนกที่แจ้งปัญหา: ${data.issue_department_name}\n`,
                                 `รหัสทรัพย์สิน: ${data.task_device_id === null || data.task_device_id === "" ? "ไม่ได้ระบุ" : data.task_device_id}\n`,
                                 `Serial number: ${data.task_serialnumber === null || data.task_serialnumber === "" ? "ไม่ได้ระบุ" : data.task_serialnumber}\n`,
                                 `รายละเอียดของปัญหา: ${data.task_issue}\n`,
@@ -390,7 +390,7 @@ export default function DMISReport() {
                 <title> รายงาน | MIH Center </title>
             </Helmet>
 
-            <Container>
+            <Container maxWidth="xl">
 
                 <Typography variant="h4" sx={{ mb: 5 }}>
                     รายงาน

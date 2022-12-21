@@ -30,6 +30,7 @@ import { Icon } from '@iconify/react';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 
+
 const ODD_OPACITY = 0.2;
 
 const StripedDataGrid = styled(DataGrid)(({ theme }) => ({

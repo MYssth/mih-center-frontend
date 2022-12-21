@@ -54,7 +54,6 @@
     "gulp": "^4.0.2",
     "history": "^5.3.0",
     "jwt-decode": "^3.1.2",
-    "line-notify-nodejs": "^1.0.1",
     "lodash": "^4.17.21",
     "numeral": "^2.0.6",
     "pdfmake": "^0.2.6",

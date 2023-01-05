@@ -30,10 +30,12 @@ export default function AccountPopover() {
 
     const handleBack = () => {
       navigate('/dashboard', { replace: true });
+      handleClose();
     };
 
     const handleSetting = () => {
-      navigate('/profilesetting', { replace: true });
+      navigate('/dashboard/profilesetting', { replace: true });
+      handleClose();
     };
 
     const handleLogout = () => {

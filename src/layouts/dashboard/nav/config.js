@@ -25,7 +25,7 @@ try {
           },
           {
             title: 'จัดการโครงสร้างองค์กร',
-            path: '/dashboard/<ยังไม่สร้าง>',
+            path: '/dashboard/rolemgr',
             icon: <Icon icon="ic:baseline-maps-home-work" width="30" height="30" />,
           },
         );

@@ -27,7 +27,7 @@ export default function App() {
         .then((data) => {
           if (data.status === 'ok') {
             // alert('complete');
-            navigate('/dashboard', { replace: true });
+            // navigate('/dashboard', { replace: true });
           }
           else {
             alert('กรุณาเข้าสู่ระบบ');

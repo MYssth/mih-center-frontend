@@ -66,6 +66,15 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
+const ValidationTextField = styled(TextField)({
+  '& input:valid + fieldset': {
+      borderColor: 'green'
+  },
+  '& input:invalid + fieldset': {
+      borderColor: 'red'
+  },
+});
+
 export default function UserPage() {
   const [open, setOpen] = useState(null);
   const [personnel, setPersonnel] = useState([]);
@@ -75,6 +84,8 @@ export default function UserPage() {
 
   const [personnelId, setPersonnelId] = useState('');
   const [personnelSecret, setPersonnelSecret] = useState('');
+  const [personnelInputSecret, setPersonnelInputSecret] = useState(null);
+  const [personnelInputSecretConfirm, setPersonnelInputSecretConfirm] = useState(null);
   const [personnelFirstname, setPersonnelFirstname] = useState('');
   const [personnelLastname, setPersonnelLastname] = useState('');
   const [personnelIsactive, setPersonnelIsactive] = useState('');
@@ -84,10 +95,14 @@ export default function UserPage() {
   const [positions, setPositions] = useState([]);
 
   const [levels, setLevels] = useState([]);
+  const [levelViews, setLevelViews] = useState([]);
 
   const [DMISLevelName, setDMISLevelName] = useState('');
   const [DMISLevelId, setDMISLevelId] = useState('');
   const [DMISLevelDescription, setDMISLevelDescription] = useState('');
+  const [DMISLevelViewName, setDMISLevelViewName] = useState('');
+  const [DMISLevelViewId, setDMISLevelViewId] = useState('');
+  const [DMISLevelViewDescription, setDMISLevelViewDescription] = useState('');
   const [isDMIS, setIsDMIS] = useState(false);
 
   const [PMSLevelName, setPMSLevelName] = useState('');
@@ -182,16 +197,31 @@ export default function UserPage() {
       })
       .catch((error) => {
         console.error('Error:', error);
-      });
-
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevels`)
-      .then((response) => response.json())
-      .then((data) => {
-        setLevels(data);
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+
+      .then(
+
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevels`)
+          .then((response) => response.json())
+          .then((data) => {
+            setLevels(data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          })
+
+      ).then(
+
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevelviews`)
+          .then((response) => response.json())
+          .then((data) => {
+            setLevelViews(data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          })
+
+      )
 
   }, []);
 
@@ -215,6 +245,8 @@ export default function UserPage() {
 
     setPersonnelId('');
     setPersonnelSecret('');
+    setPersonnelInputSecret(null);
+    setPersonnelInputSecretConfirm(null);
     setPersonnelFirstname('');
     setPersonnelLastname('');
     setPersonnelIsactive('');
@@ -224,6 +256,9 @@ export default function UserPage() {
     setDMISLevelId('');
     setDMISLevelName('');
     setDMISLevelDescription('');
+    setDMISLevelViewId('');
+    setDMISLevelViewName('');
+    setDMISLevelViewDescription('');
     setIsDMIS(false);
 
     setPMSLevelId('');
@@ -242,6 +277,9 @@ export default function UserPage() {
             setDMISLevelId(data[i].level_id);
             setDMISLevelName(data[i].level_name);
             setDMISLevelDescription(data[i].level_description);
+            setDMISLevelViewId(data[i].view_id);
+            setDMISLevelViewName(data[i].view_name);
+            setDMISLevelViewDescription(data[i].view_description);
             setIsDMIS(true);
           }
           if (data[i].mihapp_id === "PMS") {
@@ -282,13 +320,19 @@ export default function UserPage() {
   const handleEdit = () => {
 
     const levelList = [];
+    const viewList = [];
 
     if (isDMIS) {
       if (DMISLevelId === "") {
-        alert("กรุณาใส่หน้าที่ของระบบแจ้งซ่อม");
+        alert("กรุณาเลือกหน้าที่ของระบบแจ้งซ่อม");
+        return;
+      }
+      if (DMISLevelViewId === "") {
+        alert("กรุณาเลือกระดับการมองเห็นของระบบแจ้งซ่อม");
         return;
       }
       levelList.push(DMISLevelId);
+      viewList.push(DMISLevelViewId)
     }
 
     if (isPMS) {
@@ -299,11 +343,11 @@ export default function UserPage() {
       levelList.push(PMSLevelId);
     }
 
-    const inputSecret = document.getElementById('secret').value;
+    let secret = personnelSecret
 
-    if (inputSecret !== "") {
-      if (inputSecret === document.getElementById('secretConfirm').value) {
-        setPersonnelSecret(inputSecret);
+    if (personnelInputSecret !== "" && personnelInputSecret !== null) {
+      if (personnelInputSecret === personnelInputSecretConfirm) {
+        secret = personnelInputSecret;
       }
       else {
         alert("กรุณากรอกรหัสผ่านให้ตรงกัน");
@@ -313,12 +357,13 @@ export default function UserPage() {
 
     const jsonData = {
       personnel_id: personnelId,
-      personnel_secret: personnelSecret,
+      personnel_secret: secret,
       personnel_firstname: personnelFirstname,
       personnel_lastname: personnelLastname,
       personnel_isactive: personnelIsactive,
       position_id: positionId,
       level_list: levelList,
+      view_list: viewList,
     };
 
     if (jsonData.personnel_id === "" ||
@@ -331,6 +376,15 @@ export default function UserPage() {
       return;
     }
 
+    // console.log(`personnel_id: ${jsonData.personnel_id}`);
+    // console.log(`personnel_secret: ${jsonData.personnel_secret}`);
+    // console.log(`personnel_firstname: ${jsonData.personnel_firstname}`);
+    // console.log(`personnel_lastname: ${jsonData.personnel_lastname}`);
+    // console.log(`personnel_isactive: ${jsonData.personnel_isactive}`);
+    // console.log(`position_id: ${jsonData.position_id}`);
+    // console.log(`level_list: ${jsonData.level_list}`);
+    // console.log(`view_list: ${jsonData.view_list}`);
+    
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnCrudPort}/api/updatepersonnel`, {
       method: 'POST',
       headers: {
@@ -447,6 +501,9 @@ export default function UserPage() {
       setDMISLevelId("");
       setDMISLevelName("");
       setDMISLevelDescription("");
+      setDMISLevelViewId("");
+      setDMISLevelViewName("");
+      setDMISLevelViewDescription("");
     }
 
   }
@@ -541,8 +598,8 @@ export default function UserPage() {
             <DialogContentText>
               ข้อมูลส่วนตัว
             </DialogContentText>
-            <TextField id="firstname" name="firstname" value={personnelFirstname === null ? "" : personnelFirstname} onChange={(event) => { setPersonnelFirstname(event.target.value) }} label="ชื่อ" />
-            <TextField id="lastname" name="lastname" value={personnelLastname === null ? "" : personnelLastname} onChange={(event) => { setPersonnelLastname(event.target.value) }} label="นามสกุล" />
+            <ValidationTextField required id="firstname" name="firstname" value={personnelFirstname === null ? "" : personnelFirstname} onChange={(event) => { setPersonnelFirstname(event.target.value) }} label="ชื่อ" />
+            <ValidationTextField required id="lastname" name="lastname" value={personnelLastname === null ? "" : personnelLastname} onChange={(event) => { setPersonnelLastname(event.target.value) }} label="นามสกุล" />
 
             {/* <div>{`position id: ${position_id !== null ? `'${position_id}'` : 'null'}`}</div><br /> */}
             <Autocomplete
@@ -561,6 +618,13 @@ export default function UserPage() {
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="ตำแหน่ง" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: positionName ? 'green' : 'red'
+                  }
+                }
+              }}
             />
           </Stack>
 
@@ -569,7 +633,7 @@ export default function UserPage() {
           </DialogContentText>
           <Stack direction="row" spacing={2} sx={{ width: 'auto', p: 2 }}>
 
-            <TextField id="secret" name="secret" label="รหัสผ่านใหม่" type={showSecret ? 'text' : 'password'} fullWidth={Boolean(true)}
+            <TextField id="secret" name="secret" label="รหัสผ่านใหม่" type={showSecret ? 'text' : 'password'} fullWidth value={personnelInputSecret === null ? "" : personnelInputSecret} onChange={(event) => { setPersonnelInputSecret(event.target.value) }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -579,7 +643,7 @@ export default function UserPage() {
                   </InputAdornment>
                 ),
               }} />
-            <TextField id="secretConfirm" name="secretConfirm" label="ยืนยันรหัสผ่านใหม่" type={showSecret ? 'text' : 'password'} fullWidth={Boolean(true)}
+            <TextField id="secretConfirm" name="secretConfirm" label="ยืนยันรหัสผ่านใหม่" type={showSecret ? 'text' : 'password'} fullWidth value={personnelInputSecretConfirm === null ? "" : personnelInputSecretConfirm} onChange={(event) => { setPersonnelInputSecretConfirm(event.target.value) }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -619,6 +683,13 @@ export default function UserPage() {
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="ระบบจัดการข้อมูลบุคลากร" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: isPMS ? (PMSLevelName ? 'green' : 'red') : ''
+                  }
+                }
+              }}
             />
             <Typography sx={{ pl: 1.5 }}>{`${PMSLevelDescription}`}</Typography><br />
             {/* ==== END OF Personnel admin ==== */}
@@ -645,8 +716,43 @@ export default function UserPage() {
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งซ่อม" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: isDMIS ? (DMISLevelViewName ? 'green' : 'red') : ''
+                  }
+                }
+              }}
             />
             <Typography sx={{ pl: 1.5 }}>{`${DMISLevelDescription}`}</Typography><br />
+            <Autocomplete
+              disabled={!isDMIS}
+              value={DMISLevelViewName}
+              onChange={(event, newValue) => {
+                setDMISLevelViewName(newValue);
+                if (newValue !== null) {
+                  setDMISLevelViewId(levelViews.find(o => o.view_name === newValue).view_id);
+                  setDMISLevelViewDescription(`รายละเอียด: ${levelViews.find(o => o.view_name === newValue).view_description}`);
+                }
+                else {
+                  setDMISLevelViewId("");
+                  setDMISLevelViewDescription("");
+                }
+              }}
+              id="controllable-states-DMIS-level-views-id"
+              options={Object.values(levelViews).map((option) => option.mihapp_id === "DMIS" ? `${option.view_name}` : '').filter(isSkip)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งซ่อม" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: isDMIS ? (DMISLevelViewName ? 'green' : 'red') : ''
+                  }
+                }
+              }}
+            />
+            <Typography sx={{ pl: 1.5 }}>{`${DMISLevelViewDescription}`}</Typography><br />
             {/* ==== END OF DMIS ==== */}
 
           </Box>

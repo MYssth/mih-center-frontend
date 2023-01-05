@@ -30,9 +30,12 @@ export default function dmisnewcase() {
 
     useEffect(() => {
 
+        const controller = new AbortController();
+        // eslint-disable-next-line prefer-destructuring
+        const signal = controller.signal;
         const token = jwtDecode(localStorage.getItem('token'));
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpersonnel/${token.personnel_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpersonnel/${token.personnel_id}`, { signal })
             .then((response) => response.json())
             .then((data) => {
                 setInformerId(data.personnel_id);
@@ -40,17 +43,35 @@ export default function dmisnewcase() {
                 setDepartmentName(data.department_name);
             })
             .catch((error) => {
-                console.error('Error:', error);
-            });
-
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getdepartments`)
-            .then((response) => response.json())
-            .then((data) => {
-                setDepartments(data);
+                if (error.name === "AbortError") {
+                    console.log("cancelled")
+                }
+                else {
+                    console.error('Error:', error);
+                }
             })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+
+            .then(
+
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getdepartments`, { signal })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        setDepartments(data);
+                    })
+                    .catch((error) => {
+                        if (error.name === "AbortError") {
+                            console.log("cancelled")
+                        }
+                        else {
+                            console.error('Error:', error);
+                        }
+                    })
+
+            )
+
+            return () => {
+                controller.abort();
+            }
 
     }, []);
 
@@ -140,8 +161,11 @@ export default function dmisnewcase() {
                                 if (newValue.label === 'งาน IT') {
                                     setCaseTypeId("DMIS_IT");
                                 }
-                                else if (newValue.label === 'งานช่าง') {
+                                else if (newValue.label === 'งานซ่อมบำรุงทั่วไป') {
                                     setCaseTypeId("DMIS_MT");
+                                }
+                                else if (newValue.label === 'งานซ่อมบำรุงเครื่องมือแพทย์') {
+                                    setCaseTypeId("DMIS_MER");
                                 }
                                 else {
                                     setCaseTypeId("");
@@ -150,7 +174,8 @@ export default function dmisnewcase() {
                             id="controllable-states-case-type-id"
                             options={[
                                 { label: 'งาน IT' },
-                                { label: 'งานช่าง' }]}
+                                { label: 'งานซ่อมบำรุงทั่วไป' },
+                                { label: 'งานซ่อมบำรุงเครื่องมือแพทย์' },]}
                             fullWidth
                             required
                             renderInput={(params) => <TextField required {...params} label="กรุณาเลือกงานที่ต้องการแจ้งซ่อม" />}

@@ -4,7 +4,16 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Container, Stack, Typography, TextField, Card, Button, Checkbox, Box } from '@mui/material';
+import { Container, Stack, Typography, TextField, Card, Button, Checkbox, Box, Divider, styled } from '@mui/material';
+
+const ValidationTextField = styled(TextField)({
+    '& input:valid + fieldset': {
+        borderColor: 'green'
+    },
+    '& input:invalid + fieldset': {
+        borderColor: 'red'
+    },
+});
 
 export default function UserPageNewUser() {
     const navigate = useNavigate();
@@ -13,10 +22,14 @@ export default function UserPageNewUser() {
     const [positionId, setPositionId] = React.useState('');
     const [positions, setPositions] = React.useState([]);
     const [levels, setLevels] = React.useState([]);
+    const [levelViews, setLevelViews] = React.useState([]);
 
     const [DMISLevelName, setDMISLevelName] = React.useState('');
     const [DMISLevelId, setDMISLevelId] = React.useState('');
     const [DMISLevelDescription, setDMISLevelDescription] = React.useState('');
+    const [DMISLevelViewName, setDMISLevelViewName] = React.useState('');
+    const [DMISLevelViewId, setDMISLevelViewId] = React.useState('');
+    const [DMISLevelViewDescription, setDMISLevelViewDescription] = React.useState('');
     const [isDMIS, setIsDMIS] = React.useState(false);
 
     const [PMSLevelName, setPMSLevelName] = React.useState('');
@@ -24,7 +37,7 @@ export default function UserPageNewUser() {
     const [PMSLevelDescription, setPMSLevelDescription] = React.useState('');
     const [isPMS, setIsPMS] = React.useState(false);
 
-    const isSkip = (value) => value!=='';
+    const isSkip = (value) => value !== '';
 
     useEffect(() => {
 
@@ -35,29 +48,50 @@ export default function UserPageNewUser() {
             })
             .catch((error) => {
                 console.error('Error:', error);
-            });
-
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevels`)
-            .then((response) => response.json())
-            .then((data) => {
-                setLevels(data);
             })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+
+            .then(
+
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevels`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        setLevels(data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    })
+
+            ).then(
+
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevelviews`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        setLevelViews(data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    })
+
+            )
 
     }, []);
 
     const handleSubmit = () => {
 
         const levelList = [];
+        const viewList = [];
 
         if (isDMIS) {
             if (DMISLevelId === "") {
-                alert("กรุณาใส่หน้าที่ของระบบแจ้งซ่อม");
+                alert("กรุณาเลือกหน้าที่ของระบบแจ้งซ่อม");
+                return;
+            }
+            if (DMISLevelViewId === "") {
+                alert("กรุณาเลือกระดับการมองเห็นของระบบแจ้งซ่อม");
                 return;
             }
             levelList.push(DMISLevelId);
+            viewList.push(DMISLevelViewId);
         }
 
         if (isPMS) {
@@ -76,6 +110,7 @@ export default function UserPageNewUser() {
             personnel_isactive: "1",
             position_id: positionId,
             level_list: levelList,
+            view_list: viewList,
         };
 
         // console.log(`id : ${jsonData.personnel_id}`);
@@ -135,6 +170,9 @@ export default function UserPageNewUser() {
             setDMISLevelId("");
             setDMISLevelName("");
             setDMISLevelDescription("");
+            setDMISLevelViewId("");
+            setDMISLevelViewName("");
+            setDMISLevelViewDescription("");
         }
 
     }
@@ -166,10 +204,10 @@ export default function UserPageNewUser() {
                 <Card>
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
                         <Typography variant='h5'>ข้อมูลส่วนตัว</Typography>
-                        <TextField id="username" name="username" label="รหัสพนักงาน" />
-                        <TextField id="password" name="password" label="รหัสผ่าน (วันเดือนปีเกิด)" />
-                        <TextField id="firstname" name="firstname" label="ชื่อ" />
-                        <TextField id="lastname" name="lastname" label="นามสกุล" />
+                        <ValidationTextField required id="username" name="username" label="รหัสพนักงาน" inputProps={{ maxLength: 7 }} />
+                        <ValidationTextField required id="password" name="password" label="รหัสผ่าน (วันเดือนปีเกิด)" />
+                        <ValidationTextField required id="firstname" name="firstname" label="ชื่อ" />
+                        <ValidationTextField required id="lastname" name="lastname" label="นามสกุล" />
 
                         {/* <div>{`position id: ${position_id !== null ? `'${position_id}'` : 'null'}`}</div><br /> */}
                         <Autocomplete
@@ -188,6 +226,13 @@ export default function UserPageNewUser() {
                             fullWidth
                             required
                             renderInput={(params) => <TextField {...params} label="ตำแหน่ง" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: positionName ? 'green' : 'red'
+                                    }
+                                }
+                            }}
                         />
 
                     </Stack>
@@ -214,13 +259,22 @@ export default function UserPageNewUser() {
                             }}
                             id="controllable-states-PMS-levels-id"
                             // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
-                            options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}`: '').filter(isSkip)}
+                            options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '').filter(isSkip)}
                             fullWidth
                             required
                             renderInput={(params) => <TextField {...params} label="ระบบจัดการข้อมูลบุคลากร" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: isPMS ? (PMSLevelName ? 'green' : 'red') : ''
+                                    }
+                                }
+                            }}
                         />
                         <Typography sx={{ pl: 1.5 }}>{`${PMSLevelDescription}`}</Typography><br />
                         {/* ========================================= END OF Personnel admin ==================================================== */}
+
+                        <Divider />
 
                         {/* ============================================= DMIS ================================================================= */}
                         <Checkbox onChange={handleChangeDMIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบแจ้งซ่อม
@@ -244,8 +298,43 @@ export default function UserPageNewUser() {
                             fullWidth
                             required
                             renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งซ่อม" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: isDMIS ? (DMISLevelName ? 'green' : 'red') : ''
+                                    }
+                                }
+                            }}
                         />
                         <Typography sx={{ pl: 1.5 }}>{`${DMISLevelDescription}`}</Typography><br />
+                        <Autocomplete
+                            disabled={!isDMIS}
+                            value={DMISLevelViewName}
+                            onChange={(event, newValue) => {
+                                setDMISLevelViewName(newValue);
+                                if (newValue !== null) {
+                                    setDMISLevelViewId(levelViews.find(o => o.view_name === newValue).view_id);
+                                    setDMISLevelViewDescription(`รายละเอียด: ${levelViews.find(o => o.view_name === newValue).view_description}`);
+                                }
+                                else {
+                                    setDMISLevelViewId("");
+                                    setDMISLevelViewDescription("");
+                                }
+                            }}
+                            id="controllable-states-DMIS-level-views-id"
+                            options={Object.values(levelViews).map((option) => option.mihapp_id === "DMIS" ? `${option.view_name}` : '').filter(isSkip)}
+                            fullWidth
+                            required
+                            renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งซ่อม" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: isDMIS ? (DMISLevelViewName ? 'green' : 'red') : ''
+                                    }
+                                }
+                            }}
+                        />
+                        <Typography sx={{ pl: 1.5 }}>{`${DMISLevelViewDescription}`}</Typography><br />
                         {/* ============================================= END OF DMIS ========================================================== */}
 
                     </Box>

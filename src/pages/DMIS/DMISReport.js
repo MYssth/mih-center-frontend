@@ -85,7 +85,7 @@ const columns = [
     },
     {
         field: 'id',
-        headerName: 'เลขที่',
+        headerName: 'ลำดับที่',
         width: 50,
     },
     {
@@ -177,7 +177,7 @@ const columns = [
     },
     {
         field: 'issue_department_name',
-        headerName: 'แผนกที่มีปัญหา',
+        headerName: 'แผนกที่แจ้งปัญหา',
         width: 110,
     },
     {
@@ -203,6 +203,7 @@ const columns = [
 
 function printPDF(data) {
     const docDefinition = {
+        pageOrientation: 'portrait',
         content: [
             // logo image hide here
             {
@@ -214,7 +215,7 @@ function printPDF(data) {
                 table: {
                     widths: ['auto', '*', 'auto'],
                     body: [
-                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : '(งานซ่อมบำรุง)'}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 19 ธ.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 19 ธ.ค. 2565' }]
+                        [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : (data.level_id === 'DMIS_MT' ? '(งานซ่อมบำรุงทั่วไป)' : '(งานซ่อมบำรุงเครื่องมือแพทย์)')}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 19 ธ.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 19 ธ.ค. 2565' }]
                     ]
                 },
 
@@ -355,22 +356,34 @@ export default function DMISReport() {
 
     useEffect(() => {
 
+        const controller = new AbortController();
+        // eslint-disable-next-line prefer-destructuring
+        const signal = controller.signal;
         const token = jwtDecode(localStorage.getItem('token'));
 
         for (let i = 0; i < token.level_list.length; i += 1) {
             if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" ||
-                token.level_list[i].level_id === "DMIS_U1" || token.level_list[i].level_id === "DMIS_U2" ||
-                token.level_list[i].level_id === "DMIS_U3" || token.level_list[i].level_id === "DMIS_U4") {
-                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}`)
+                token.level_list[i].level_id === "DMIS_USER" || token.level_list[i].level_id === "DMIS_MER") {
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}`, { signal })
                     .then((response) => response.json())
                     .then((data) => {
                         setCompleteTaskList(data);
                         setFilterTaskList(data);
                     })
                     .catch((error) => {
-                        console.error('Error:', error);
+                        if (error.name === "AbortError") {
+                            console.log("cancelled")
+                        }
+                        else {
+                            console.error('Error:', error);
+                        }
                     });
+                break;
             }
+        }
+
+        return () => {
+            controller.abort();
         }
 
     }, []);
@@ -445,6 +458,11 @@ export default function DMISReport() {
                                 }
                                 autoHeight
                                 getRowHeight={() => 'auto'}
+                                sx={{
+                                    [`& .${gridClasses.cell}`]: {
+                                        py: 1,
+                                    },
+                                }}
                                 columns={columns}
                                 rows={filterTaskList}
                                 pageSize={pageSize}

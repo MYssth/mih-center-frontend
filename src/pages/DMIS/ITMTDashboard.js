@@ -41,8 +41,6 @@ export default function ITMTDashboard() {
 
   // =========================================================
 
-  const [psnId, setPsnId] = useState('');
-
   const [taskList, setTaskList] = useState([]);
   const [completeTaskList, setCompleteTaskList] = useState([]);
   const [operatorList, setOperatorList] = useState([]);
@@ -67,7 +65,7 @@ export default function ITMTDashboard() {
   const [categoryId, setCategoryId] = useState('');
   const [categoryName, setCategoryName] = useState('');
   const [taskCount, setTaskCount] = useState([]);
-  const [processTaskButton, setProcessTaskButton] = useState(false);
+  const [disableProcessTaskButton, setDisableProcessTaskButton] = useState(false);
 
   const [filterTaskList, setFilterTaskList] = useState([]);
   const [filterStatusId, setFilterStatusId] = useState('all');
@@ -87,77 +85,109 @@ export default function ITMTDashboard() {
 
   useEffect(() => {
 
+    const controller = new AbortController();
+    // eslint-disable-next-line prefer-destructuring
+    const signal = controller.signal;
     const token = jwtDecode(localStorage.getItem('token'));
 
     for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT") {
+      if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" || token.level_list[i].level_id === "DMIS_MER") {
 
-        setPsnId(token.personnel_id);
-        refreshTable(token.personnel_id, token.level_list[i].level_id);
+        setLevelId(token.level_list[i].level_id);
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`, { signal })
           .then((response) => response.json())
           .then((data) => {
             setOperatorList(data);
           })
           .catch((error) => {
-            console.error('Error:', error);
-          });
+            if (error.name === "AbortError") {
+              console.log("cancelled")
+            }
+            else {
+              console.error('Error:', error);
+            }
+          })
 
+          .then(
+
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${false}`, { signal })
+              .then((response) => response.json())
+              .then((data) => {
+                setTaskList(data);
+                setFilterTaskList(data);
+              })
+              .catch((error) => {
+                if (error.name === "AbortError") {
+                  console.log("cancelled")
+                }
+                else {
+                  console.error('Error:', error);
+                }
+              })
+
+          ).then(
+
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${false}`, { signal })
+              .then((response) => response.json())
+              .then((data) => {
+                setTaskCount(data);
+              })
+              .catch((error) => {
+                if (error.name === "AbortError") {
+                  console.log("cancelled")
+                }
+                else {
+                  console.error('Error:', error);
+                }
+              })
+
+          ).then(
+
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${false}`, { signal })
+              .then((response) => response.json())
+              .then((data) => {
+                setCompleteTaskList(data);
+              })
+              .catch((error) => {
+                if (error.name === "AbortError") {
+                  console.log("cancelled")
+                }
+                else {
+                  console.error('Error:', error);
+                }
+              })
+
+          )
+
+        break;
       }
     }
 
     setRecvId(token.personnel_id);
 
+    return () => {
+      controller.abort();
+    }
+
   }, []);
 
   useEffect(() => {
     if (filterStatusId === 5) {
-      setProcessTaskButton(true);
+      setDisableProcessTaskButton(true);
       setFilterTaskList(completeTaskList);
     }
     else {
-      setProcessTaskButton(false);
+      setDisableProcessTaskButton(false);
       setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatusId])
 
-  const refreshTable = (tempPersonnelId, tempLevelId) => {
-
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${tempPersonnelId}/${tempLevelId}/${false}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setTaskList(data);
-        setFilterTaskList(data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${tempPersonnelId}/${tempLevelId}/${false}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setTaskCount(data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${tempPersonnelId}/${tempLevelId}/${false}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCompleteTaskList(data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-  }
   // ========================================================
 
-  const setTempTask = (taskId, levelId) => {
+  const setTempTask = (taskId) => {
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettask/${taskId}/${levelId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -195,10 +225,10 @@ export default function ITMTDashboard() {
       });
   }
 
-  const handleOpenTaskDialog = (taskId, levelId, statusId, operatorId) => {
+  const handleOpenTaskDialog = (taskId, statusId, operatorId) => {
 
     setTaskId(taskId);
-    setLevelId(levelId);
+    // setLevelId(levelId);
     // console.log(`statusID = ${statusId} levelID = ${levelId}`);
     if (statusId === 1) {
       setRecvName(`${operatorList.find(o => o.personnel_id === recvId).personnel_firstname} ${operatorList.find(o => o.personnel_id === recvId).personnel_lastname}`);
@@ -209,15 +239,14 @@ export default function ITMTDashboard() {
         setOperatorName(`${operatorList.find(o => o.personnel_id === operatorId).personnel_firstname} ${operatorList.find(o => o.personnel_id === operatorId).personnel_lastname}`);
         setOperatorId(operatorId);
       }
-      setTempTask(taskId, levelId);
-      setCategories(levelId);
+      setTempTask(taskId);
+      // setCategories(levelId);
       setProcessTaskDialogOpen(true);
     }
   };
 
   const handleCloseAcceptTaskDialog = () => {
     setTaskId("");
-    setLevelId("");
     setOperatorId("");
     setOperatorName("");
     setAcceptTaskDialogOpen(false);
@@ -225,7 +254,6 @@ export default function ITMTDashboard() {
 
   const handleCloseProcessTaskDialog = () => {
     setTaskId("");
-    setLevelId("");
     setOperatorId("");
     setOperatorName("");
     setPhoneNo("");
@@ -262,7 +290,7 @@ export default function ITMTDashboard() {
         if (data.status === 'ok') {
           alert('รับเรื่องสำเร็จ');
           handleCloseAcceptTaskDialog();
-          refreshTable(psnId, levelId);
+          window.location.reload(false);
         }
         else {
           alert('ไม่สามารถทำการรับเรื่องได้');
@@ -346,7 +374,7 @@ export default function ITMTDashboard() {
         if (data.status === 'ok') {
           alert('ดำเนินการเรียบร้อย');
           handleCloseProcessTaskDialog();
-          refreshTable(psnId, levelId);
+          window.location.reload(false);
         }
         else {
           alert('ไม่สามารถดำเนินการได้');
@@ -497,7 +525,7 @@ export default function ITMTDashboard() {
                       {row.task_note}
                     </TableCell>
                     <TableCell>{row.status_name}</TableCell>
-                    <TableCell><Button variant="contained" disabled={processTaskButton} onClick={() => { handleOpenTaskDialog(row.task_id, row.level_id, row.status_id, row.operator_id) }}>ดำเนินการ</Button></TableCell>
+                    <TableCell><Button variant="contained" disabled={disableProcessTaskButton} onClick={() => { handleOpenTaskDialog(row.task_id, row.status_id, row.operator_id) }}>ดำเนินการ</Button></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -562,7 +590,7 @@ export default function ITMTDashboard() {
                 setStatusName(newValue);
                 if (newValue !== null) {
                   setStatusId(status.find(o => o.status_name === newValue).status_id);
-                  if(status.find(o => o.status_name === newValue).status_id!==5){
+                  if (status.find(o => o.status_name === newValue).status_id !== 5) {
                     setSolution('');
                   }
                 }

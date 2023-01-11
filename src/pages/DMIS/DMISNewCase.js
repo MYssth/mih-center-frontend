@@ -27,6 +27,7 @@ export default function dmisnewcase() {
     const [departmentId, setDepartmentId] = useState('');
     const [departmentName, setDepartmentName] = useState('');
     const [informerId, setInformerId] = useState([]);
+    const [informerName, setInformerName] = useState('');
 
     useEffect(() => {
 
@@ -35,10 +36,12 @@ export default function dmisnewcase() {
         const signal = controller.signal;
         const token = jwtDecode(localStorage.getItem('token'));
 
+
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpersonnel/${token.personnel_id}`, { signal })
             .then((response) => response.json())
             .then((data) => {
                 setInformerId(data.personnel_id);
+                setInformerName(`${data.personnel_firstname} ${data.personnel_lastname}`);
                 setDepartmentId(data.department_id);
                 setDepartmentName(data.department_name);
             })
@@ -82,20 +85,11 @@ export default function dmisnewcase() {
             task_serialnumber: document.getElementById('serialnumber').value,
             task_device_id: document.getElementById('deviceId').value,
             informer_id: informerId,
+            informer_name: informerName,
             issue_department_id: departmentId,
             department_name: departmentName,
             phoneNumber: document.getElementById('phoneNumber').value,
         };
-
-        // console.log(`level_id: ${jsonData.level_id}`);
-        // console.log(`task_issue: ${jsonData.task_issue}`);
-        // console.log(`task_serialnumber: ${jsonData.task_serialnumber}`);
-        // console.log(`task_device_id: ${jsonData.task_device_id}`);
-        // console.log(`informer_id: ${jsonData.informer_id}`);
-        // console.log(`issue_department_id: ${jsonData.issue_department_id}`);
-        // console.log(`department_name: ${jsonData.department_name}`);
-        // console.log(`phoneNumber: ${jsonData.phoneNumber}`);
-
 
         if (caseTypeName === "" ||
             jsonData.level_id === "") {
@@ -111,9 +105,19 @@ export default function dmisnewcase() {
             return;
         }
         if (jsonData.issue_department_id === "") {
-            alert("กรุณาแผนกที่มีปัญหา");
+            alert("กรุณาแผนกที่พบปัญหา");
             return;
         }
+
+        // console.log(`level_id: ${jsonData.level_id}`);
+        // console.log(`task_issue: ${jsonData.task_issue}`);
+        // console.log(`task_serialnumber: ${jsonData.task_serialnumber}`);
+        // console.log(`task_device_id: ${jsonData.task_device_id}`);
+        // console.log(`informer_id: ${jsonData.informer_id}`);
+        // console.log(`informer_name: ${jsonData.informer_name}`);
+        // console.log(`issue_department_id: ${jsonData.issue_department_id}`);
+        // console.log(`department_name: ${jsonData.department_name}`);
+        // console.log(`phoneNumber: ${jsonData.phoneNumber}`);
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/addtask`, {
             method: 'POST',
@@ -222,7 +226,7 @@ export default function dmisnewcase() {
                             options={Object.values(departments).map((option) => option.department_name)}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField required {...params} label="แผนกที่แจ้งปัญหา" />}
+                            renderInput={(params) => <TextField required {...params} label="แผนกที่พบปัญหา" />}
                             sx={{
                                 "& .MuiAutocomplete-inputRoot": {
                                     "& .MuiOutlinedInput-notchedOutline": {

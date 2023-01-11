@@ -415,6 +415,7 @@ export default function UserPage() {
     const jsonData = {
       personnel_id: personnelId,
       personnel_isactive: personnelIsactive,
+      position_id: positionId,
     };
 
     if (jsonData.personnel_isactive === "" || jsonData.personnel_isactive === null) {

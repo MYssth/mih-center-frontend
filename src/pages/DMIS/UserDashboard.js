@@ -20,12 +20,6 @@ import {
   Button,
   Box,
 } from '@mui/material';
-// hooks
-import dmisCheckinBtn from 'src/img/DMIS/DMIS_checkin.jpg';
-import dmisCompleteBtn from 'src/img/DMIS/DMIS_complete.jpg';
-import dmisOutSourceBtn from 'src/img/DMIS/DMIS_outsource.jpg';
-import dmisSpareBtn from 'src/img/DMIS/DMIS_spare.jpg';
-import dmisWorkingBtn from 'src/img/DMIS/DMIS_working.jpg';
 // ----------------------------------------------------------------------
 
 const ODD_OPACITY = 0.2;
@@ -62,6 +56,24 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     },
   },
 }));
+
+const Item = styled('div')(({ theme }) => ({
+  padding: theme.spacing(1),
+  textAlign: 'left',
+}));
+
+function QuickSearchToolbar() {
+  return (
+    <Box
+      sx={{
+        p: 0.5,
+        pb: 0,
+      }}
+    >
+      <GridToolbarQuickFilter />
+    </Box>
+  );
+}
 
 const columns = [
 
@@ -109,35 +121,22 @@ const columns = [
     width: 100,
   },
   {
-    field: 'task_note',
-    headerName: 'หมายเหตุ',
-    width: 180,
-  },
-  {
     field: 'status_name',
     headerName: 'สถานะ',
     width: 140,
   },
+  {
+    field: 'estimation_name',
+    headerName: 'เวลาดำเนินงาน',
+    width: 120,
+  },
+  {
+    field: 'task_note',
+    headerName: 'หมายเหตุ',
+    width: 180,
+  },
 
 ];
-
-const Item = styled('div')(({ theme }) => ({
-  padding: theme.spacing(1),
-  textAlign: 'left',
-}));
-
-function QuickSearchToolbar() {
-  return (
-    <Box
-      sx={{
-        p: 0.5,
-        pb: 0,
-      }}
-    >
-      <GridToolbarQuickFilter />
-    </Box>
-  );
-}
 
 export default function UserDashboard() {
 
@@ -147,10 +146,10 @@ export default function UserDashboard() {
   const [filterStatusId, setFilterStatusId] = useState('all');
   const [taskCount, setTaskCount] = useState([]);
 
+  const [pageSize, setPageSize] = useState(10);
+
   const [focusTask, setFocusTask] = useState([]);
   const [focusTaskDialogOpen, setFocusTaskDialogOpen] = useState(false);
-
-  const [pageSize, setPageSize] = useState(10);
 
 
   useEffect(() => {
@@ -164,8 +163,8 @@ export default function UserDashboard() {
       if (token.level_list[i].level_id === "DMIS_USER" ||
         token.level_list[i].level_id === "DMIS_IT" ||
         token.level_list[i].level_id === "DMIS_MT" ||
-        token.level_list[i].level_id === "DMIS_MER") {
-
+        token.level_list[i].level_id === "DMIS_MER" ||
+        token.level_list[i].level_id === "DMIS_ENV") {
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`, { signal })
           .then((response) => response.json())
           .then((data) => {
@@ -214,6 +213,7 @@ export default function UserDashboard() {
               })
 
           )
+
         break;
       }
     }
@@ -248,7 +248,7 @@ export default function UserDashboard() {
   return (
     <>
       <Helmet>
-        <title> หน้าหลัก | MIH Center </title>
+        <title> ระบบแจ้งซ่อมอุปกรณ์ | MIH Center </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -256,14 +256,15 @@ export default function UserDashboard() {
           ระบบแจ้งซ่อมอุปกรณ์ - Device Maintenance Inform Service(DMIS)
         </Typography>
 
-        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent='center'>
-          <Card sx={{ width: 200, mr: 2, backgroundColor: 'error.main' }}>
+        <Grid container spacing={{ xs: 2, md: 3, }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent='center'>
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'error.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(1)}>
               <div style={{ position: "relative" }}>
                 <CardMedia
                   component="img"
-                  image={dmisCheckinBtn}
-                  alt="checkin" />
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_checkin.jpg`}
+                  alt="checkin"
+                />
                 <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
                   <Typography variant="h4">
                     {taskCount.inform}
@@ -272,13 +273,14 @@ export default function UserDashboard() {
               </div>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(2)}>
               <div style={{ position: "relative" }}>
                 <CardMedia
                   component="img"
-                  image={dmisWorkingBtn}
-                  alt="checkin" />
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_working.jpg`}
+                  alt="checkin"
+                />
                 <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
                   <Typography variant="h4">
                     {taskCount.accept}
@@ -287,13 +289,14 @@ export default function UserDashboard() {
               </div>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(3)}>
               <div style={{ position: "relative" }}>
                 <CardMedia
                   component="img"
-                  image={dmisSpareBtn}
-                  alt="checkin" />
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_spare.jpg`}
+                  alt="checkin"
+                />
                 <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
                   <Typography variant="h4">
                     {taskCount.wait}
@@ -302,13 +305,14 @@ export default function UserDashboard() {
               </div>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: 200, mr: 2, backgroundColor: 'warning.main' }}>
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(4)}>
               <div style={{ position: "relative" }}>
                 <CardMedia
                   component="img"
-                  image={dmisOutSourceBtn}
-                  alt="checkin" />
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_outsource.jpg`}
+                  alt="checkin"
+                />
                 <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
                   <Typography variant="h4">
                     {taskCount.outside}
@@ -317,13 +321,32 @@ export default function UserDashboard() {
               </div>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: 200, backgroundColor: 'success.main' }}>
+
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(6)}>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_replace.jpg`}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.replace}
+                  </Typography>
+                </div>
+              </div>
+            </CardActionArea>
+          </Card>
+
+          <Card sx={{ width: 200, mb: 1, backgroundColor: 'success.main' }}>
             <CardActionArea onClick={() => setFilterStatusId(5)}>
               <div style={{ position: "relative" }}>
                 <CardMedia
                   component="img"
-                  image={dmisCompleteBtn}
-                  alt="checkin" />
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_complete.jpg`}
+                  alt="checkin"
+                />
                 <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
                   <Typography variant="h4">
                     {taskCount.complete}
@@ -343,6 +366,7 @@ export default function UserDashboard() {
           >
             รายการงานแจ้งซ่อมอุปกรณ์
           </Typography>
+
           <div style={{ display: 'flex', height: '100%' }}>
             <div style={{ flexGrow: 1 }}>
               <StripedDataGrid
@@ -371,6 +395,7 @@ export default function UserDashboard() {
               />
             </div>
           </div>
+
         </Card>
       </Container>
 
@@ -445,6 +470,12 @@ export default function UserDashboard() {
               </Grid>
               <Grid xs={8}>
                 <Item>{focusTask.task_date_accept ? (focusTask.task_date_accept).replace("T", " ").replace(".000Z", " น.") : ""}</Item>
+              </Grid>
+              <Grid xs={4}>
+                <Item sx={{ textAlign: 'right' }}>เวลาดำเนินงาน:</Item>
+              </Grid>
+              <Grid xs={8}>
+                <Item>{focusTask.estimation_name}</Item>
               </Grid>
               <Grid xs={4}>
                 <Item sx={{ textAlign: 'right' }}>ผู้รับเรื่อง:</Item>

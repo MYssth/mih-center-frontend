@@ -76,11 +76,6 @@ export default function DMISReport() {
 
     const [pageSize, setPageSize] = useState(25);
 
-    // let pId = "6500663";
-    let inforSig = "";
-    const [recvSig, setRecvSig] = useState('');
-    const [operSig, setOperSig] = useState('');
-
     useEffect(() => {
 
         const controller = new AbortController();
@@ -91,7 +86,8 @@ export default function DMISReport() {
         for (let i = 0; i < token.level_list.length; i += 1) {
             if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" ||
                 token.level_list[i].level_id === "DMIS_USER" || token.level_list[i].level_id === "DMIS_MER" ||
-                token.level_list[i].level_id === "DMIS_ENV") {
+                token.level_list[i].level_id === "DMIS_ENV" || token.level_list[i].level_id === "DMIS_HIT" ||
+                token.level_list[i].level_id === "DMIS_ALL") {
                 fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}`, { signal })
                     .then((response) => response.json())
                     .then((data) => {
@@ -125,34 +121,44 @@ export default function DMISReport() {
 
     }
 
+    let noSig = "";
+    let inforSig = "";
+    let recvSig = "";
+    let operSig = "";
+
     const getImgBase64 = (data) => {
 
-        console.log("sssssssssss");
-        // imageToBase64(require(`${process.env.REACT_APP_signature_path}/${data.informer_id}.jpg`)) // Path to the image
         // eslint-disable-next-line import/no-dynamic-require, global-require
-        imageToBase64(`${process.env.PUBLIC_URL}/signature/6500663.jpg`) // Path to the image
+        imageToBase64(`${process.env.PUBLIC_URL}/signature/nosignature.png`)
             .then(
                 (response) => {
-                    console.log(`data:image/jpeg;base64,${response}`); // "cGF0aC90by9maWxlLmpwZw=="
-                    inforSig = `data:image/jpeg;base64,${response}`;
-                    console.log(`infoSig length = ${inforSig.length}`);
-                    if (inforSig.length < 5000) {
-                        console.log("first");
-                        imageToBase64(`${process.env.PUBLIC_URL}/signature/nosignature.png`)
-                            .then(
-                                (response) => {
-                                    inforSig = `data:image/jpeg;base64,${response}`;
-                                    console.log(`data:image/jpeg;base64,${response}`);
-                                    printPDF(data);
-                                }
-                            )
-                    }
-                    else {
-                        console.log("ddddddddddd")
-                        printPDF(data);
-                    }
-
+                    noSig = `data:image/jpeg;base64,${response}`;
                 }
+            ).then(
+                imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.informer_id}.jpg`) // Path to the image
+                    .then((response) => {
+                        inforSig = `data:image/jpeg;base64,${response}`;
+                        if (inforSig.length < 5000) {
+                            inforSig = noSig;
+                        }
+                    })
+            ).then(
+                imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.receiver_id}.jpg`)
+                    .then((response) => {
+                        recvSig = `data:image/jpeg;base64,${response}`;
+                        if (recvSig.length < 5000) {
+                            recvSig = noSig;
+                        }
+                    })
+            ).then(
+                imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.operator_id}.jpg`)
+                    .then((response) => {
+                        operSig = `data:image/jpeg;base64,${response}`;
+                        if (operSig.length < 5000) {
+                            operSig = noSig;
+                        }
+                        printPDF(data, inforSig, recvSig, operSig, noSig)
+                    })
             )
             .catch(
                 (error) => {
@@ -195,6 +201,8 @@ export default function DMISReport() {
             field: 'level_id',
             headerName: 'ประเภทงาน',
             width: 100,
+            valueGetter: (params) =>
+                `${params.row.level_id === "DMIS_IT" ? "IT" : (params.row.level_id === 'DMIS_MT' ? "ซ่อมบำรุง" : "เครื่องมือแพทย์")}`,
         },
         {
             field: 'task_issue',
@@ -304,7 +312,7 @@ export default function DMISReport() {
         }
     ];
 
-    function printPDF(data) {
+    function printPDF(data, inforSig, recvSig, operSig, noSig) {
         const docDefinition = {
             pageOrientation: 'portrait',
             content: [
@@ -314,15 +322,11 @@ export default function DMISReport() {
                     fit: [150, 200],
                 },
                 {
-                    image: inforSig,
-                    fit: [150, 200],
-                },
-                {
                     style: 'tableExample',
                     table: {
                         widths: ['auto', '*', 'auto'],
                         body: [
-                            [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : (data.level_id === 'DMIS_MT' ? '(งานซ่อมบำรุงทั่วไป)' : '(งานซ่อมบำรุงเครื่องมือแพทย์)')}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 19 ธ.ค. 2565\nปรับปรุงครั้งที่ 1 เมื่อ 19 ธ.ค. 2565' }]
+                            [{ text: 'รหัสแบบฟอร์ม\nDMIS-001', alignment: 'center' }, { text: `ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา\n${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : (data.level_id === 'DMIS_MT' ? '(งานซ่อมบำรุงทั่วไป)' : '(งานซ่อมบำรุงเครื่องมือแพทย์)')}`, style: 'header', alignment: 'center' }, { text: 'เริ่มใช้วันที่ 16 ม.ค. 2566\nปรับปรุงครั้งที่ 2 เมื่อ 16 ม.ค. 2566' }]
                         ]
                     },
 
@@ -350,14 +354,14 @@ export default function DMISReport() {
                     style: 'tableExample',
                     table: {
                         widths: ['*'],
-                        heights: [10, 120],
+                        heights: [10, 85],
                         body: [
                             [{ text: 'รายละเอียด', style: 'header2' }],
                             [{
                                 text: [
+                                    `แผนกที่แจ้งปัญหา: ${data.issue_department_name}\t`,
                                     `วันที่แจ้ง: ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}\n`,
-                                    `แผนกที่แจ้งปัญหา: ${data.issue_department_name}\n`,
-                                    `รหัสทรัพย์สิน: ${data.task_device_id === null || data.task_device_id === "" ? "ไม่ได้ระบุ" : data.task_device_id}\n`,
+                                    `รหัสทรัพย์สิน: ${data.task_device_id === null || data.task_device_id === "" ? "ไม่ได้ระบุ" : data.task_device_id}\t`,
                                     `Serial number: ${data.task_serialnumber === null || data.task_serialnumber === "" ? "ไม่ได้ระบุ" : data.task_serialnumber}\n`,
                                     `รายละเอียดของปัญหา: ${data.task_issue}\n`,
                                 ]
@@ -365,26 +369,72 @@ export default function DMISReport() {
                         ]
                     }
                 },
-                '\n',
                 {
-                    alignment: 'center',
                     columns: [
                         {
                             text: [
-                                // { text: '\n', lineHeight: 1 },
-                                { text: 'ลงชื่อ............................................ผู้แจ้ง\n', alignment: 'center' },
-                                { text: `(${data.informer_firstname} ${data.informer_lastname})\n`, alignment: 'center' },
-                                { text: `วันที่ ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}\n`, alignment: 'center' },
+                                { text: "\n", width: 60 },
+                                { text: 'ลงชื่อ', alignment: 'right', width: 60 },
+                            ]
+                        },
+                        {
+                            image: inforSig,
+                            fit: [110, 40],
+                            width: 110,
+                            alignment: 'center',
+                        },
+                        {
+                            text: [
+                                { text: "\n", width: 60 },
+                                { text: 'ผู้แจ้ง', width: 60 },
                             ]
                         },
                         {
                             text: [
-                                // { text: '\n', lineHeight: 1 },
-                                { text: 'ลงชื่อ............................................ผู้รับเรื่อง\n', alignment: 'center' },
-                                { text: `${data.receiver_firstname === null || data.receiver_firstname === "" ? "(...............................................)" : `(${data.receiver_firstname} ${data.receiver_lastname})`}\n`, alignment: 'center' },
-                                { text: `วันที่${data.task_date_accept === null || data.task_date_accept === "" ? "............................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_accept), 543), 'dd/MM/yyyy')}`}\n`, alignment: 'center' },
+                                { text: "\n", width: 60 },
+                                { text: 'ลงชื่อ', alignment: 'right', width: 60 },
                             ]
-                        }
+                        },
+                        {
+                            image: recvSig,
+                            fit: [110, 40],
+                            width: 110,
+                            alignment: 'center',
+                        },
+                        {
+                            text: [
+                                { text: "\n" },
+                                { text: 'ผู้รับเรื่อง' },
+                            ]
+                        },
+                    ]
+                },
+                {
+                    columns: [
+                        {
+                            text: `(${data.informer_firstname} ${data.informer_lastname})`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                        {
+                            text: `${data.receiver_firstname === null || data.receiver_firstname === "" ? "(........................................)" : `(${data.receiver_firstname} ${data.receiver_lastname})`}`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                    ]
+                },
+                {
+                    columns: [
+                        {
+                            text: `วันที่ ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                        {
+                            text: `วันที่${data.task_date_accept === null || data.task_date_accept === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_accept), 543), 'dd/MM/yyyy')}`}`,
+                            alignment: 'center',
+                            width: 260,
+                        },
                     ]
                 },
                 '\n',
@@ -392,43 +442,130 @@ export default function DMISReport() {
                     style: 'tableExample',
                     table: {
                         widths: ['*'],
-                        heights: [10, 120],
+                        heights: [10, 95],
                         body: [
                             [{ text: 'ผลการดำเนินงาน', style: 'header2' }],
                             [{
                                 text: [
-                                    `สถานะ: ${data.status_name}\n`,
+                                    `สถานะ: ${data.status_name}\t`,
+                                    `งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}\t`,
                                     `วันที่เสร็จสิ้นการดำเนินงาน: ${data.task_date_end === null || data.task_date_end === "" ? "สถานะงานยังไม่เสร็จสิ้น" : dateFns.format(dateFns.addYears(new Date(data.task_date_end), 543), 'dd/MM/yyyy')}\n`,
                                     `รายละเอียดการแก้ไขปัญหา: ${data.task_solution === null || data.task_solution === "" ? "สถานะงานยังไม่เสร็จสิ้น" : data.task_solution}\n`,
-                                    `งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}\n`,
                                     `หมายเหตุ: ${data.task_note === null || data.task_note === "" ? "" : data.task_note}\n`,
                                 ]
                             }],
                         ]
                     }
                 },
-                '\n',
                 {
-                    alignment: 'center',
                     columns: [
                         {
                             text: [
-                                // { text: '\n', lineHeight: 1 },
-                                { text: 'ลงชื่อ............................................ผู้ดำเนินงาน\n', alignment: 'center' },
-                                { text: `${data.operator_firstname === null || data.operator_firstname === "" ? "(...............................................)" : `(${data.operator_firstname} ${data.operator_lastname})`}\n`, alignment: 'center' },
-                                { text: `วันที่${data.task_date_process === null || data.task_date_process === "" ? "............................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_process), 543), 'dd/MM/yyyy')}`}\n`, alignment: 'center' },
+                                { text: "\n", width: 60 },
+                                { text: 'ลงชื่อ', alignment: 'right', width: 60 },
+                            ]
+                        },
+                        {
+                            image: operSig,
+                            fit: [110, 40],
+                            width: 110,
+                            alignment: 'center',
+                        },
+                        {
+                            text: [
+                                { text: "\n", width: 60 },
+                                { text: 'ผู้ดำเนินการ', width: 60 },
                             ]
                         },
                         {
                             text: [
-                                // { text: '\n', lineHeight: 1 },
-                                { text: 'ลงชื่อ............................................ผู้ตรวจสอบ\n', alignment: 'center' },
-                                { text: '(...............................................)\n', alignment: 'center' },
-                                { text: 'วันที่.............................................\n', alignment: 'center' },
+                                { text: "\n", width: 60 },
+                                { text: 'ลงชื่อ', alignment: 'right', width: 60 },
                             ]
-                        }
+                        },
+                        {
+                            image: noSig,
+                            fit: [110, 40],
+                            width: 110,
+                            alignment: 'center',
+                        },
+                        {
+                            text: [
+                                { text: "\n" },
+                                { text: 'ผู้ตรวจสอบ' },
+                            ]
+                        },
                     ]
                 },
+                {
+                    columns: [
+                        {
+                            text: `${data.operator_firstname === null || data.operator_firstname === "" ? "(........................................)" : `(${data.operator_firstname} ${data.operator_lastname})`}`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                        {
+                            text: `(........................................)`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                    ]
+                },
+                {
+                    columns: [
+                        {
+                            text: `วันที่${data.task_date_process === null || data.task_date_process === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_process), 543), 'dd/MM/yyyy')}`}`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                        {
+                            text: `วันที่...................................`,
+                            alignment: 'center',
+                            width: 260,
+                        },
+                    ]
+                },
+                {
+                    columns : [
+                        {
+                            text: [
+                                { text: "\n", width: 60 },
+                                { text: 'ลงชื่อ', alignment: 'right', width: 60 },
+                            ]
+                        },
+                        {
+                            image: noSig,
+                            fit: [110, 40],
+                            width: 110,
+                            alignment: 'center',
+                        },
+                        {
+                            text: [
+                                { text: "\n" },
+                                { text: 'ผู้ตรวจรับงาน' },
+                            ]
+                        },
+                    ]
+                },
+                {
+                    columns : [
+                        {
+                            text: `(........................................)`,
+                            alignment: 'center',
+                            width: '*',
+                        },
+                    ]
+                },
+                {
+                    columns: [
+                        {
+                            text: `วันที่...................................`,
+                            alignment: 'center',
+                            width: '*',
+                        },
+                    ]
+                },
+                
             ],
             defaultStyle: {
                 font: 'THSarabunNew',

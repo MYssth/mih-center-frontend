@@ -4,6 +4,7 @@ import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 import InputMask from "react-input-mask";
 import { DataGrid, gridClasses, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { Icon } from '@iconify/react';
 // @mui
 import {
   Card,
@@ -25,7 +26,6 @@ import {
   styled,
   alpha,
   Box,
-  useStepContext,
 } from '@mui/material';
 
 // ----------------------------------------------------------------------
@@ -79,6 +79,7 @@ function QuickSearchToolbar() {
       }}
     >
       <GridToolbarQuickFilter />
+      <Button variant="outlined" sx={{ ml: 1 }} startIcon={<Icon icon="ic:baseline-refresh" width="24" height="24" />} onClick={() => { window.location.reload(false); }} >Refresh</Button>
     </Box>
   );
 }
@@ -197,6 +198,8 @@ export default function ITMTDashboard() {
   const [estimationId, setEstimationId] = useState('');
   const [estimationName, setEstimationName] = useState('');
 
+  const isSkip = (value) => value !== '';
+
   useEffect(() => {
 
     const controller = new AbortController();
@@ -205,7 +208,9 @@ export default function ITMTDashboard() {
     const token = jwtDecode(localStorage.getItem('token'));
 
     for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV") {
+      if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT"
+      || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
+      || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`, { signal })
           .then((response) => response.json())
@@ -709,7 +714,12 @@ export default function ITMTDashboard() {
               }
             }}
             id="controllable-states-operator-id"
-            options={Object.values(operatorList).map((option) => `${option.personnel_firstname} ${option.personnel_lastname}`)}
+            options={
+              levelId === "DMIS_IT" ?
+                Object.values(operatorList).map((option) => option.level_id === "DMIS_IT" || option.level_id === "DMIS_HIT" ? `${option.personnel_firstname} ${option.personnel_lastname}` : "").filter(isSkip)
+                : levelId === "DMIS_MT" ? Object.values(operatorList).map((option) => option.level_id === "DMIS_MT" || option.level_id === "DMIS_ENV" ? `${option.personnel_firstname} ${option.personnel_lastname}` : "").filter(isSkip)
+                  : Object.values(operatorList).map((option) => option.level_id === "DMIS_MER" || option.level_id === "DMIS_ENV" ? `${option.personnel_firstname} ${option.personnel_lastname}` : "").filter(isSkip)
+            }
             fullWidth
             required
             renderInput={(params) => <TextField {...params} label="" />}
@@ -835,7 +845,12 @@ export default function ITMTDashboard() {
                 }
               }}
               id="controllable-states-operator-id"
-              options={Object.values(operatorList).map((option) => `${option.personnel_firstname} ${option.personnel_lastname}`)}
+              options={
+                levelId === "DMIS_IT" ?
+                  Object.values(operatorList).map((option) => option.level_id === "DMIS_IT" || option.level_id === "DMIS_HIT" ? `${option.personnel_firstname} ${option.personnel_lastname}` : "").filter(isSkip)
+                  : levelId === "DMIS_MT" ? Object.values(operatorList).map((option) => option.level_id === "DMIS_MT" || option.level_id === "DMIS_ENV" ? `${option.personnel_firstname} ${option.personnel_lastname}` : "").filter(isSkip)
+                    : Object.values(operatorList).map((option) => option.level_id === "DMIS_MER" || option.level_id === "DMIS_ENV" ? `${option.personnel_firstname} ${option.personnel_lastname}` : "").filter(isSkip)
+              }
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="ผู้รับผิดชอบงาน" />}
@@ -859,7 +874,12 @@ export default function ITMTDashboard() {
                 }
               }}
               id="controllable-states-categories-id"
-              options={Object.values(categories).map((option) => option.category_name)}
+              options={
+                levelId === "DMIS_IT" ?
+                  Object.values(categories).map((option) => option.level_id === "DMIS_IT" ? option.category_name : "").filter(isSkip)
+                  : levelId === "DMIS_MT" ? Object.values(categories).map((option) => option.level_id === "DMIS_MT" ? option.category_name : "").filter(isSkip)
+                    : Object.values(categories).map((option) => option.level_id === "DMIS_MER" ? option.category_name : "").filter(isSkip)
+              }
               fullWidth
               required
               renderInput={(params) => <TextField {...params} label="หมวดหมู่งาน" />}

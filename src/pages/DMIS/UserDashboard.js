@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import jwtDecode from "jwt-decode";
 import { Helmet } from 'react-helmet-async';
 import { DataGrid, gridClasses, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { Icon } from '@iconify/react';
 // @mui
 import {
   Container,
@@ -71,6 +72,7 @@ function QuickSearchToolbar() {
       }}
     >
       <GridToolbarQuickFilter />
+      <Button variant="outlined" sx={{ ml: 1 }} startIcon={<Icon icon="ic:baseline-refresh" width="24" height="24" />} onClick={() => { window.location.reload(false); }} >Refresh</Button>
     </Box>
   );
 }
@@ -121,14 +123,14 @@ const columns = [
     width: 100,
   },
   {
-    field: 'status_name',
-    headerName: 'สถานะ',
-    width: 140,
-  },
-  {
     field: 'estimation_name',
     headerName: 'เวลาดำเนินงาน',
     width: 120,
+  },
+  {
+    field: 'status_name',
+    headerName: 'สถานะ',
+    width: 140,
   },
   {
     field: 'task_note',
@@ -164,7 +166,9 @@ export default function UserDashboard() {
         token.level_list[i].level_id === "DMIS_IT" ||
         token.level_list[i].level_id === "DMIS_MT" ||
         token.level_list[i].level_id === "DMIS_MER" ||
-        token.level_list[i].level_id === "DMIS_ENV") {
+        token.level_list[i].level_id === "DMIS_ENV" ||
+        token.level_list[i].level_id === "DMIS_HIT" ||
+        token.level_list[i].level_id === "DMIS_ALL") {
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`, { signal })
           .then((response) => response.json())
           .then((data) => {
@@ -359,7 +363,7 @@ export default function UserDashboard() {
 
         <Card>
           <Typography
-            sx={{ flex: '1 1 100%', p: 1 }}
+            sx={{ ml: 1 }}
             variant="h6"
             id="tableTitle"
             component="div"

@@ -395,7 +395,7 @@ export default function UserPage() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('แก้ไขข้อมูลผู้ใช้สำเร็จ');
+          alert('แก้ไขข้อมูลผู้ใช้สำเร็จ กรุณาแจ้งให้ผู้ใช้ทำการเข้าสู่ระบบอีกครั้งเพื่อเปลี่ยนข้อมูล');
           handleCloseEditDialog();
           handleCloseMenu();
           refreshTable();

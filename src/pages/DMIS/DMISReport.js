@@ -542,7 +542,7 @@ export default function DMISReport() {
                         {
                             text: [
                                 { text: "\n" },
-                                { text: 'ผู้ตรวจรับงาน' },
+                                { text: 'ผู้รับทราบผลดำเนินงาน' },
                             ]
                         },
                     ]

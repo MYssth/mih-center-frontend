@@ -17,8 +17,8 @@ try {
   if (token !== null) {
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT"
-      || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
-      || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
+        || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
+        || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
         navConfig.push(
           {
             title: 'งานที่ได้รับ',
@@ -26,6 +26,16 @@ try {
             icon: <Icon icon="ic:baseline-settings-suggest" width="30" height="30" />,
           },
         );
+        if (token.level_list[i].level_id === "DMIS_ENV" || token.level_list[i].level_id === "DMIS_HIT") {
+          navConfig.push(
+            {
+              title: 'งานรอตรวจสอบ/ยืนยัน',
+              path: '/dmis/auditdashboard',
+              icon: <Icon icon="ic:outline-fact-check" width="30" height="30" />,
+            },
+          );
+        }
+        break;
       }
     }
   }

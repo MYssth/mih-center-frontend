@@ -18,6 +18,7 @@ import UserDashboard from './pages/DMIS/UserDashboard';
 import DMISNewCase from './pages/DMIS/DMISNewCase';
 import DMISReport from './pages/DMIS/DMISReport';
 import AuditDashboard from './pages/DMIS/AuditDashboard';
+import PermitDashboard from './pages/DMIS/PermitDashboard';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +51,7 @@ export default function Router() {
         { path: 'dmisnewcase', element: <DMISNewCase />},
         { path: 'dmisreport', element: <DMISReport />},
         { path: 'auditdashboard', element: <AuditDashboard />},
+        { path: 'permitdashboard', element: <PermitDashboard />},
       ],
     },
     {

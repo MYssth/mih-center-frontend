@@ -198,6 +198,8 @@ export default function ITMTDashboard() {
   const [estimationId, setEstimationId] = useState('');
   const [estimationName, setEstimationName] = useState('');
 
+  const [headStatus, setHeadStatus] = useState('งานที่ยังไม่เสร็จสิ้นทั้งหมด');
+
   const isSkip = (value) => value !== '';
 
   useEffect(() => {
@@ -209,8 +211,8 @@ export default function ITMTDashboard() {
 
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT"
-      || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
-      || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
+        || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
+        || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`, { signal })
           .then((response) => response.json())
@@ -306,13 +308,29 @@ export default function ITMTDashboard() {
   }, []);
 
   useEffect(() => {
-    if (filterStatusId === 5) {
+
+    setDisableProcessTaskButton(false);
+    setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+
+    if (filterStatusId === 1) {
+      setHeadStatus("งานรอรับเรื่อง");
+    }
+    else if (filterStatusId === 2) {
+      setHeadStatus("งานกำลังดำเนินการ");
+    }
+    else if (filterStatusId === 3) {
+      setHeadStatus("งานรออะไหล่");
+    }
+    else if (filterStatusId === 4) {
+      setHeadStatus("งานส่งซ่อมภายนอก");
+    }
+    else if (filterStatusId === 5) {
+      setHeadStatus("งานดำเนินการเสร็จสิ้น");
       setDisableProcessTaskButton(true);
       setFilterTaskList(completeTaskList);
     }
-    else {
-      setDisableProcessTaskButton(false);
-      setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+    else if (filterStatusId === 6) {
+      setHeadStatus("งานซื้อใหม่ทดแทน");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -454,12 +472,13 @@ export default function ITMTDashboard() {
       task_cost: document.getElementById('cost').value,
       task_serialnumber: serialnumber,
       task_device_id: deviceId,
-      status_id: statusId,
+      status_id_request: statusId,
       operator_id: operatorId,
       category_id: categoryId,
       task_phone_no: phoneNo,
       task_note: taskNote,
       estimation_id: estimationId,
+      taskCase: statusId === 2 ? "request" : "complete",
     }
 
     // console.log(`task_id ${jsonData.task_id}`);
@@ -659,7 +678,7 @@ export default function ITMTDashboard() {
             id="tableTitle"
             component="div"
           >
-            รายการงานแจ้งซ่อมอุปกรณ์
+            รายการงานแจ้งซ่อมอุปกรณ์ - {headStatus}
           </Typography>
 
           <div style={{ display: 'flex', height: '100%' }}>
@@ -760,33 +779,42 @@ export default function ITMTDashboard() {
             กรุณาระบุรายละเอียดงาน
           </DialogContentText>
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-            <Autocomplete
-              value={statusName}
-              onChange={(event, newValue) => {
-                setStatusName(newValue);
-                if (newValue !== null) {
-                  setStatusId(status.find(o => o.status_name === newValue).status_id);
-                  if (status.find(o => o.status_name === newValue).status_id !== 5) {
-                    setSolution('');
-                  }
-                }
-                else {
-                  setStatusId("");
-                }
-              }}
-              id="controllable-states-status-id"
-              options={Object.values(status).map((option) => option.status_name)}
-              fullWidth
-              required
-              renderInput={(params) => <TextField {...params} label="สถานะของงาน" />}
-              sx={{
-                "& .MuiAutocomplete-inputRoot": {
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: statusName ? 'green' : 'red'
-                  }
-                }
-              }}
-            />
+            {statusId === 2 ? (
+              <>
+                <Autocomplete
+                  value={statusName}
+                  onChange={(event, newValue) => {
+                    setStatusName(newValue);
+                    if (newValue !== null) {
+                      setStatusId(status.find(o => o.status_name === newValue).status_id);
+                      if (status.find(o => o.status_name === newValue).status_id !== 5) {
+                        setSolution('');
+                      }
+                    }
+                    else {
+                      setStatusId("");
+                    }
+                  }}
+                  id="controllable-states-status-id"
+                  options={Object.values(status).map((option) => option.status_name)}
+                  fullWidth
+                  required
+                  renderInput={(params) => <TextField {...params} label="สถานะของงาน" />}
+                  sx={{
+                    "& .MuiAutocomplete-inputRoot": {
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: statusName ? 'green' : 'red'
+                      }
+                    }
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <Typography variant="h5">สถานะ: {statusName}</Typography>
+              </>
+            )}
+
           </Stack>
           <Divider />
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
@@ -800,20 +828,27 @@ export default function ITMTDashboard() {
             >
               {() => <TextField id="deviceId" name="deviceId" label="รหัสทรัพย์สิน" placeholder='xx-xx-xxx-xxx-xxxx' />}
             </InputMask>
-            <TextField
-              id="solution"
-              name="solution"
-              label="รายละเอียดของการแก้ปัญหา"
-              value={solution === null ? "" : solution}
-              onChange={(event) => { setSolution(event.target.value) }}
-              inputProps={{ maxLength: 140 }}
-              disabled={!(statusId === 5)}
-              sx={{
-                '& input:valid + fieldset': {
-                  borderColor: solution ? 'green' : 'red'
-                },
-              }}
-            />
+            {statusId !== 2 ? (
+              <>
+                <TextField
+                  id="solution"
+                  name="solution"
+                  label="รายละเอียดของการแก้ปัญหา"
+                  value={solution === null ? "" : solution}
+                  onChange={(event) => { setSolution(event.target.value) }}
+                  inputProps={{ maxLength: 140 }}
+                  sx={{
+                    '& input:valid + fieldset': {
+                      borderColor: solution ? 'green' : 'red'
+                    },
+                  }}
+                />
+              </>
+            ) : (
+              <>
+              </>
+            )}
+
             <TextField id="serialnumber" name="serialnumber" value={serialnumber === null ? "" : serialnumber} onChange={(event) => { setSerialnumber(event.target.value) }} label="Serial Number" />
             <TextField id="cost" name="cost" value={taskCost === null ? "" : taskCost} onChange={(event) => { setTaskCost(event.target.value) }} label="งบประมาณที่ใช้" />
             <Autocomplete
@@ -908,7 +943,7 @@ export default function ITMTDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseProcessTaskDialog}>ยกเลิก</Button>
-          <Button variant="contained" onClick={handleProcessTask}>ดำเนินการ</Button>
+            <Button variant="contained" onClick={handleProcessTask}>{statusId === 2 ? "ดำเนินการ" : "จบงาน"}</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

@@ -29,8 +29,8 @@ try {
         if (token.level_list[i].level_id === "DMIS_ENV" || token.level_list[i].level_id === "DMIS_HIT") {
           navConfig.push(
             {
-              title: 'งานรอตรวจสอบ/ยืนยัน',
-              path: '/dmis/auditdashboard',
+              title: 'งานรอตรวจสอบ',
+              path: '/dmis/permitdashboard',
               icon: <Icon icon="ic:outline-fact-check" width="30" height="30" />,
             },
           );
@@ -40,6 +40,11 @@ try {
     }
   }
   navConfig.push(
+    {
+      title: 'งานรอตรวจรับ',
+      path: '/dmis/auditdashboard',
+      icon: <Icon icon="ic:baseline-recommend" width="30" height="30" />,
+    },
     {
       title: 'แจ้งซ่อมอุปกรณ์',
       path: '/dmis/dmisnewcase',

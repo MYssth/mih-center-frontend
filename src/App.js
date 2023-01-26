@@ -14,6 +14,7 @@ export default function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     const token = localStorage.getItem('token');
     if (token !== null) {
       fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_loginPort}/api/authen`, {
@@ -45,6 +46,7 @@ export default function App() {
     else {
       navigate('/login', { replace: true });
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

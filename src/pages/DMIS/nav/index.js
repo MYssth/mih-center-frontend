@@ -40,6 +40,15 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const [tokenData, setTokenData] = useState([]);
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     // eslint-disable-next-line react/no-this-in-sfc
+  //     setSeed(seed+1);
+  //     console.log(`seed = ${seed}`);
+  //   }, 10 * 1000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
   useEffect(() => {
 
     const token = localStorage.getItem('token');
@@ -48,6 +57,7 @@ export default function Nav({ openNav, onCloseNav }) {
     if (openNav) {
       onCloseNav();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
@@ -68,7 +78,7 @@ export default function Nav({ openNav, onCloseNav }) {
             {/* <Avatar src={account.photoURL} alt="photoURL" /> */}
 
             <Box sx={{ ml: 2 }}>
-            <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {tokenData.personnel_name}
               </Typography>
 

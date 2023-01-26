@@ -72,9 +72,9 @@ export default function dmisnewcase() {
 
             )
 
-            return () => {
-                controller.abort();
-            }
+        return () => {
+            controller.abort();
+        }
 
     }, []);
 
@@ -93,7 +93,7 @@ export default function dmisnewcase() {
 
         if (caseTypeName === "" ||
             jsonData.level_id === "") {
-            alert("กรุณาเลือกงานที่ต้องการแจ้งซ่อม");
+            alert("กรุณาเลือกงานที่ต้องการแจ้งปัญหา");
             return;
         }
         if (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) {
@@ -129,16 +129,16 @@ export default function dmisnewcase() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === 'ok') {
-                    alert('ทำการแจ้งซ่อมสำเร็จ');
+                    alert('ทำการแจ้งปัญหาสำเร็จ');
                     navigate('/dmis', { replace: true });
                 }
                 else {
-                    alert('ไม่สามารถทำการแจ้งซ่อมได้');
+                    alert('ไม่สามารถทำการแจ้งปัญหาได้');
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('เกิดข้อผิดพลาดในการแจ้งซ่อม');
+                alert('เกิดข้อผิดพลาดในการแจ้งปัญหา');
             });
 
     }
@@ -146,13 +146,13 @@ export default function dmisnewcase() {
     return (
         <>
             <Helmet>
-                <title> แจ้งซ่อมอุปกรณ์ | MIH Center </title>
+                <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
             </Helmet>
 
             <Container>
 
                 <Typography variant="h4" sx={{ mb: 5 }}>
-                    แจ้งซ่อมอุปกรณ์
+                    แจ้งปัญหาออนไลน์
                 </Typography>
                 <Card>
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
@@ -182,7 +182,7 @@ export default function dmisnewcase() {
                                 { label: 'งานซ่อมบำรุงเครื่องมือแพทย์' },]}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField required {...params} label="กรุณาเลือกงานที่ต้องการแจ้งซ่อม" />}
+                            renderInput={(params) => <TextField required {...params} label="กรุณาเลือกงานที่ต้องการแจ้งปัญหา" />}
                             sx={{
                                 "& .MuiAutocomplete-inputRoot": {
                                     "& .MuiOutlinedInput-notchedOutline": {
@@ -237,9 +237,9 @@ export default function dmisnewcase() {
                         />
 
                     </Stack>
-                    <Box textAlign='center'>
+                    <Box textAlign='center' sx={{ mb: 1}}>
                         <Button variant="contained" onClick={handleSubmit} align='center'>
-                            แจ้งซ่อมอุปกรณ์
+                            ส่งเรื่องแจ้งปัญหา
                         </Button>
                     </Box>
                 </Card>

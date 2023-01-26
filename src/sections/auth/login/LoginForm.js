@@ -57,7 +57,7 @@ export default function LoginForm() {
         <TextField
           id="password"
           name="password"
-          label="วันเดือนปีเกิด(พ.ศ.) เช่น 18ม.ค.2566 = 18012566"
+          label="รหัสผ่านเริ่มต้นคือวันเดือนปีเกิด(พ.ศ.) เช่น 18ม.ค.2566 = 18012566"
           type={showPassword ? 'text' : 'password'}
           onKeyPress={handleKeypress}
           InputProps={{

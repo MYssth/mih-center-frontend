@@ -125,46 +125,34 @@ export default function DMISReport() {
     let inforSig = "";
     let recvSig = "";
     let operSig = "";
+    let permitSig = "";
+    let auditSig = "";
 
-    const getImgBase64 = (data) => {
+    async function getImgBase64(data) {
 
-        // eslint-disable-next-line import/no-dynamic-require, global-require
-        imageToBase64(`${process.env.PUBLIC_URL}/signature/nosignature.png`)
-            .then(
-                (response) => {
-                    noSig = `data:image/jpeg;base64,${response}`;
-                }
-            ).then(
-                imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.informer_id}.jpg`) // Path to the image
-                    .then((response) => {
-                        inforSig = `data:image/jpeg;base64,${response}`;
-                        if (inforSig.length < 5000) {
-                            inforSig = noSig;
-                        }
-                    })
-            ).then(
-                imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.receiver_id}.jpg`)
-                    .then((response) => {
-                        recvSig = `data:image/jpeg;base64,${response}`;
-                        if (recvSig.length < 5000) {
-                            recvSig = noSig;
-                        }
-                    })
-            ).then(
-                imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.operator_id}.jpg`)
-                    .then((response) => {
-                        operSig = `data:image/jpeg;base64,${response}`;
-                        if (operSig.length < 5000) {
-                            operSig = noSig;
-                        }
-                        printPDF(data, inforSig, recvSig, operSig, noSig)
-                    })
-            )
-            .catch(
-                (error) => {
-                    console.log(error); // Logs an error if there was one
-                }
-            )
+        noSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/nosignature.png`)}`;
+        inforSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.informer_id}.jpg`)}`;
+        if (inforSig.length < 5000) {
+            inforSig = noSig;
+        }
+        recvSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.receiver_id}.jpg`)}`;
+        if (recvSig.length < 5000) {
+            recvSig = noSig;
+        }
+        operSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.operator_id}.jpg`)}`;
+        if (operSig.length < 5000) {
+            operSig = noSig;
+        }
+        permitSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.permit_id}.jpg`)}`;
+        if (permitSig.length < 5000) {
+            permitSig = noSig;
+        }
+        auditSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.audit_id}.jpg`)}`;
+        if (auditSig.length < 5000) {
+            auditSig = noSig;
+        }
+        printPDF(data, inforSig, recvSig, operSig, permitSig, auditSig);
+
     }
 
     const columns = [
@@ -180,7 +168,6 @@ export default function DMISReport() {
                     // pId = params.row.informer_id;
                     getImgBase64(params.row);
                     // getImgBase64();
-
                     // return alert(`you choose ID = ${params.row.task_id}`);
                 };
 
@@ -273,6 +260,8 @@ export default function DMISReport() {
             field: 'status_name',
             headerName: 'สถานะ',
             width: 125,
+            valueGetter: (params) =>
+                `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ)` : params.row.status_id === 5 ? params.row.status_name : `${params.row.status_name} (เสร็จสิ้น)`}`,
         },
         {
             field: 'informer_firstname',
@@ -312,7 +301,7 @@ export default function DMISReport() {
         }
     ];
 
-    function printPDF(data, inforSig, recvSig, operSig, noSig) {
+    function printPDF(data, inforSig, recvSig, operSig, permitSig, auditSig) {
         const docDefinition = {
             pageOrientation: 'portrait',
             content: [
@@ -342,8 +331,8 @@ export default function DMISReport() {
                             [{ text: 'ผู้ขอใช้บริการ', style: 'header2' }],
                             [{
                                 text: [
-                                    `ชื่อ: ${data.informer_firstname}\tนามสกุล: ${data.informer_lastname}\tเบอร์โทรศัพท์: ${data.task_phone_no === null || data.task_phone_no === "" ? "ไม่ได้ระบุ" : data.task_phone_no}\n`,
-                                    `ตำแหน่ง: ${data.informer_position_name}\tแผนก: ${data.informer_department_name}\tฝ่าย: ${data.informer_faction_name}`,
+                                    `ชื่อ: ${data.informer_firstname}\tนามสกุล: ${data.informer_lastname}\tตำแหน่ง: ${data.informer_position_name}\n`,
+                                    `แผนก: ${data.informer_department_name}\tฝ่าย: ${data.informer_faction_name}\tเบอร์โทรศัพท์: ${data.task_phone_no === null || data.task_phone_no === "" ? "ไม่ได้ระบุ" : data.task_phone_no}`,
                                 ]
                             }],
                         ]
@@ -484,7 +473,7 @@ export default function DMISReport() {
                             ]
                         },
                         {
-                            image: noSig,
+                            image: permitSig,
                             fit: [110, 40],
                             width: 110,
                             alignment: 'center',
@@ -505,7 +494,7 @@ export default function DMISReport() {
                             width: 260,
                         },
                         {
-                            text: `(........................................)`,
+                            text: `${data.permit_firstname === null || data.permit_firstname === "" ? "(........................................)" : `(${data.permit_firstname} ${data.permit_lastname})`}`,
                             alignment: 'center',
                             width: 260,
                         },
@@ -519,14 +508,14 @@ export default function DMISReport() {
                             width: 260,
                         },
                         {
-                            text: `วันที่...................................`,
+                            text: `วันที่${data.permit_date === null || data.permit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.permit_date), 543), 'dd/MM/yyyy')}`}`,
                             alignment: 'center',
                             width: 260,
                         },
                     ]
                 },
                 {
-                    columns : [
+                    columns: [
                         {
                             text: [
                                 { text: "\n", width: 60 },
@@ -534,7 +523,7 @@ export default function DMISReport() {
                             ]
                         },
                         {
-                            image: noSig,
+                            image: auditSig,
                             fit: [110, 40],
                             width: 110,
                             alignment: 'center',
@@ -548,9 +537,9 @@ export default function DMISReport() {
                     ]
                 },
                 {
-                    columns : [
+                    columns: [
                         {
-                            text: `(........................................)`,
+                            text: `${data.audit_firstname === null || data.audit_firstname === "" ? "(........................................)" : `(${data.audit_firstname} ${data.audit_lastname})`}`,
                             alignment: 'center',
                             width: '*',
                         },
@@ -559,13 +548,13 @@ export default function DMISReport() {
                 {
                     columns: [
                         {
-                            text: `วันที่...................................`,
+                            text: `วันที่${data.audit_date === null || data.audit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.audit_date), 543), 'dd/MM/yyyy')}`}`,
                             alignment: 'center',
                             width: '*',
                         },
                     ]
                 },
-                
+
             ],
             defaultStyle: {
                 font: 'THSarabunNew',
@@ -642,7 +631,7 @@ export default function DMISReport() {
                     </Stack>
                     <Divider />
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-                        <Typography variant='h5'>รายการงานแจ้งซ่อม</Typography>
+                        <Typography variant='h5'>รายการงานแจ้งปัญหาออนไลน์</Typography>
                         <div style={{ width: '100%' }}>
                             <StripedDataGrid
                                 getRowClassName={(params) =>

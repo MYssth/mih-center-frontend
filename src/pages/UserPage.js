@@ -68,10 +68,10 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 
 const ValidationTextField = styled(TextField)({
   '& input:valid + fieldset': {
-      borderColor: 'green'
+    borderColor: 'green'
   },
   '& input:invalid + fieldset': {
-      borderColor: 'red'
+    borderColor: 'red'
   },
 });
 
@@ -115,6 +115,9 @@ export default function UserPage() {
   const navigate = useNavigate();
   const isSkip = (value) => value !== '';
   const [showSecret, setShowSecret] = useState(false);
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
   const columns = [
     {
@@ -265,9 +268,22 @@ export default function UserPage() {
     setPMSLevelName('');
     setPMSLevelDescription('');
     setIsPMS(false);
+
+    setImageUrl(null);
   };
 
   const handleOpenEditDialog = () => {
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${personnelId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if(data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== ""){
+        setImageUrl(data.signature_data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
 
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevellist/${personnelId}`)
       .then((response) => response.json())
@@ -364,6 +380,7 @@ export default function UserPage() {
       position_id: positionId,
       level_list: levelList,
       view_list: viewList,
+      signature_data: selectedImage !== undefined && selectedImage !== null && selectedImage !== "" ? imageUrl : null,
     };
 
     if (jsonData.personnel_id === "" ||
@@ -384,7 +401,7 @@ export default function UserPage() {
     // console.log(`position_id: ${jsonData.position_id}`);
     // console.log(`level_list: ${jsonData.level_list}`);
     // console.log(`view_list: ${jsonData.view_list}`);
-    
+
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnCrudPort}/api/updatepersonnel`, {
       method: 'POST',
       headers: {
@@ -506,6 +523,22 @@ export default function UserPage() {
       setDMISLevelViewName("");
       setDMISLevelViewDescription("");
     }
+
+  }
+
+  const handleImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
+    if (e.target.files[0] === undefined) {
+      setImageUrl("");
+      return;
+    }
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImageUrl(reader.result);
+    };
+
+    reader.readAsDataURL(e.target.files[0]);
 
   }
 
@@ -657,6 +690,12 @@ export default function UserPage() {
           </Stack>
 
           <Box spacing={2} sx={{ width: 'auto', p: 2 }}>
+            <Typography variant='h5'>ลายเซ็น</Typography>
+            {imageUrl !== null && imageUrl !== undefined && imageUrl !== "" ? <img src={imageUrl} alt={"ยังไม่มีลายเซ็น"} height="100px" /> : ``}
+            <input id='signature' type="file" accept="image/*" onChange={handleImageChange} />
+          </Box>
+
+          <Box spacing={2} sx={{ width: 'auto', p: 2 }}>
             <DialogContentText>
               การเข้าถึงระบบ
             </DialogContentText>
@@ -696,7 +735,7 @@ export default function UserPage() {
             {/* ==== END OF Personnel admin ==== */}
 
             {/* ==== DMIS ==== */}
-            <Checkbox checked={isDMIS} onChange={handleChangeDMIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบแจ้งซ่อม
+            <Checkbox checked={isDMIS} onChange={handleChangeDMIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบแจ้งปัญหาออนไลน์
             {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
             <Autocomplete
               disabled={!isDMIS}
@@ -716,7 +755,7 @@ export default function UserPage() {
               options={Object.values(levels).map((option) => option.mihapp_id === "DMIS" ? `${option.level_name}` : '').filter(isSkip)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งซ่อม" />}
+              renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งปัญหาออนไลน์" />}
               sx={{
                 "& .MuiAutocomplete-inputRoot": {
                   "& .MuiOutlinedInput-notchedOutline": {
@@ -744,7 +783,7 @@ export default function UserPage() {
               options={Object.values(levelViews).map((option) => option.mihapp_id === "DMIS" ? `${option.view_name}` : '').filter(isSkip)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งซ่อม" />}
+              renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งปัญหาออนไลน์" />}
               sx={{
                 "& .MuiAutocomplete-inputRoot": {
                   "& .MuiOutlinedInput-notchedOutline": {

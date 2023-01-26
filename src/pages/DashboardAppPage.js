@@ -23,7 +23,7 @@ export default function DashboardAppPage() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           ยินดีต้อนรับเข้าสู่ระบบ MIH Center
         </Typography>
-        <Button variant="contained" onClick={handleDMIS}><Icon icon="ic:baseline-settings-suggest" width="50" height="50" />ระบบแจ้งซ่อม</Button>
+        <Button variant="contained" onClick={handleDMIS}><Icon icon="ic:baseline-settings-suggest" width="50" height="50" />ระบบแจ้งปัญหาออนไลน์</Button>
       </Container>
     </>
   );

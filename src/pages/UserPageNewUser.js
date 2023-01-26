@@ -37,6 +37,9 @@ export default function UserPageNewUser() {
     const [PMSLevelDescription, setPMSLevelDescription] = React.useState('');
     const [isPMS, setIsPMS] = React.useState(false);
 
+    const [selectedImage, setSelectedImage] = React.useState(null);
+    const [imageUrl, setImageUrl] = React.useState(null);
+
     const isSkip = (value) => value !== '';
 
     useEffect(() => {
@@ -111,6 +114,7 @@ export default function UserPageNewUser() {
             position_id: positionId,
             level_list: levelList,
             view_list: viewList,
+            signature_data: imageUrl,
         };
 
         // console.log(`id : ${jsonData.personnel_id}`);
@@ -120,6 +124,7 @@ export default function UserPageNewUser() {
         // console.log(`position id : ${jsonData.position_id}`);
         // console.log(`level_list : ${jsonData.level_list}`);
         // console.log(`level list length = ${jsonData.level_list.length}`);
+        // console.log(`signature_data = ${jsonData.signature_data}`);
 
         if (jsonData.personnel_id === "" ||
             jsonData.personnel_secret === "" ||
@@ -190,6 +195,22 @@ export default function UserPageNewUser() {
 
     }
 
+    const handleImageChange = (e) => {
+        setSelectedImage(e.target.files[0]);
+        if (e.target.files[0] === undefined) {
+            setImageUrl("");
+            return;
+        }
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setImageUrl(reader.result);
+        };
+
+        reader.readAsDataURL(e.target.files[0]);
+
+    }
+
     return (
         <>
             <Helmet>
@@ -238,6 +259,12 @@ export default function UserPageNewUser() {
                     </Stack>
 
                     <Box spacing={2} sx={{ width: 'auto', p: 2 }}>
+                        <Typography variant='h5'>ลายเซ็น</Typography>
+                        {imageUrl ? <img src={imageUrl} alt={selectedImage.name} height="100px" /> : ``}
+                        <input id='signature' type="file" accept="image/*" onChange={handleImageChange} />
+                    </Box>
+
+                    <Box spacing={2} sx={{ width: 'auto', p: 2 }}>
                         <Typography variant='h5'>การเข้าถึงระบบ</Typography>
 
                         {/* =========================================== Personnel admin ======================================================== */}
@@ -277,7 +304,7 @@ export default function UserPageNewUser() {
                         <Divider />
 
                         {/* ============================================= DMIS ================================================================= */}
-                        <Checkbox onChange={handleChangeDMIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบแจ้งซ่อม
+                        <Checkbox onChange={handleChangeDMIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบแจ้งปัญหาออนไลน์
                         {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
                         <Autocomplete
                             disabled={!isDMIS}
@@ -297,7 +324,7 @@ export default function UserPageNewUser() {
                             options={Object.values(levels).map((option) => option.mihapp_id === "DMIS" ? `${option.level_name}` : '').filter(isSkip)}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งซ่อม" />}
+                            renderInput={(params) => <TextField {...params} label="หน้าที่ภายในระบบแจ้งปัญหาออนไลน์" />}
                             sx={{
                                 "& .MuiAutocomplete-inputRoot": {
                                     "& .MuiOutlinedInput-notchedOutline": {
@@ -325,7 +352,7 @@ export default function UserPageNewUser() {
                             options={Object.values(levelViews).map((option) => option.mihapp_id === "DMIS" ? `${option.view_name}` : '').filter(isSkip)}
                             fullWidth
                             required
-                            renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งซ่อม" />}
+                            renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งปัญหาออนไลน์" />}
                             sx={{
                                 "& .MuiAutocomplete-inputRoot": {
                                     "& .MuiOutlinedInput-notchedOutline": {
@@ -338,6 +365,7 @@ export default function UserPageNewUser() {
                         {/* ============================================= END OF DMIS ========================================================== */}
 
                     </Box>
+
                     <Box textAlign='center'>
                         <Button variant="contained" onClick={handleSubmit} align='center'>
                             เพิ่มข้อมูลผู้ใช้

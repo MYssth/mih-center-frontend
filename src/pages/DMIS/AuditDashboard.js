@@ -20,6 +20,7 @@ import {
   DialogContentText,
   Grid,
   Stack,
+  TextField,
 } from '@mui/material';
 
 import reportPDF from './components/report-pdf'
@@ -89,7 +90,7 @@ export default function auditdashboard() {
       sortable: false,
       renderCell: (params) => {
         const onClick = () => {
-          handleOpenAuditTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id);
+          handleOpenAuditTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id, params.row.audit_comment);
           // return alert(`you choose level = ${params.row.level_id}`);
         };
 
@@ -125,6 +126,11 @@ export default function auditdashboard() {
     {
       field: 'task_note',
       headerName: 'หมายเหตุ',
+      width: 150,
+    },
+    {
+      field: 'audit_comment',
+      headerName: 'การตรวจรับ',
       width: 150,
     },
     {
@@ -171,6 +177,7 @@ export default function auditdashboard() {
   const [levelId, setLevelId] = useState('');
   const [auditId, setAuditId] = useState('');
   const [statusId, setStatusId] = useState('');
+  const [auditComment, setAuditComment] = useState('');
 
   const [auditTaskDialogOpen, setAuditTaskDialogOpen] = useState(false);
 
@@ -227,10 +234,11 @@ export default function auditdashboard() {
     setFocusTaskDialogOpen(false);
   }
 
-  const handleOpenAuditTaskDialog = (taskId, levelId, statusId) => {
+  const handleOpenAuditTaskDialog = (taskId, levelId, statusId, auditComment) => {
     setTaskId(taskId);
     setLevelId(levelId);
     setStatusId(statusId);
+    setAuditComment(auditComment);
     setAuditTaskDialogOpen(true);
   }
 
@@ -238,7 +246,42 @@ export default function auditdashboard() {
     setTaskId('');
     setLevelId('');
     setStatusId('');
+    setAuditComment('');
     setAuditTaskDialogOpen(false);
+  }
+
+  const handleAuditTaskComment = () => {
+
+    const jsonData = {
+      task_id: taskId,
+      level_id: levelId,
+      audit_comment: auditComment,
+      taskCase: "comment",
+    };
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData)
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 'ok') {
+          alert('บันทึกหมายเหตุการตรวจรับงานสำเร็จ');
+          handleCloseAuditTaskDialog();
+          window.location.reload(false);
+        }
+        else {
+          alert('ไม่สามารถบันทึกหมายเหตุการตรวจรับงานได้');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการบันทึกหมายเหตุการตรวจรับงาน');
+      });
+
   }
 
   const handleAuditTask = () => {
@@ -248,6 +291,7 @@ export default function auditdashboard() {
       level_id: levelId,
       audit_id: auditId,
       status_id: statusId,
+      audit_comment: auditComment,
       taskCase: "audit",
     };
 
@@ -456,7 +500,7 @@ export default function auditdashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseFocusTaskDialog}>ปิดหน้าต่าง</Button>
-          <Button onClick={() => {reportPDF(focusTask)}}>ปริ้นเอกสาร</Button>
+          <Button onClick={() => { reportPDF(focusTask) }}>ปริ้นเอกสาร</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}
@@ -468,10 +512,17 @@ export default function auditdashboard() {
           <DialogContentText>
             คุณต้องการตรวจรับงานนี้ใช่หรือไม่
           </DialogContentText>
+          <TextField id="auditComment" name="auditComment"
+            value={auditComment === null ? "" : auditComment}
+            onChange={(event) => { setAuditComment(event.target.value) }}
+            fullWidth
+            sx={{ mt: 1 }}
+            label="หมายเหตุการตรวจรับ" />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAuditTaskDialog}>ยกเลิก</Button>
-          <Button variant="contained" onClick={handleAuditTask}>ยืนยันการตรวจรับงาน</Button>
+          <Button onClick={handleCloseAuditTaskDialog} >ยกเลิก</Button>
+          <Button variant="contained" onClick={handleAuditTaskComment} >บันทึกหมายเหตุ</Button>
+          <Button variant="contained" onClick={handleAuditTask} >ยืนยันการตรวจรับงาน</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

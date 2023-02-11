@@ -200,7 +200,7 @@ export default function auditdashboard() {
           .then((response) => response.json())
           .then((data) => {
             setAuditTaskList(data);
-            setFilterAuditTaskList(data.filter(dt => dt.status_id === 5));
+            setFilterAuditTaskList(data.filter(dt => dt.status_id !== 6));
           })
           .catch((error) => {
             if (error.name === "AbortError") {
@@ -220,7 +220,7 @@ export default function auditdashboard() {
       setFilterAuditTaskList(auditTaskList.filter(dt => dt.status_id === 6));
     }
     else {
-      setFilterAuditTaskList(auditTaskList.filter(dt => dt.status_id === 5));
+      setFilterAuditTaskList(auditTaskList.filter(dt => dt.status_id !== 6));
     }
   }, [showReplacement])
 

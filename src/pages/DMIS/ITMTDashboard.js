@@ -101,7 +101,7 @@ export default function ITMTDashboard() {
           // return alert(`you choose level = ${params.row.level_id}`);
         };
 
-        return <Button variant="contained" disabled={disableProcessTaskButton} onClick={onClick}>ดำเนินการ</Button>;
+        return <Button variant="contained" disabled={disableProcessTaskButton || params.row.status_id_request} onClick={onClick}>ดำเนินการ</Button>;
       },
     },
     {
@@ -157,7 +157,7 @@ export default function ITMTDashboard() {
       headerName: 'สถานะ',
       width: 130,
       valueGetter: (params) =>
-        `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_name : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 ? params.row.status_name : `${params.row.status_name} (เสร็จสิ้น)`}`,
+      `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 ? params.row.status_name : `${params.row.status_name} (เสร็จสิ้น)`}`,
     },
   ];
 
@@ -188,6 +188,9 @@ export default function ITMTDashboard() {
   const [categoryName, setCategoryName] = useState('');
   const [taskCount, setTaskCount] = useState([]);
   const [disableProcessTaskButton, setDisableProcessTaskButton] = useState(false);
+
+  const [tempStatus, setTempStatus] = useState('');
+  const [isStatusChange, setIsStatusChange] = useState(false);
 
   const [filterTaskList, setFilterTaskList] = useState([]);
   const [filterStatusId, setFilterStatusId] = useState('all');
@@ -352,6 +355,7 @@ export default function ITMTDashboard() {
         setPhoneNo(data.task_phone_no);
         setTaskNote(data.task_note);
         setStatusId(data.status_id);
+        setTempStatus(data.status_id);
         setStatusName(data.status_name);
         setTaskCost(data.task_cost);
         setCategoryId(data.category_id);
@@ -430,6 +434,7 @@ export default function ITMTDashboard() {
     setEstimationId("");
     setEstimationName("");
     setProcessTaskDialogOpen(false);
+    setIsStatusChange(false);
   };
 
   const handleAcceptTask = () => {
@@ -469,7 +474,11 @@ export default function ITMTDashboard() {
 
   }
 
-  const handleProcessTask = () => {
+  const handleProcessTask = (taskCase) => {
+
+    if(isStatusChange && tempStatus !== 2){
+      taskCase = statusId === 5 ? "complete" : "request";
+    }
 
     const jsonData = {
       task_id: taskId,
@@ -484,7 +493,8 @@ export default function ITMTDashboard() {
       task_phone_no: phoneNo,
       task_note: taskNote,
       estimation_id: estimationId,
-      taskCase: dialogStatus === 2 ? "request" : "complete",
+      // eslint-disable-next-line object-shorthand
+      taskCase: taskCase,
     }
 
     // console.log(`task_id ${jsonData.task_id}`);
@@ -498,6 +508,7 @@ export default function ITMTDashboard() {
     // console.log(`category_id ${jsonData.category_id}`);
     // console.log(`task_phone_no ${jsonData.task_phone_no}`);
     // console.log(`task_note ${jsonData.task_note}`);
+    // console.log(`taskCase ${jsonData.taskCase}`);
 
     if (jsonData.status_id === "" || jsonData.status_id === null) {
       alert("กรุณาระบุสถานะของงาน");
@@ -785,13 +796,17 @@ export default function ITMTDashboard() {
             กรุณาระบุรายละเอียดงาน
           </DialogContentText>
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-            {dialogStatus === 2 ? (
-              <>
                 <Autocomplete
                   value={statusName}
                   onChange={(event, newValue) => {
                     setStatusName(newValue);
                     if (newValue !== null) {
+                      if(status.find(o => o.status_name === newValue).status_id !== tempStatus){
+                        setIsStatusChange(true);
+                      }
+                      else{
+                        setIsStatusChange(false);
+                      }
                       setStatusId(status.find(o => o.status_name === newValue).status_id);
                       if (status.find(o => o.status_name === newValue).status_id !== 5) {
                         setSolution('');
@@ -814,12 +829,6 @@ export default function ITMTDashboard() {
                     }
                   }}
                 />
-              </>
-            ) : (
-              <>
-                <Typography variant="h5">สถานะ: {statusName}</Typography>
-              </>
-            )}
 
           </Stack>
           <Divider />
@@ -834,7 +843,7 @@ export default function ITMTDashboard() {
             >
               {() => <TextField id="deviceId" name="deviceId" label="รหัสทรัพย์สิน" placeholder='xx-xx-xxx-xxx-xxxx' />}
             </InputMask>
-            {dialogStatus !== 2 || statusId === 5 || statusId === 6 ? (
+            {statusId === 3 || statusId === 4 || statusId === 5 || statusId === 6 ? (
               <>
                 <TextField
                   id="solution"
@@ -949,7 +958,7 @@ export default function ITMTDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseProcessTaskDialog}>ยกเลิก</Button>
-          <Button variant="contained" onClick={handleProcessTask}>{dialogStatus === 2 ? "ดำเนินการ" : "จบงาน"}</Button>
+          <Button variant="contained" onClick={() => {handleProcessTask(dialogStatus === 2 ? "request" : "edit")}}>ดำเนินการ</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

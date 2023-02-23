@@ -381,118 +381,118 @@ export default function auditdashboard() {
         <DialogContent>
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={1}>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>สถานะ:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.status_name}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>เลขที่เอกสาร:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_id}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>ประเภทงาน:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.level_id === "DMIS_IT" ? "IT" : (focusTask.level_id === 'DMIS_MT' ? "ซ่อมบำรุง" : "เครื่องมือแพทย์")}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>วันที่แจ้ง:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_date_start ? (focusTask.task_date_start).replace("T", " ").replace(".000Z", " น.") : ""}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>แผนกที่แจ้งปัญหา:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.issue_department_name}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>รายละเอียดงานที่แจ้ง:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_issue}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>Serial Number:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_serialnumber}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>รหัสทรัพย์สิน:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_device_id}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>ผู้แจ้ง:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.informer_firstname} {focusTask.informer_lastname}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>เบอร์โทรติดต่อ:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_phone_no}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>วันที่รับเรื่อง:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_date_accept ? (focusTask.task_date_accept).replace("T", " ").replace(".000Z", " น.") : ""}</Item>
               </Grid>
-              <Grid xs={4}>
-                <Item sx={{ textAlign: 'right' }}>เวลาดำเนินงาน:</Item>
+              <Grid item xs={4}>
+                <Item item sx={{ textAlign: 'right' }}>เวลาดำเนินงาน:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.estimation_name}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>ผู้รับเรื่อง:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.receiver_firstname} {focusTask.receiver_lastname}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>วันที่ดำเนินการล่าสุด:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_date_process ? (focusTask.task_date_process).replace("T", " ").replace(".000Z", " น.") : ""}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>ผู้รับผิดชอบ:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.operator_firstname} {focusTask.operator_lastname}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>หมายเหตุ:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_note}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>วันที่เสร็จสิ้น:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_date_end ? (focusTask.task_date_end).replace("T", " ").replace(".000Z", " น.") : ""}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>รายละเอียดการแก้ไขปัญหา:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_solution}</Item>
               </Grid>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>งบประมาณที่ใช้:</Item>
               </Grid>
-              <Grid xs={8}>
+              <Grid item xs={8}>
                 <Item>{focusTask.task_cost}</Item>
               </Grid>
             </Grid>

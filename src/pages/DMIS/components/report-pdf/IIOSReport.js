@@ -30,32 +30,78 @@ let auditSig = "";
 export default async function getImgBase64(data) {
 
   noSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/nosignature.png`)}`;
-  inforSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.informer_id}.jpg`)}`;
-  if (inforSig.length < 5000) {
-    inforSig = noSig;
-  }
-  recvSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.receiver_id}.jpg`)}`;
-  if (recvSig.length < 5000) {
-    recvSig = noSig;
-  }
-  operSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.operator_id}.jpg`)}`;
-  if (operSig.length < 5000) {
-    operSig = noSig;
-  }
-  permitSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.permit_id}.jpg`)}`;
-  if (permitSig.length < 5000) {
-    permitSig = noSig;
-  }
-  auditSig = `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/signature/${data.audit_id}.jpg`)}`;
-  if (auditSig.length < 5000) {
-    auditSig = noSig;
-  }
-  printPDF(data, inforSig, recvSig, operSig, permitSig, auditSig);
+
+  await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.informer_id}`)
+      .then((response) => response.json())
+      .then((data) => {
+          if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== "") {
+              inforSig = data.signature_data;
+              return;
+          }
+          inforSig = noSig;
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+
+  await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.receiver_id}`)
+      .then((response) => response.json())
+      .then((data) => {
+          if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== "") {
+              recvSig = data.signature_data;
+              return;
+          }
+          recvSig = noSig;
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+
+  await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.operator_id}`)
+      .then((response) => response.json())
+      .then((data) => {
+          if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== "") {
+              operSig = data.signature_data;
+              return;
+          }
+          operSig = noSig;
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+
+  await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.permit_id}`)
+      .then((response) => response.json())
+      .then((data) => {
+          if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== "") {
+              permitSig = data.signature_data;
+              return;
+          }
+          permitSig = noSig;
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+
+  await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.audit_id}`)
+      .then((response) => response.json())
+      .then((data) => {
+          if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== "") {
+              auditSig = data.signature_data;
+              return;
+          }
+          auditSig = noSig;
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+
+  printPDF(data);
 
   return null;
 }
 
-function printPDF(data, inforSig, recvSig, operSig, permitSig, auditSig) {
+function printPDF(data) {
   const docDefinition = {
     pageOrientation: 'portrait',
     content: [

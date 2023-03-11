@@ -79,6 +79,9 @@ function QuickSearchToolbar() {
   );
 }
 
+let pId = "";
+  let viewId = "";
+
 export default function auditdashboard() {
 
   const columns = [
@@ -183,10 +186,8 @@ export default function auditdashboard() {
 
   useEffect(() => {
 
-    const controller = new AbortController();
-    // eslint-disable-next-line prefer-destructuring
-    const signal = controller.signal;
     const token = jwtDecode(localStorage.getItem('token'));
+    pId = token.personnel_id;
     setAuditId(token.personnel_id);
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].level_id === "DMIS_USER" ||
@@ -196,7 +197,15 @@ export default function auditdashboard() {
         token.level_list[i].level_id === "DMIS_ENV" ||
         token.level_list[i].level_id === "DMIS_HIT" ||
         token.level_list[i].level_id === "DMIS_ALL") {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getaudittasklist/${token.personnel_id}/${token.level_list[i].view_id}`, { signal })
+          viewId = token.level_list[i].view_id;
+          refreshTable();
+        break;
+      }
+    }
+  }, []);
+
+  function refreshTable(){
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getaudittasklist/${pId}/${viewId}`)
           .then((response) => response.json())
           .then((data) => {
             setAuditTaskList(data);
@@ -210,10 +219,7 @@ export default function auditdashboard() {
               console.error('Error:', error);
             }
           })
-        break;
-      }
-    }
-  }, [])
+  }
 
   useEffect(() => {
     if (showReplacement) {
@@ -269,9 +275,8 @@ export default function auditdashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('บันทึกหมายเหตุการตรวจรับงานสำเร็จ');
           handleCloseAuditTaskDialog();
-          window.location.reload(false);
+          refreshTable();
         }
         else {
           alert('ไม่สามารถบันทึกหมายเหตุการตรวจรับงานได้');
@@ -305,9 +310,8 @@ export default function auditdashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('ตรวจรับงานสำเร็จ');
           handleCloseAuditTaskDialog();
-          window.location.reload(false);
+          refreshTable();
         }
         else {
           alert('ไม่สามารถตรวจรับงานได้');

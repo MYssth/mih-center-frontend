@@ -37,6 +37,11 @@ export default function UserPageNewUser() {
     const [PMSLevelDescription, setPMSLevelDescription] = React.useState('');
     const [isPMS, setIsPMS] = React.useState(false);
 
+    const [DSMSLevelName, setDSMSLevelName] = React.useState('');
+    const [DSMSLevelId, setDSMSLevelId] = React.useState('');
+    const [DSMSLevelDescription, setDSMSLevelDescription] = React.useState('');
+    const [isDSMS, setIsDSMS] = React.useState(false);
+
     const [selectedImage, setSelectedImage] = React.useState(null);
     const [imageUrl, setImageUrl] = React.useState(null);
 
@@ -47,7 +52,7 @@ export default function UserPageNewUser() {
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getpositions`)
             .then((response) => response.json())
             .then((data) => {
-                setPositions(data);
+                setPositions(data.filter(dt => dt.position_isactive));
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -86,11 +91,11 @@ export default function UserPageNewUser() {
 
         if (isDMIS) {
             if (DMISLevelId === "") {
-                alert("กรุณาเลือกหน้าที่ของระบบแจ้งซ่อม");
+                alert("กรุณาเลือกหน้าที่ของระบบแจ้งปัญหา");
                 return;
             }
             if (DMISLevelViewId === "") {
-                alert("กรุณาเลือกระดับการมองเห็นของระบบแจ้งซ่อม");
+                alert("กรุณาเลือกระดับการมองเห็นของระบบแจ้งปัญหา");
                 return;
             }
             levelList.push(DMISLevelId);
@@ -99,10 +104,18 @@ export default function UserPageNewUser() {
 
         if (isPMS) {
             if (PMSLevelId === "") {
-                alert("กรุณาใส่หน้าที่ของจัดการข้อมูลบุคลากร");
+                alert("กรุณาใส่หน้าที่ของระบบจัดการข้อมูลบุคลากร");
                 return;
             }
             levelList.push(PMSLevelId);
+        }
+
+        if (isDSMS) {
+            if (DSMSLevelId === "") {
+                alert("กรุณาใส่หน้าที่ของระบบจองเวรแพทย์");
+                return;
+            }
+            levelList.push(DSMSLevelId);
         }
 
         const jsonData = {
@@ -195,6 +208,19 @@ export default function UserPageNewUser() {
 
     }
 
+    const handleChangeDSMS = (event) => {
+        if (event.target.checked) {
+            setIsDSMS(true);
+        }
+        else {
+            setIsDSMS(false);
+            setDSMSLevelId("");
+            setDSMSLevelName("");
+            setDSMSLevelDescription("");
+        }
+
+    }
+
     const handleImageChange = (e) => {
         setSelectedImage(e.target.files[0]);
         if (e.target.files[0] === undefined) {
@@ -276,8 +302,8 @@ export default function UserPageNewUser() {
                             onChange={(event, newValue) => {
                                 setPMSLevelName(newValue);
                                 if (newValue !== null) {
-                                    setPMSLevelId(levels.find(o => o.level_name === newValue).level_id);
-                                    setPMSLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue).level_description}`);
+                                    setPMSLevelId(levels.find(o => o.level_name === newValue && o.mihapp_id === "PMS").level_id);
+                                    setPMSLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue && o.mihapp_id === "PMS").level_description}`);
                                 }
                                 else {
                                     setPMSLevelId("");
@@ -312,8 +338,8 @@ export default function UserPageNewUser() {
                             onChange={(event, newValue) => {
                                 setDMISLevelName(newValue);
                                 if (newValue !== null) {
-                                    setDMISLevelId(levels.find(o => o.level_name === newValue).level_id);
-                                    setDMISLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue).level_description}`);
+                                    setDMISLevelId(levels.find(o => o.level_name === newValue && o.mihapp_id === "DMIS").level_id);
+                                    setDMISLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue && o.mihapp_id === "DMIS").level_description}`);
                                 }
                                 else {
                                     setDMISLevelId("");
@@ -363,6 +389,42 @@ export default function UserPageNewUser() {
                         />
                         <Typography sx={{ pl: 1.5 }}>{`${DMISLevelViewDescription}`}</Typography><br />
                         {/* ============================================= END OF DMIS ========================================================== */}
+
+                        <Divider />
+
+                        {/* ============================================= DSMS ================================================================= */}
+                        <Checkbox onChange={handleChangeDSMS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบจองเวรแพทย์
+                        {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
+                        <Autocomplete
+                            disabled={!isDSMS}
+                            value={DSMSLevelName}
+                            onChange={(event, newValue) => {
+                                setDSMSLevelName(newValue);
+                                if (newValue !== null) {
+                                    setDSMSLevelId(levels.find(o => o.level_name === newValue && o.mihapp_id === "DSMS").level_id);
+                                    setDSMSLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue && o.mihapp_id === "DSMS").level_description}`);
+                                }
+                                else {
+                                    setDSMSLevelId("");
+                                    setDSMSLevelDescription("");
+                                }
+                            }}
+                            id="controllable-states-DSMS-levels-id"
+                            // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
+                            options={Object.values(levels).map((option) => option.mihapp_id === "DSMS" ? `${option.level_name}` : '').filter(isSkip)}
+                            fullWidth
+                            required
+                            renderInput={(params) => <TextField {...params} label="ระบบจองเวรแพทย์" />}
+                            sx={{
+                                "& .MuiAutocomplete-inputRoot": {
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: isDSMS ? (DSMSLevelName ? 'green' : 'red') : ''
+                                    }
+                                }
+                            }}
+                        />
+                        <Typography sx={{ pl: 1.5 }}>{`${DSMSLevelDescription}`}</Typography><br />
+                        {/* ============================================= END OF DSMS ========================================================== */}
 
                     </Box>
 

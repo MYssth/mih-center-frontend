@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import * as React from 'react';
-import { DataGrid, GridToolbar, gridClasses } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarColumnsButton, gridClasses, GridToolbarExportContainer, GridCsvExportMenuItem, GridToolbarContainer, GridToolbarQuickFilter, GridToolbar } from '@mui/x-data-grid';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -8,7 +8,7 @@ import jwtDecode from "jwt-decode";
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Container, Stack, Typography, Card, Divider, TextField, Button, alpha, styled, Box } from '@mui/material';
+import { Container, Stack, Typography, Card, Divider, TextField, Button, alpha, styled, Box, } from '@mui/material';
 
 import reportPDF from './components/report-pdf'
 
@@ -48,6 +48,29 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
         },
     },
 }));
+
+const csvOptions = { delimiter: ";" };
+
+const CustomExportButton = (props) => (
+    <GridToolbarExportContainer {...props}>
+        <GridCsvExportMenuItem options={csvOptions} />
+    </GridToolbarExportContainer>
+);
+
+function CustomToolbar(){
+    <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <CustomExportButton />
+        <Box
+            sx={{
+                p: 0.5,
+                pb: 0,
+            }}
+        >
+            <GridToolbarQuickFilter />
+        </Box>
+    </GridToolbarContainer>
+};
 
 export default function DMISReport() {
 
@@ -124,8 +147,16 @@ export default function DMISReport() {
         },
         {
             field: 'id',
+            headerName: 'id',
+            width: 50,
+        },
+        {
+            field: 'no',
             headerName: 'ลำดับที่',
             width: 50,
+            sortable: false,
+            valueGetter: (index) =>
+                index.api.getRowIndex(index.row.id) + 1,
         },
         {
             field: 'task_id',
@@ -140,9 +171,26 @@ export default function DMISReport() {
                 `${params.row.level_id === "DMIS_IT" ? "IT" : (params.row.level_id === 'DMIS_MT' ? "ซ่อมบำรุง" : "เครื่องมือแพทย์")}`,
         },
         {
+            field: 'informer_firstname',
+            headerName: 'ผู้แจ้ง',
+            width: 100,
+            valueGetter: (params) =>
+                `${(params.row.informer_firstname)} ${(params.row.informer_lastname)}`,
+        },
+        {
+            field: 'issue_department_name',
+            headerName: 'แผนกที่แจ้งปัญหา',
+            width: 110,
+        },
+        {
             field: 'task_issue',
             headerName: 'รายละเอียดของปัญหา',
             width: 200,
+        },
+        {
+            field: 'task_device_id',
+            headerName: 'รหัสทรัพย์สิน',
+            width: 110,
         },
         {
             field: 'task_solution',
@@ -178,50 +226,11 @@ export default function DMISReport() {
                 `${params.row.task_date_end === null ? "" : (params.row.task_date_end).replace("T", " ").replace(".000Z", " น.")}`,
         },
         {
-            field: 'task_cost',
-            headerName: 'งบประมาณที่ใช้',
-            width: 120,
-            valueGetter: (params) =>
-                `${params.row.task_cost === null || params.row.task_cost === "" ? "0" : params.row.task_cost}`,
-        },
-        {
-            field: 'task_serialnumber',
-            headerName: 'serialnumber',
-            width: 110,
-        },
-        {
-            field: 'task_device_id',
-            headerName: 'รหัสทรัพย์สิน',
-            width: 110,
-        },
-        {
-            field: 'task_phone_no',
-            headerName: 'เบอร์โทรติดต่อ',
-            width: 110,
-        },
-        {
-            field: 'task_note',
-            headerName: 'หมายเหตุ',
-            width: 150,
-        },
-        {
             field: 'status_name',
             headerName: 'สถานะ',
             width: 125,
             valueGetter: (params) =>
-                `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ)` : params.row.status_id === 5 ? params.row.status_name : `${params.row.status_name} (เสร็จสิ้น)`}`,
-        },
-        {
-            field: 'informer_firstname',
-            headerName: 'ผู้แจ้ง',
-            width: 100,
-            valueGetter: (params) =>
-                `${(params.row.informer_firstname)} ${(params.row.informer_lastname)}`,
-        },
-        {
-            field: 'issue_department_name',
-            headerName: 'แผนกที่แจ้งปัญหา',
-            width: 110,
+                `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` :`ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
         },
         {
             field: 'receiver_firstname',
@@ -238,15 +247,37 @@ export default function DMISReport() {
                 `${params.row.operator_firstname === null || params.row.operator_firstname === "" ? "" : `${params.row.operator_firstname} ${params.row.operator_lastname}`}`,
         },
         {
+            field: 'estimation_name',
+            headerName: 'เวลาดำเนินงาน',
+            width: 120,
+        },
+        {
+            field: 'task_cost',
+            headerName: 'งบประมาณที่ใช้',
+            width: 120,
+            valueGetter: (params) =>
+                `${params.row.task_cost === null || params.row.task_cost === "" ? "0" : params.row.task_cost}`,
+        },
+        {
+            field: 'task_serialnumber',
+            headerName: 'serialnumber',
+            width: 110,
+        },
+        {
+            field: 'task_phone_no',
+            headerName: 'เบอร์โทรติดต่อ',
+            width: 110,
+        },
+        {
+            field: 'task_note',
+            headerName: 'หมายเหตุ',
+            width: 150,
+        },
+        {
             field: 'category_name',
             headerName: 'หมวดหมู่งาน',
             width: 100,
         },
-        {
-            field: 'estimation_name',
-            headerName: 'เวลาดำเนินงาน',
-            width: 120,
-        }
     ];
 
     return (
@@ -315,30 +346,34 @@ export default function DMISReport() {
                                         py: 1,
                                     },
                                 }}
+                                disableSelectionOnClick
                                 columns={columns}
                                 rows={filterTaskList}
                                 pageSize={pageSize}
                                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                 components={{
                                     Toolbar: GridToolbar,
+                                    // Toolbar: CustomToolbar,
                                 }}
                                 initialState={{
                                     columns: {
                                         columnVisibilityModel: {
                                             // Hide columns status and traderName, the other columns will remain visible
+                                            id: false,
                                             task_cost: false,
                                             task_date_accept: false,
                                             task_date_process: false,
                                             task_serialnumber: false,
-                                            task_device_id: false,
                                             receiver_firstname: false,
-                                            task_note: false,
                                             task_phone_no: false,
-                                            estimation_name: false,
                                         },
                                     },
                                 }}
-                                componentsProps={{ toolbar: { printOptions: { hideFooter: true, hideToolbar: true, }, csvOptions: { utf8WithBom: true, } } }}
+                                componentsProps={{
+                                    toolbar: {
+                                        csvOptions: { utf8WithBom: true, },
+                                    },
+                                }}
                             />
                         </div>
                     </Stack>

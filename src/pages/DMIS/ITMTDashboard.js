@@ -87,6 +87,10 @@ function QuickSearchToolbar() {
   );
 }
 
+let pId = "";
+let lvId = "";
+let vId = "";
+
 export default function ITMTDashboard() {
 
   const columns = [
@@ -102,7 +106,7 @@ export default function ITMTDashboard() {
           // return alert(`you choose level = ${params.row.level_id}`);
         };
 
-        return <Button variant="contained" disabled={disableProcessTaskButton || params.row.status_id_request !== null } onClick={onClick}>ดำเนินการ</Button>;
+        return <Button variant="contained" disabled={disableProcessTaskButton || params.row.status_id_request !== null} onClick={onClick}>ดำเนินการ</Button>;
       },
     },
     {
@@ -158,7 +162,7 @@ export default function ITMTDashboard() {
       headerName: 'สถานะ',
       width: 130,
       valueGetter: (params) =>
-      `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 ? params.row.status_name : `${params.row.status_name} (เสร็จสิ้น)`}`,
+        `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
     },
   ];
 
@@ -212,9 +216,6 @@ export default function ITMTDashboard() {
 
   useEffect(() => {
 
-    const controller = new AbortController();
-    // eslint-disable-next-line prefer-destructuring
-    const signal = controller.signal;
     const token = jwtDecode(localStorage.getItem('token'));
 
     for (let i = 0; i < token.level_list.length; i += 1) {
@@ -222,10 +223,42 @@ export default function ITMTDashboard() {
         || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
         || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${token.level_list[i].level_id}`, { signal })
+        pId = token.personnel_id;
+        lvId = token.level_list[i].level_id;
+        vId = token.level_list[i].view_id;
+
+        refreshTable();
+
+        break;
+      }
+    }
+
+    setRecvId(token.personnel_id);
+
+  }, []);
+
+  function refreshTable() {
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${lvId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setOperatorList(data);
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          console.log("cancelled")
+        }
+        else {
+          console.error('Error:', error);
+        }
+      })
+
+      .then(
+
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${pId}/${lvId}/${vId}/${false}`)
           .then((response) => response.json())
           .then((data) => {
-            setOperatorList(data);
+            setTaskList(data);
+            setFilterTaskList(data);
           })
           .catch((error) => {
             if (error.name === "AbortError") {
@@ -236,84 +269,56 @@ export default function ITMTDashboard() {
             }
           })
 
-          .then(
+      ).then(
 
-            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${false}`, { signal })
-              .then((response) => response.json())
-              .then((data) => {
-                setTaskList(data);
-                setFilterTaskList(data);
-              })
-              .catch((error) => {
-                if (error.name === "AbortError") {
-                  console.log("cancelled")
-                }
-                else {
-                  console.error('Error:', error);
-                }
-              })
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${pId}/${lvId}/${vId}/${false}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setTaskCount(data);
+          })
+          .catch((error) => {
+            if (error.name === "AbortError") {
+              console.log("cancelled")
+            }
+            else {
+              console.error('Error:', error);
+            }
+          })
 
-          ).then(
+      ).then(
 
-            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${false}`, { signal })
-              .then((response) => response.json())
-              .then((data) => {
-                setTaskCount(data);
-              })
-              .catch((error) => {
-                if (error.name === "AbortError") {
-                  console.log("cancelled")
-                }
-                else {
-                  console.error('Error:', error);
-                }
-              })
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${pId}/${lvId}/${vId}/${false}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setCompleteTaskList(data);
+          })
+          .catch((error) => {
+            if (error.name === "AbortError") {
+              console.log("cancelled")
+            }
+            else {
+              console.error('Error:', error);
+            }
+          })
 
-          ).then(
+      ).then(
 
-            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${false}`, { signal })
-              .then((response) => response.json())
-              .then((data) => {
-                setCompleteTaskList(data);
-              })
-              .catch((error) => {
-                if (error.name === "AbortError") {
-                  console.log("cancelled")
-                }
-                else {
-                  console.error('Error:', error);
-                }
-              })
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getestimation`)
+          .then((response) => response.json())
+          .then((data) => {
+            setEstimationList(data);
+          })
+          .catch((error) => {
+            if (error.name === "AbortError") {
+              console.log("cancelled")
+            }
+            else {
+              console.error('Error:', error);
+            }
+          })
 
-          ).then(
-
-            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getestimation`, { signal })
-              .then((response) => response.json())
-              .then((data) => {
-                setEstimationList(data);
-              })
-              .catch((error) => {
-                if (error.name === "AbortError") {
-                  console.log("cancelled")
-                }
-                else {
-                  console.error('Error:', error);
-                }
-              })
-
-          )
-
-        break;
-      }
-    }
-
-    setRecvId(token.personnel_id);
-
-    return () => {
-      controller.abort();
-    }
-
-  }, []);
+      )
+  }
 
   useEffect(() => {
 
@@ -460,9 +465,8 @@ export default function ITMTDashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('รับเรื่องสำเร็จ');
           handleCloseAcceptTaskDialog();
-          window.location.reload(false);
+          refreshTable();
         }
         else {
           alert('ไม่สามารถทำการรับเรื่องได้');
@@ -477,7 +481,7 @@ export default function ITMTDashboard() {
 
   const handleProcessTask = (taskCase) => {
 
-    if(isStatusChange && tempStatus !== 2){
+    if (isStatusChange && tempStatus !== 2) {
       taskCase = statusId === 5 ? "complete" : "request";
     }
 
@@ -552,9 +556,8 @@ export default function ITMTDashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('ดำเนินการเรียบร้อย');
           handleCloseProcessTaskDialog();
-          window.location.reload(false);
+          refreshTable();
         }
         else {
           alert('ไม่สามารถดำเนินการได้');
@@ -798,39 +801,39 @@ export default function ITMTDashboard() {
             กรุณาระบุรายละเอียดงาน
           </DialogContentText>
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-                <Autocomplete
-                  value={statusName}
-                  onChange={(event, newValue) => {
-                    setStatusName(newValue);
-                    if (newValue !== null) {
-                      if(status.find(o => o.status_name === newValue).status_id !== tempStatus){
-                        setIsStatusChange(true);
-                      }
-                      else{
-                        setIsStatusChange(false);
-                      }
-                      setStatusId(status.find(o => o.status_name === newValue).status_id);
-                      if (status.find(o => o.status_name === newValue).status_id !== 5) {
-                        setSolution('');
-                      }
-                    }
-                    else {
-                      setStatusId("");
-                    }
-                  }}
-                  id="controllable-states-status-id"
-                  options={Object.values(status).map((option) => option.status_name)}
-                  fullWidth
-                  required
-                  renderInput={(params) => <TextField {...params} label="สถานะของงาน" />}
-                  sx={{
-                    "& .MuiAutocomplete-inputRoot": {
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: statusName ? 'green' : 'red'
-                      }
-                    }
-                  }}
-                />
+            <Autocomplete
+              value={statusName}
+              onChange={(event, newValue) => {
+                setStatusName(newValue);
+                if (newValue !== null) {
+                  if (status.find(o => o.status_name === newValue).status_id !== tempStatus) {
+                    setIsStatusChange(true);
+                  }
+                  else {
+                    setIsStatusChange(false);
+                  }
+                  setStatusId(status.find(o => o.status_name === newValue).status_id);
+                  if (status.find(o => o.status_name === newValue).status_id !== 5) {
+                    setSolution('');
+                  }
+                }
+                else {
+                  setStatusId("");
+                }
+              }}
+              id="controllable-states-status-id"
+              options={Object.values(status).map((option) => option.status_name)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="สถานะของงาน" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: statusName ? 'green' : 'red'
+                  }
+                }
+              }}
+            />
 
           </Stack>
           <Divider />
@@ -960,7 +963,7 @@ export default function ITMTDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseProcessTaskDialog}>ยกเลิก</Button>
-          <Button variant="contained" onClick={() => {handleProcessTask(dialogStatus === 2 ? "request" : "edit")}}>ดำเนินการ</Button>
+          <Button variant="contained" onClick={() => { handleProcessTask(dialogStatus === 2 ? "request" : "edit") }}>ดำเนินการ</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}
@@ -1090,7 +1093,7 @@ export default function ITMTDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseFocusTaskDialog}>ปิดหน้าต่าง</Button>
-          <Button onClick={() => {reportPDF(focusTask)}}>ปริ้นเอกสาร</Button>
+          <Button onClick={() => { reportPDF(focusTask) }}>ปริ้นเอกสาร</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

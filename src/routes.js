@@ -10,6 +10,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import UserPageNewUser from './pages/UserPageNewUser';
 import ProfileSetting from './pages/ProfileSetting';
 import RoleMgrPage from './pages/RoleMgrPage';
+import SiteSetting from './pages/SiteSetting';
 
 // DMIS
 import DMISDashboardLayout from './pages/DMIS/DMISDashboardLayout';
@@ -20,11 +21,15 @@ import DMISReport from './pages/DMIS/DMISReport';
 import AuditDashboard from './pages/DMIS/AuditDashboard';
 import PermitDashboard from './pages/DMIS/PermitDashboard';
 
+// DSMS
+import DSMSDashboardLayout from './pages/DSMS/DSMSDashboardLayout';
+import DSMSDashboard from './pages/DSMS/DSMSDashboard';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
-    
+
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -32,9 +37,10 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
-        { path: 'newuser', element: <UserPageNewUser />},
-        { path: 'profilesetting', element: <ProfileSetting />},
-        { path: 'rolemgr', element: <RoleMgrPage />},
+        { path: 'newuser', element: <UserPageNewUser /> },
+        { path: 'profilesetting', element: <ProfileSetting /> },
+        { path: 'rolemgr', element: <RoleMgrPage /> },
+        { path: 'sitesetting', element: <SiteSetting />}
       ],
     },
     {
@@ -47,11 +53,19 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dmis/app" />, index: true },
         { path: 'app', element: <UserDashboard /> },
-        { path: 'itmtdashboard', element: <ITMTDashboard />},
-        { path: 'dmisnewcase', element: <DMISNewCase />},
-        { path: 'dmisreport', element: <DMISReport />},
-        { path: 'auditdashboard', element: <AuditDashboard />},
-        { path: 'permitdashboard', element: <PermitDashboard />},
+        { path: 'itmtdashboard', element: <ITMTDashboard /> },
+        { path: 'dmisnewcase', element: <DMISNewCase /> },
+        { path: 'dmisreport', element: <DMISReport /> },
+        { path: 'auditdashboard', element: <AuditDashboard /> },
+        { path: 'permitdashboard', element: <PermitDashboard /> },
+      ],
+    },
+    {
+      path: '/dsms',
+      element: <DSMSDashboardLayout />,
+      children: [
+        { element: <Navigate to="/dsms/app" />, index: true },
+        { path: 'app', element: <DSMSDashboard /> },
       ],
     },
     {

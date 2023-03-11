@@ -28,6 +28,11 @@ try {
             path: '/dashboard/rolemgr',
             icon: <Icon icon="ic:baseline-maps-home-work" width="30" height="30" />,
           },
+          {
+            title: 'ตั้งค่าเว็บไซต์',
+            path: '/dashboard/sitesetting',
+            icon: <Icon icon="dashicons:admin-site-alt3" width="30" height="30" />,
+          },
         );
       }
     }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Helmet } from 'react-helmet-async';
 // @mui
 import {
@@ -7,16 +8,26 @@ import {
   Stack,
   Autocomplete,
   TextField,
-  Button, Dialog,
+  Button,
+  Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-  Grid,
   Box,
+  styled,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 // ----------------------------------------------------------------------
+
+const ValidationTextField = styled(TextField)({
+  '& input:valid + fieldset': {
+    borderColor: 'green'
+  },
+  '& input:invalid + fieldset': {
+    borderColor: 'red'
+  },
+});
 
 export default function RoleMgrPage() {
 
@@ -25,24 +36,28 @@ export default function RoleMgrPage() {
   const [fieldId, setFieldId] = useState('');
   const [fieldName, setFieldName] = useState('');
   const [fieldIsactive, setFieldIsactive] = useState('');
+  const [fieldHimsId, setFieldHimsId] = useState('');
 
   const [filterFactions, setFilterFactions] = useState([]);
   const [factions, setFactions] = useState([]);
   const [factionId, setFactionId] = useState('');
   const [factionName, setFactionName] = useState('');
   const [factionIsactive, setFactionIsactive] = useState('');
+  const [factionHimsId, setFactionHimsId] = useState('');
 
   const [filterDepartments, setFilterDepartments] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [departmentId, setDepartmentId] = useState('');
   const [departmentName, setDepartmentName] = useState('');
   const [departmentIsactive, setDepartmentIsactive] = useState('');
+  const [departmentHimsId, setDepartmentHimsId] = useState('');
 
   const [filterPositions, setFilterPositions] = useState([]);
   const [positions, setPositions] = useState([]);
   const [positionId, setPositionId] = useState('');
   const [positionName, setPositionName] = useState('');
   const [positionIsactive, setPositionIsactive] = useState('');
+  const [positionHimsId, setPositionHimsId] = useState('');
 
   const [showActive, setShowActive] = useState(true);
   const isSkip = (value) => value !== '';
@@ -52,6 +67,7 @@ export default function RoleMgrPage() {
   const [addRoleDialogOpen, setAddRoleDialogOpen] = useState(false);
   const [updateRoleDialogOpen, setUpdateRoleDialogOpen] = useState(false);
   const [inputRoleName, setInputRoleName] = useState('');
+  const [inputHimsId, setInputHimsId] = useState('');
   const [inputUpperRoleId, setInputUpperRoleId] = useState('');
   const [inputUpperRoleName, setInputUpperRoleName] = useState('');
   const [statusRoleDialogOpen, setStatusRoleDialogOpen] = useState(false);
@@ -127,6 +143,7 @@ export default function RoleMgrPage() {
       setDepartmentId(positions.find(o => o.position_id === positionId).department_id);
       setDepartmentName(departments.find(o => o.department_id === positions.find(o => o.position_id === positionId).department_id).department_name);
       setDepartmentIsactive(departments.find(o => o.department_id === positions.find(o => o.position_id === positionId).department_id).department_isactive);
+      setDepartmentHimsId(departments.find(o => o.department_id === positions.find(o => o.position_id === positionId).department_id).hims_id);
     }
   }, [positionId]);
 
@@ -135,11 +152,13 @@ export default function RoleMgrPage() {
       setFactionId(departments.find(o => o.department_id === departmentId).faction_id);
       setFactionName(factions.find(o => o.faction_id === departments.find(o => o.department_id === departmentId).faction_id).faction_name);
       setFactionIsactive(factions.find(o => o.faction_id === departments.find(o => o.department_id === departmentId).faction_id).faction_isactive);
+      setFactionHimsId(factions.find(o => o.faction_id === departments.find(o => o.department_id === departmentId).faction_id).hims_id);
     }
     else {
       setPositionId("");
       setPositionName("");
       setPositionIsactive("");
+      setPositionHimsId("");
     }
   }, [departmentId]);
 
@@ -148,11 +167,13 @@ export default function RoleMgrPage() {
       setFieldId(factions.find(o => o.faction_id === factionId).field_id);
       setFieldName(fields.find(o => o.field_id === factions.find(o => o.faction_id === factionId).field_id).field_name);
       setFieldIsactive(fields.find(o => o.field_id === factions.find(o => o.faction_id === factionId).field_id).field_isactive);
+      setFieldHimsId(fields.find(o => o.field_id === factions.find(o => o.faction_id === factionId).field_id).hims_id);
     }
     else {
       setDepartmentId("");
       setDepartmentName("");
       setDepartmentIsactive("");
+      setDepartmentHimsId("");
     }
   }, [factionId]);
 
@@ -176,27 +197,40 @@ export default function RoleMgrPage() {
 
     let jsonData = "";
 
+    if (document.getElementById("role_name").value === null || document.getElementById("role_name").value === "") {
+      alert(`กรุณากรอกชื่อ${showName}`);
+      return;
+    }
+    if (document.getElementById("hims_id").value === null || document.getElementById("hims_id").value === "") {
+      alert(`กรุณากรอกรหัส${showName}ที่แสดงในระบบ HIMS`);
+      return;
+    }
+
     if (role === "field") {
       jsonData = {
         field_name: document.getElementById("role_name").value,
+        hims_id: document.getElementById("hims_id").value,
       };
     }
     else if (role === "faction") {
       jsonData = {
         faction_name: document.getElementById("role_name").value,
         field_id: fieldId,
+        hims_id: document.getElementById("hims_id").value,
       };
     }
     else if (role === "department") {
       jsonData = {
         department_name: document.getElementById("role_name").value,
         faction_id: factionId,
+        hims_id: document.getElementById("hims_id").value,
       };
     }
     else if (role === "position") {
       jsonData = {
         position_name: document.getElementById("role_name").value,
         department_id: departmentId,
+        hims_id: document.getElementById("hims_id").value,
       };
     }
 
@@ -229,6 +263,7 @@ export default function RoleMgrPage() {
     setRole(role);
     setShowName(sName);
     setInputRoleName(role === "field" ? fieldName : role === "faction" ? factionName : role === "department" ? departmentName : positionName);
+    setInputHimsId(role === "field" ? fieldHimsId : role === "faction" ? factionHimsId : role === "department" ? departmentHimsId : positionHimsId)
     setInputUpperRoleId(role === "field" ? "" : role === "faction" ? fieldId : role === "department" ? factionId : departmentId);
     setInputUpperRoleName(role === "field" ? "" : role === "faction" ? fieldName : role === "department" ? factionName : departmentName);
     setUpdateRoleDialogOpen(true);
@@ -239,6 +274,7 @@ export default function RoleMgrPage() {
     setRole("");
     setShowName("");
     setInputRoleName("");
+    setInputHimsId("");
   }
 
   const handleUpdateRole = () => {
@@ -248,6 +284,7 @@ export default function RoleMgrPage() {
       jsonData = {
         field_id: fieldId,
         field_name: inputRoleName,
+        hims_id: inputHimsId,
       }
     }
     else if (role === "faction") {
@@ -255,6 +292,7 @@ export default function RoleMgrPage() {
         faction_id: factionId,
         faction_name: inputRoleName,
         field_id: inputUpperRoleId,
+        hims_id: inputHimsId,
       }
     }
     else if (role === "department") {
@@ -262,6 +300,7 @@ export default function RoleMgrPage() {
         department_id: departmentId,
         department_name: inputRoleName,
         faction_id: inputUpperRoleId,
+        hims_id: inputHimsId,
       }
     }
     else if (role === "position") {
@@ -269,6 +308,7 @@ export default function RoleMgrPage() {
         position_id: positionId,
         position_name: inputRoleName,
         department_id: inputUpperRoleId,
+        hims_id: inputHimsId,
       }
     }
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/update${role}`, {
@@ -451,6 +491,7 @@ export default function RoleMgrPage() {
                   if (newValue !== null) {
                     setFieldId(fields.find(o => o.field_name === newValue).field_id);
                     setFieldIsactive(fields.find(o => o.field_name === newValue).field_isactive);
+                    setFieldHimsId(fields.find(o => o.field_name === newValue).hims_id);
                     setFactionId("");
                     setFactionName("");
                     setDepartmentId("");
@@ -461,6 +502,7 @@ export default function RoleMgrPage() {
                   else {
                     setFieldId("");
                     setFieldIsactive("");
+                    setFieldHimsId("");
                     setFactionId("");
                     setFactionName("");
                   }
@@ -495,6 +537,7 @@ export default function RoleMgrPage() {
                   if (newValue !== null) {
                     setFactionId(factions.find(o => o.faction_name === newValue).faction_id);
                     setFactionIsactive(factions.find(o => o.faction_name === newValue).faction_isactive);
+                    setFactionHimsId(factions.find(o => o.faction_name === newValue).hims_id);
                     setDepartmentId("");
                     setDepartmentName("");
                     setPositionId("");
@@ -503,6 +546,7 @@ export default function RoleMgrPage() {
                   else {
                     setFactionId("");
                     setFactionIsactive("");
+                    setFactionHimsId("");
                   }
                 }}
                 id="controllable-states-factions-id"
@@ -536,12 +580,14 @@ export default function RoleMgrPage() {
                   if (newValue !== null) {
                     setDepartmentId(departments.find(o => o.department_name === newValue).department_id);
                     setDepartmentIsactive(departments.find(o => o.department_name === newValue).department_isactive);
+                    setDepartmentHimsId(departments.find(o => o.department_name === newValue).hims_id);
                     setPositionId("");
                     setPositionName("");
                   }
                   else {
                     setDepartmentId("");
                     setDepartmentIsactive("");
+                    setDepartmentHimsId("");
                   }
                 }}
                 id="controllable-states-departments-id"
@@ -575,10 +621,12 @@ export default function RoleMgrPage() {
                   if (newValue !== null) {
                     setPositionId(positions.find(o => o.position_name === newValue).position_id);
                     setPositionIsactive(positions.find(o => o.position_name === newValue).position_isactive);
+                    setPositionHimsId(positions.find(o => o.position_name === newValue).hims_id);
                   }
                   else {
                     setPositionId("");
                     setPositionIsactive("");
+                    setPositionHimsId("");
                   }
                 }}
                 id="controllable-states-positions-id"
@@ -611,12 +659,11 @@ export default function RoleMgrPage() {
         <DialogTitle>เพิ่ม{showName}ใหม่</DialogTitle>
         <DialogContent>
           <Box sx={{ flexGrow: 1, p: 2 }}>
-            <Grid spacing={1}>
-              <DialogContentText sx={{ mb: 1 }}>
-                {role === "field" ? "" : role === "faction" ? `เพิ่มฝ่ายภายในสายงาน ${fieldName}` : role === "department" ? `เพิ่มแผนกภายในฝ่าย ${factionName}` : `เพิ่มตำแหน่งภายในแผนก ${departmentName}`}
-              </DialogContentText>
-              <TextField id="role_name" name="role_name" label={`ชื่อ${showName}`} fullWidth />
-            </Grid>
+            <DialogContentText sx={{ mb: 2 }}>
+              {role === "field" ? "" : role === "faction" ? `เพิ่มฝ่ายภายในสายงาน ${fieldName}` : role === "department" ? `เพิ่มแผนกภายในฝ่าย ${factionName}` : `เพิ่มตำแหน่งภายในแผนก ${departmentName}`}
+            </DialogContentText>
+            <ValidationTextField id="role_name" name="role_name" label={`ชื่อ${showName}`} fullWidth sx={{ mb: 2 }} />
+            <ValidationTextField id="hims_id" name="hims_id" label={`รหัส${showName}ที่แสดงในระบบ HIMS`} fullWidth />
           </Box>
         </DialogContent>
         <DialogActions>
@@ -631,7 +678,6 @@ export default function RoleMgrPage() {
         <DialogTitle>แก้ไข{showName}</DialogTitle>
         <DialogContent>
           <Box sx={{ flexGrow: 1, p: 2 }}>
-            <Grid spacing={1}>
               <Autocomplete
                 value={inputUpperRoleName}
                 onChange={(event, newValue) => {
@@ -648,11 +694,18 @@ export default function RoleMgrPage() {
                 id="controllable-states-role"
                 options={role === "faction" ? Object.values(filterFields).map((option) => option.field_name).filter(isSkip) : role === "department" ? Object.values(filterFactions).map((option) => option.faction_name).filter(isSkip) : Object.values(filterDepartments).map((option) => option.department_name).filter(isSkip)}
                 fullWidth
-                sx={{ mb: 2 }}
+                sx={{
+                  mb: 2,
+                  "& .MuiAutocomplete-inputRoot": {
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: inputUpperRoleName || role === "field" ? 'green' : 'red'
+                    }
+                  }
+                }}
                 renderInput={(params) => <TextField {...params} label={`${role === "field" ? "ไม่มีสังกัด" : role === "faction" ? "สังกัดสายงาน" : role === "department" ? "สังกัดฝ่าย" : "สังกัดแผนก"}`} />}
               />
-              <TextField id="role_name" name="role_name" label={`ชื่อ${showName}`} fullWidth value={inputRoleName} onChange={(event) => { setInputRoleName(event.target.value) }} />
-            </Grid>
+              <ValidationTextField id="role_name" name="role_name" label={`ชื่อ${showName}`} fullWidth value={inputRoleName} onChange={(event) => { setInputRoleName(event.target.value) }} sx={{ mb: 2 }} />
+              <ValidationTextField id="hims_id" name="hims_id" label={`รหัส${showName}ที่แสดงในระบบ HIMS`} fullWidth value={inputHimsId} onChange={(event) => { setInputHimsId(event.target.value) }} />
           </Box>
         </DialogContent>
         <DialogActions>

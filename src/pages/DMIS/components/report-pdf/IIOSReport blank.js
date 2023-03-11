@@ -136,7 +136,7 @@ function printPDF(data) {
 
       },
       '\n',
-      { text: `เลขที่เอกสาร ${data.task_id}`, alignment: 'right' },
+      { text: `เลขที่เอกสาร ........................`, alignment: 'right' },
       {
         style: 'tableExample',
         table: {
@@ -146,8 +146,8 @@ function printPDF(data) {
             [{ text: 'ผู้ขอใช้บริการ', style: 'header2' }],
             [{
               text: [
-                `ชื่อ: ${data.informer_firstname}\tนามสกุล: ${data.informer_lastname}\tตำแหน่ง: ${data.informer_position_name}\n`,
-                `แผนก: ${data.informer_department_name}\tฝ่าย: ${data.informer_faction_name}\tเบอร์โทรศัพท์: ${data.task_phone_no === null || data.task_phone_no === "" ? "ไม่ได้ระบุ" : data.task_phone_no}`,
+                `ชื่อ:.................................................... นามสกุล:.................................................... ตำแหน่ง:....................................................\n`,
+                `แผนก:.................................................. ฝ่าย:.................................................. เบอร์โทรศัพท์:..................................................`,
               ]
             }],
           ]
@@ -163,83 +163,25 @@ function printPDF(data) {
             [{ text: 'รายละเอียด', style: 'header2' }],
             [{
               text: [
-                `แผนกที่แจ้งปัญหา: ${data.issue_department_name}\t`,
-                `วันที่แจ้ง: ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}\n`,
-                `รหัสทรัพย์สิน: ${data.task_device_id === null || data.task_device_id === "" ? "ไม่ได้ระบุ" : data.task_device_id}\t`,
-                `Serial number: ${data.task_serialnumber === null || data.task_serialnumber === "" ? "ไม่ได้ระบุ" : data.task_serialnumber}\n`,
-                `รายละเอียดของปัญหา: ${data.task_issue}\n`,
+                `แผนกที่แจ้งปัญหา:................................................................................. `,
+                `วันที่แจ้ง:...................................................................\n`,
+                `รหัสทรัพย์สิน:........................................................................ `,
+                `Serial number:.......................................................................\n`,
+                `รายละเอียดของปัญหา:.............................................................................................................................................................\n..................................................................................................................................................................................................`,
               ]
             }],
           ]
         }
       },
+      "\n",
       {
-        columns: [
-          {
-            text: [
-              { text: "\n", width: 60 },
-              { text: 'ลงชื่อ', alignment: 'right', width: 60 },
-            ]
-          },
-          {
-            image: inforSig,
-            fit: [110, 40],
-            width: 110,
-            alignment: 'center',
-          },
-          {
-            text: [
-              { text: "\n", width: 60 },
-              { text: 'ผู้แจ้ง', width: 60 },
-            ]
-          },
-          {
-            text: [
-              { text: "\n", width: 60 },
-              { text: 'ลงชื่อ', alignment: 'right', width: 60 },
-            ]
-          },
-          {
-            image: recvSig,
-            fit: [110, 40],
-            width: 110,
-            alignment: 'center',
-          },
-          {
-            text: [
-              { text: "\n" },
-              { text: 'ผู้รับเรื่อง' },
-            ]
-          },
-        ]
+         text: 'ลงชื่อ .......................................... ผู้แจ้ง\t\t\t\t\t\t\t\tลงชื่อ .......................................... ผู้รับเรื่อง', alignment: 'center',
       },
       {
-        columns: [
-          {
-            text: `(${data.informer_firstname} ${data.informer_lastname})`,
-            alignment: 'center',
-            width: 260,
-          },
-          {
-            text: `${data.receiver_firstname === null || data.receiver_firstname === "" ? "(........................................)" : `(${data.receiver_firstname} ${data.receiver_lastname})`}`,
-            alignment: 'center',
-            width: 260,
-          },
-        ]
+        text: "(.............................................)\t\t\t\t\t\t\t\t\t\t\t(.............................................)", alignment: 'center',
       },
       {
-        columns: [
-          {
-            text: `วันที่ ${dateFns.format(dateFns.addYears(new Date(data.task_date_start), 543), 'dd/MM/yyyy')}`,
-            alignment: 'center',
-            width: 260,
-          },
-          {
-            text: `วันที่${data.task_date_accept === null || data.task_date_accept === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_accept), 543), 'dd/MM/yyyy')}`}`,
-            alignment: 'center',
-            width: 260,
-          },
-        ]
+        text: "วันที่........................................\t\t\t\t\t\t\t\t\t\t\tวันที่........................................", alignment: 'center',
       },
       '\n',
       {
@@ -251,83 +193,25 @@ function printPDF(data) {
             [{ text: 'ผลการดำเนินงาน', style: 'header2' }],
             [{
               text: [
-                `สถานะ: ${data.status_name}\t`,
-                `งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}\t`,
-                `วันที่เสร็จสิ้นการดำเนินงาน: ${data.status_name === "ยกเลิก" ? dateFns.format(dateFns.addYears(new Date(data.task_date_process), 543), 'dd/MM/yyyy') : data.task_date_end === null || data.task_date_end === "" ? "สถานะงานยังไม่เสร็จสิ้น" : dateFns.format(dateFns.addYears(new Date(data.task_date_end), 543), 'dd/MM/yyyy')}\n`,
-                `รายละเอียดการแก้ไขปัญหา: ${data.status_name === "ยกเลิก" ? "ยกเลิกใบงาน" : data.task_solution === null || data.task_solution === "" ? "สถานะงานยังไม่เสร็จสิ้น" : data.task_solution}\n`,
-                `หมายเหตุ: ${data.task_note === null || data.task_note === "" ? "" : data.task_note}\n`,
+                `สถานะ:..................................... `,
+                `งบประมาณที่ใช้:.................................. `,
+                `วันที่เสร็จสิ้นการดำเนินงาน:.....................................\n`,
+                `รายละเอียดการแก้ไขปัญหา:.....................................................................................................................................................\n..................................................................................................................................................................................................\n`,
+                `หมายเหตุ:.................................................................................................................................................................................\n..................................................................................................................................................................................................`,
               ]
             }],
           ]
         }
       },
+      "\n",
       {
-        columns: [
-          {
-            text: [
-              { text: "\n", width: 60 },
-              { text: 'ลงชื่อ', alignment: 'right', width: 60 },
-            ]
-          },
-          {
-            image: operSig,
-            fit: [110, 40],
-            width: 110,
-            alignment: 'center',
-          },
-          {
-            text: [
-              { text: "\n", width: 60 },
-              { text: 'ผู้ดำเนินการ', width: 60 },
-            ]
-          },
-          {
-            text: [
-              { text: "\n", width: 60 },
-              { text: 'ลงชื่อ', alignment: 'right', width: 60 },
-            ]
-          },
-          {
-            image: permitSig,
-            fit: [110, 40],
-            width: 110,
-            alignment: 'center',
-          },
-          {
-            text: [
-              { text: "\n" },
-              { text: 'ผู้ตรวจสอบ' },
-            ]
-          },
-        ]
+         text: 'ลงชื่อ .......................................... ผู้ดำเนินการ\t\t\t\t\t\tลงชื่อ .......................................... ผู้ตรวจสอบ', alignment: 'center',
       },
       {
-        columns: [
-          {
-            text: `${data.operator_firstname === null || data.operator_firstname === "" ? "(........................................)" : `(${data.operator_firstname} ${data.operator_lastname})`}`,
-            alignment: 'center',
-            width: 260,
-          },
-          {
-            text: `${data.permit_firstname === null || data.permit_firstname === "" ? "(........................................)" : `(${data.permit_firstname} ${data.permit_lastname})`}`,
-            alignment: 'center',
-            width: 260,
-          },
-        ]
+        text: "(..................................................)\t\t\t\t\t\t\t\t\t\t(................................................)", alignment: 'center',
       },
       {
-        columns: [
-          {
-            text: `วันที่${data.task_date_process === null || data.task_date_process === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.task_date_process), 543), 'dd/MM/yyyy')}`}`,
-            alignment: 'center',
-            width: 260,
-          },
-          {
-            text: `วันที่${data.permit_date === null || data.permit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.addYears(new Date(data.permit_date), 543), 'dd/MM/yyyy')}`}`,
-            alignment: 'center',
-            width: 260,
-          },
-        ]
+        text: "วันที่........................................\t\t\t\t\t\t\t\t\t\t\tวันที่........................................", alignment: 'center',
       },
       {
         columns: [

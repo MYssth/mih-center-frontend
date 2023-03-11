@@ -77,6 +77,8 @@ function QuickSearchToolbar() {
   );
 }
 
+let lvId = "";
+
 export default function permitdashboard() {
 
   const columns = [
@@ -174,9 +176,6 @@ export default function permitdashboard() {
 
   useEffect(() => {
 
-    const controller = new AbortController();
-    // eslint-disable-next-line prefer-destructuring
-    const signal = controller.signal;
     const token = jwtDecode(localStorage.getItem('token'));
     setPermitId(token.personnel_id);
     for (let i = 0; i < token.level_list.length; i += 1) {
@@ -187,23 +186,28 @@ export default function permitdashboard() {
         token.level_list[i].level_id === "DMIS_ENV" ||
         token.level_list[i].level_id === "DMIS_HIT" ||
         token.level_list[i].level_id === "DMIS_ALL") {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getpermittasklist/${token.level_list[i].level_id}`, { signal })
-          .then((response) => response.json())
-          .then((data) => {
-            setPermitTaskList(data);
-          })
-          .catch((error) => {
-            if (error.name === "AbortError") {
-              console.log("cancelled")
-            }
-            else {
-              console.error('Error:', error);
-            }
-          })
+          lvId = token.level_list[i].level_id;
+          refreshTable();
         break;
       }
     }
   }, [])
+
+  function refreshTable() {
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getpermittasklist/${lvId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setPermitTaskList(data);
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          console.log("cancelled")
+        }
+        else {
+          console.error('Error:', error);
+        }
+      })
+  }
 
   const handleOpenFocusTaskDialog = (task) => {
     setFocusTask(task);
@@ -248,9 +252,8 @@ export default function permitdashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          alert('ยืนยันการตรวจสอบงานสำเร็จ');
           handleClosePermitTaskDialog();
-          window.location.reload(false);
+          refreshTable();
         }
         else {
           alert('ไม่สามารถยืนยันการตรวจสอบงานได้');
@@ -435,7 +438,7 @@ export default function permitdashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseFocusTaskDialog}>ปิดหน้าต่าง</Button>
-          <Button onClick={() => {reportPDF(focusTask)}}>ปริ้นเอกสาร</Button>
+          <Button onClick={() => { reportPDF(focusTask) }}>ปริ้นเอกสาร</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

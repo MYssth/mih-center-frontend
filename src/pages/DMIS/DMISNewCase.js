@@ -59,7 +59,7 @@ export default function dmisnewcase() {
                 fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getdepartments`, { signal })
                     .then((response) => response.json())
                     .then((data) => {
-                        setDepartments(data);
+                        setDepartments(data.filter(dt => dt.department_isactive));
                     })
                     .catch((error) => {
                         if (error.name === "AbortError") {
@@ -129,7 +129,6 @@ export default function dmisnewcase() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === 'ok') {
-                    alert('ทำการแจ้งปัญหาสำเร็จ');
                     navigate('/dmis', { replace: true });
                 }
                 else {

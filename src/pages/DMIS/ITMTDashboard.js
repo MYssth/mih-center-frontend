@@ -90,6 +90,7 @@ function QuickSearchToolbar() {
 let pId = "";
 let lvId = "";
 let vId = "";
+const headSname = `${localStorage.getItem('sname')} Center`;
 
 export default function ITMTDashboard() {
 
@@ -583,7 +584,7 @@ export default function ITMTDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -848,7 +849,7 @@ export default function ITMTDashboard() {
             >
               {() => <TextField id="deviceId" name="deviceId" label="รหัสทรัพย์สิน" placeholder='xx-xx-xxx-xxx-xxxx' />}
             </InputMask>
-            {statusId === 3 || statusId === 4 || statusId === 5 || statusId === 6 ? (
+            {((dialogStatus === 3 || dialogStatus === 4 || dialogStatus === 6) && dialogStatus === statusId) || statusId === 5 ? (
               <>
                 <TextField
                   id="solution"
@@ -962,7 +963,16 @@ export default function ITMTDashboard() {
           </Stack>
         </DialogContent>
         <DialogActions>
+          {(dialogStatus === 3 || dialogStatus === 4 || dialogStatus === 6) && dialogStatus === statusId ? (
+            <>
+              <Button variant="contained" onClick={() => { handleProcessTask("complete") }}>ปิดงาน</Button>
+            </>
+          ) : (
+            <></>
+          )}
+          <div style={{ flex: '1 0 0' }} />
           <Button onClick={handleCloseProcessTaskDialog}>ยกเลิก</Button>
+
           <Button variant="contained" onClick={() => { handleProcessTask(dialogStatus === 2 ? "request" : "edit") }}>ดำเนินการ</Button>
         </DialogActions>
       </Dialog>

@@ -78,6 +78,7 @@ function QuickSearchToolbar() {
 }
 
 let lvId = "";
+const headSname = `${localStorage.getItem('sname')} Center`;
 
 export default function permitdashboard() {
 
@@ -186,8 +187,8 @@ export default function permitdashboard() {
         token.level_list[i].level_id === "DMIS_ENV" ||
         token.level_list[i].level_id === "DMIS_HIT" ||
         token.level_list[i].level_id === "DMIS_ALL") {
-          lvId = token.level_list[i].level_id;
-          refreshTable();
+        lvId = token.level_list[i].level_id;
+        refreshTable();
         break;
       }
     }
@@ -268,7 +269,7 @@ export default function permitdashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -452,6 +453,10 @@ export default function permitdashboard() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
+          <Box alignItems="flex-start">
+          <Button variant="contained" onClick={() => handlePermitTask("permitEnd")}>ส่งมอบให้ผู้แจ้งดำเนินการ</Button>
+          </Box>
+          <div style={{flex: '1 0 0'}} />
           <Button onClick={handleClosePermitTaskDialog}>ยกเลิก</Button>
           <Button variant="contained" onClick={() => handlePermitTask("permit")}>อนุมัติ</Button>
           <Button variant="contained" color="error" onClick={() => handlePermitTask("reject")}>ไม่อนุมัติ</Button>

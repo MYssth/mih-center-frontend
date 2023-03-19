@@ -23,7 +23,8 @@ import PermitDashboard from './pages/DMIS/PermitDashboard';
 
 // DSMS
 import DSMSDashboardLayout from './pages/DSMS/DSMSDashboardLayout';
-import DSMSDashboard from './pages/DSMS/DSMSDashboard';
+import DSMSDashboard from './pages/DSMS/DSMSDashboard.tsx';
+import DSMSBookShift from './pages/DSMS/DSMSBookShift.tsx';
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dsms/app" />, index: true },
         { path: 'app', element: <DSMSDashboard /> },
+        { path: 'dsmsbookshift', element: <DSMSBookShift /> },
       ],
     },
     {

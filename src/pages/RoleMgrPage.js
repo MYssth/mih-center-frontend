@@ -29,6 +29,8 @@ const ValidationTextField = styled(TextField)({
   },
 });
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function RoleMgrPage() {
 
   const [filterFields, setFilterFields] = useState([]);
@@ -467,7 +469,7 @@ export default function RoleMgrPage() {
   return (
     <>
       <Helmet>
-        <title> จัดการโครงสร้างองค์กร | MIH Center </title>
+        <title> จัดการโครงสร้างองค์กร | {headSname} </title>
       </Helmet>
 
       <Container maxWidth="xl">

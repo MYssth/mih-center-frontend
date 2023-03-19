@@ -12,7 +12,11 @@ import {
 } from '@mui/material';
 // ----------------------------------------------------------------------
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function DashboardAppPage() {
+
+  
 
   const navigate = useNavigate();
   const [showDMIS, setShowDMIS] = useState(false);
@@ -50,14 +54,15 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> หน้าหลัก | MIH Center </title>
+        <title> หน้าหลัก | {headSname} </title>
       </Helmet>
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          ยินดีต้อนรับเข้าสู่ระบบ MIH Center
+          ยินดีต้อนรับเข้าสู่ระบบ {headSname}
         </Typography>
-        <Grid container spacing={1}>
+        <Grid container spacing={{ xs: 2, md: 3, }} columns={{ xs: 4, sm: 8, md: 12 }} >
+        {/* <Grid container spacing={1}> */}
           {showDMIS ? (            
             <>
               <Grid item xs={4}>

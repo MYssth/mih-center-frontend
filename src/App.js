@@ -15,6 +15,16 @@ export default function App() {
 
   useEffect(() => {
 
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/getsitesetting`)
+            .then((response) => response.json())
+            .then((data) => {
+                    localStorage.setItem('logo', data.logo);
+                    localStorage.setItem('sname', data.sname);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
     const token = localStorage.getItem('token');
     if (token !== null) {
       fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_loginPort}/api/authen`, {

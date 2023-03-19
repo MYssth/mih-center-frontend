@@ -75,6 +75,8 @@ const ValidationTextField = styled(TextField)({
   },
 });
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function UserPage() {
   const [open, setOpen] = useState(null);
   const [personnel, setPersonnel] = useState([]);
@@ -581,7 +583,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> จัดการผู้ใช้ | MIH Center </title>
+        <title> จัดการผู้ใช้ | {headSname} </title>
       </Helmet>
 
       <Container>

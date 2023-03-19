@@ -18,11 +18,13 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function Page404() {
   return (
     <>
       <Helmet>
-        <title> 404 Page Not Found | Minimal UI </title>
+        <title> 404 Page Not Found | {headSname} </title>
       </Helmet>
 
       <Container>

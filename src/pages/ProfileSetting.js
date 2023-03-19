@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import Iconify from '../components/iconify';
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function ProfileSetting() {
 
     const [showSecret, setShowSecret] = useState(false);
@@ -150,7 +152,7 @@ export default function ProfileSetting() {
     return (
         <>
             <Helmet>
-                <title> ตั้งค่าบัญชี | MIH Center </title>
+                <title> ตั้งค่าบัญชี | {headSname} </title>
             </Helmet>
 
             <Container>

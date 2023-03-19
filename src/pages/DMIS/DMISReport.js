@@ -72,6 +72,8 @@ function CustomToolbar(){
     </GridToolbarContainer>
 };
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function DMISReport() {
 
     const [fromDate, setFromDate] = useState('');
@@ -283,7 +285,7 @@ export default function DMISReport() {
     return (
         <>
             <Helmet>
-                <title> รายงาน | MIH Center </title>
+                <title> รายงาน | {headSname} </title>
             </Helmet>
 
             <Container maxWidth="xl">

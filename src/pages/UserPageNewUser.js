@@ -15,6 +15,8 @@ const ValidationTextField = styled(TextField)({
     },
 });
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function UserPageNewUser() {
     const navigate = useNavigate();
 
@@ -240,7 +242,7 @@ export default function UserPageNewUser() {
     return (
         <>
             <Helmet>
-                <title> เพิ่มผู้ใช้ใหม่ | MIH Center </title>
+                <title> เพิ่มผู้ใช้ใหม่ | {headSname} </title>
             </Helmet>
 
             <Container>

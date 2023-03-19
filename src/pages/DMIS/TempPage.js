@@ -3,12 +3,14 @@ import { Helmet } from 'react-helmet-async';
 // @mui
 import { Container, Stack, Typography, Card } from '@mui/material';
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function dmisnewcase() {
 
     return (
         <>
             <Helmet>
-                <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
+                <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
             </Helmet>
 
             <Container>

@@ -80,7 +80,8 @@ function QuickSearchToolbar() {
 }
 
 let pId = "";
-  let viewId = "";
+let viewId = "";
+const headSname = `${localStorage.getItem('sname')} Center`;
 
 export default function auditdashboard() {
 
@@ -197,28 +198,28 @@ export default function auditdashboard() {
         token.level_list[i].level_id === "DMIS_ENV" ||
         token.level_list[i].level_id === "DMIS_HIT" ||
         token.level_list[i].level_id === "DMIS_ALL") {
-          viewId = token.level_list[i].view_id;
-          refreshTable();
+        viewId = token.level_list[i].view_id;
+        refreshTable();
         break;
       }
     }
   }, []);
 
-  function refreshTable(){
+  function refreshTable() {
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getaudittasklist/${pId}/${viewId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setAuditTaskList(data);
-            setFilterAuditTaskList(data.filter(dt => dt.status_id !== 6));
-          })
-          .catch((error) => {
-            if (error.name === "AbortError") {
-              console.log("cancelled")
-            }
-            else {
-              console.error('Error:', error);
-            }
-          })
+      .then((response) => response.json())
+      .then((data) => {
+        setAuditTaskList(data);
+        setFilterAuditTaskList(data.filter(dt => dt.status_id !== 6));
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          console.log("cancelled")
+        }
+        else {
+          console.error('Error:', error);
+        }
+      })
   }
 
   useEffect(() => {
@@ -330,7 +331,7 @@ export default function auditdashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
       </Helmet>
 
       <Container maxWidth="xl">

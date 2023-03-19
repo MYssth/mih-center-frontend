@@ -145,6 +145,8 @@ const columns = [
 
 ];
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function UserDashboard() {
 
   const [taskList, setTaskList] = useState([]);
@@ -256,7 +258,7 @@ export default function UserDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
       </Helmet>
 
       <Container maxWidth="xl">

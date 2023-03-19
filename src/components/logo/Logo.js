@@ -1,10 +1,18 @@
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import jwtDecode from "jwt-decode";
 // @mui
 import { Box, Link } from '@mui/material';
 
 // ----------------------------------------------------------------------
+
+// const img = fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/getsitesetting`)
+//   .then((response) => response.json())
+//   .then((data) => data.logo)
+//   .catch((error) => {
+//     console.error('Error:', error);
+//   });
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
 
@@ -13,14 +21,20 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
       ref={ref}
       component="div"
       sx={{
-        width: 130,
+        width: 60,
+        maxWidth: 130,
         height: 40,
         display: 'inline-flex',
         ...sx,
       }}
       {...other}
     >
-      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 333 100" enableBackground="new 0 0 333 100" xmlSpace="preserve" >  <image id="image0" width="100%" height="100%" x="0" y="0"
+
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" height="60" preserveAspectRatio="xMinYMin meet" xmlSpace="preserve" >
+        <image id="image0" width="100%" height="100%" x="0" y="0" href={localStorage.getItem('logo')} />
+      </svg>
+
+      {/* <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 333 100" enableBackground="new 0 0 333 100" xmlSpace="preserve" >  <image id="image0" width="100%" height="100%" x="0" y="0"
     href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAU0AAABkCAMAAAA1+pK8AAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABIFBMVEUAAAD/////////////
 ///////////////////////////////////////////////////x9vG60bqRtpFnm2hZklowdjEi
@@ -103,7 +117,7 @@ fcZRsdQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMTItMDdUMDY6NTE6MDUrMDA6MDCirl22AAAA
 JXRFWHRkYXRlOm1vZGlmeQAyMDIyLTEyLTA3VDA2OjUxOjA1KzAwOjAw0/PlCgAAACh0RVh0ZGF0
 ZTp0aW1lc3RhbXAAMjAyMi0xMi0wN1QwNjo1MTowNSswMDowMITmxNUAAAAZdEVYdFNvZnR3YXJl
 AEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC" />
-</svg>
+</svg> */}
 
     </Box>
   );

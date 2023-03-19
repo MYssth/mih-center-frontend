@@ -24,19 +24,19 @@ try {
           navConfig.push(
             {
               title: 'จองเวร',
-              path: '/dsms/จองเวร',
+              path: '/dsms/dsmsbookshift',
               icon: <Icon icon="zondicons:date-add" width="30" height="30" />,
             },
-            {
-              title: 'เปลี่ยนเวร',
-              path: '/dsms/เปลี่ยนเวร',
-              icon: <Icon icon="material-symbols:edit-calendar-rounded" width="30" height="30" />,
-            },
-            {
-              title: 'แลกเวร',
-              path: '/dsms/แลกเวร',
-              icon: <Icon icon="material-symbols:change-circle-outline-rounded" width="30" height="30" />,
-            },
+            // {
+            //   title: 'เปลี่ยนเวร',
+            //   path: '/dsms/เปลี่ยนเวร',
+            //   icon: <Icon icon="material-symbols:edit-calendar-rounded" width="30" height="30" />,
+            // },
+            // {
+            //   title: 'แลกเวร',
+            //   path: '/dsms/แลกเวร',
+            //   icon: <Icon icon="material-symbols:change-circle-outline-rounded" width="30" height="30" />,
+            // },
           );
           if (token.level_list[i].level_id === "DSMS_ADMIN") {
             navConfig.push(

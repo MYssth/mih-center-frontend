@@ -17,6 +17,8 @@ const ValidationTextField = styled(TextField)({
     },
 });
 
+const headSname = `${localStorage.getItem('sname')} Center`;
+
 export default function dmisnewcase() {
 
     const navigate = useNavigate();
@@ -145,7 +147,7 @@ export default function dmisnewcase() {
     return (
         <>
             <Helmet>
-                <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
+                <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
             </Helmet>
 
             <Container>

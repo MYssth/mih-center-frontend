@@ -423,6 +423,12 @@ export default function auditdashboard() {
                 <Item>{focusTask.task_issue}</Item>
               </Grid>
               <Grid item xs={4}>
+                <Item sx={{ textAlign: 'right' }}>หมวดหมู่งาน:</Item>
+              </Grid>
+              <Grid item xs={8}>
+                <Item>{focusTask.category_name}</Item>
+              </Grid>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>Serial Number:</Item>
               </Grid>
               <Grid item xs={8}>

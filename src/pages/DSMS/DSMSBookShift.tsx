@@ -8,6 +8,8 @@ import {
     TextField,
     DialogActions,
     Button,
+    Grid,
+    Box,
 } from '@mui/material';
 import { Scheduler } from "@aldabil/react-scheduler";
 import type {
@@ -119,20 +121,92 @@ export default function DSMSDashboard() {
 
                 <Card>
                     <Paper sx={{ p:1 }}>
-                        <Scheduler
-                            view="month"
-                            week={null}
-                            day={null}
-                            customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
-                            viewerExtraComponent={(fields, event) => {
-                                return (
-                                    <div>
-                                        <p>Useful to render custom fields...</p>
-                                        <p>Description: {event.description || "Nothing..."}</p>
-                                    </div>
-                                );
-                            }}
-                        />
+                    <Grid container columnSpacing={{ sm: 5, lg: 12 }}>
+                            <Grid item xs={6} sm={9} md={9} lg={10} />
+                            <Grid item xs={6} sm={3} md={3} lg={2}>
+                                <Box sx={{}}>
+                                    <Typography><span style={{
+                                        height: 20,
+                                        width: 20,
+                                        backgroundColor: "#50b500",
+                                        borderRadius: 50,
+                                        display: 'inline-block',
+                                        marginRight: 5,
+                                    }} /> เวร 08.00-16.00</Typography>
+                                    <Typography><span style={{
+                                        height: 20,
+                                        width: 20,
+                                        backgroundColor: "#0073b5",
+                                        borderRadius: 50,
+                                        display: 'inline-block',
+                                        marginRight: 5,
+                                    }} /> เวร 16.00-24.00</Typography>
+                                    <Typography><span style={{
+                                        height: 20,
+                                        width: 20,
+                                        backgroundColor: "#7d23cc",
+                                        borderRadius: 50,
+                                        display: 'inline-block',
+                                        marginRight: 5,
+                                    }} /> เวร 00.00-08.00</Typography>
+                                    <Typography><span style={{
+                                        height: 20,
+                                        width: 20,
+                                        backgroundColor: "#ed6205",
+                                        borderRadius: 50,
+                                        display: 'inline-block',
+                                        marginRight: 5,
+                                    }} /> เวร 17.00-08.00</Typography>
+                                </Box>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Scheduler
+                                    view="month"
+                                    editable={false}
+                                    deletable={false}
+                                    month={{
+                                        weekDays: [0, 1, 2, 3, 4, 5, 6],
+                                        weekStartOn: 1,
+                                        startHour: 1,
+                                        endHour: 23,
+                                        // cellRenderer?: (props: CellProps) => JSX.Element,
+                                        navigation: true,
+                                        disableGoToDay: false
+                                    }}
+                                    week={null}
+                                    day={null}
+                                    // events={events}
+                                    height={800}
+                                    hourFormat={"24"}
+                                    customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
+                                    // locale={th}
+                                    translations={{
+                                        navigation: {
+                                            month: "Month",
+                                            week: "Week",
+                                            day: "Day",
+                                            today: "กลับไปเดือนปัจจุบัน"
+                                        },
+                                        form: {
+                                            addTitle: "Add Event",
+                                            editTitle: "Edit Event",
+                                            confirm: "Confirm",
+                                            delete: "Delete",
+                                            cancel: "Cancel"
+                                        },
+                                        event: {
+                                            title: "Title",
+                                            start: "Start",
+                                            end: "End",
+                                            allDay: "All Day"
+                                        },
+                                        moreEvents: "More...",
+                                        loading: "Loading..."
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Paper>
                 </Card>
 

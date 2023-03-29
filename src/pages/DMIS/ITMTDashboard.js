@@ -535,7 +535,7 @@ export default function ITMTDashboard() {
       return;
     }
 
-    if (jsonData.status_id === 5 && jsonData.task_solution === "") {
+    if (jsonData.status_id_request === 5 && jsonData.task_solution === "" || jsonData.taskCase === "complete" && jsonData.task_solution === "") {
       alert("กรุณาระบุรายละเอียดการแก้ปัญหา ");
       return;
     }
@@ -1019,6 +1019,12 @@ export default function ITMTDashboard() {
               </Grid>
               <Grid item xs={8}>
                 <Item>{focusTask.task_issue}</Item>
+              </Grid>
+              <Grid item xs={4}>
+                <Item sx={{ textAlign: 'right' }}>หมวดหมู่งาน:</Item>
+              </Grid>
+              <Grid item xs={8}>
+                <Item>{focusTask.category_name}</Item>
               </Grid>
               <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>Serial Number:</Item>

@@ -135,7 +135,7 @@ const columns = [
     headerName: 'สถานะ',
     width: 130,
     valueGetter: (params) =>
-    `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
+      `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
   },
   {
     field: 'task_note',
@@ -452,6 +452,12 @@ export default function UserDashboard() {
                 <Item>{focusTask.task_issue}</Item>
               </Grid>
               <Grid item xs={4}>
+                <Item sx={{ textAlign: 'right' }}>หมวดหมู่งาน:</Item>
+              </Grid>
+              <Grid item xs={8}>
+                <Item>{focusTask.category_name}</Item>
+              </Grid>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>Serial Number:</Item>
               </Grid>
               <Grid item xs={8}>
@@ -534,7 +540,7 @@ export default function UserDashboard() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseFocusTaskDialog}>ปิดหน้าต่าง</Button>
-          <Button onClick={() => {reportPDF(focusTask)}}>ปริ้นเอกสาร</Button>
+          <Button onClick={() => { reportPDF(focusTask) }}>ปริ้นเอกสาร</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

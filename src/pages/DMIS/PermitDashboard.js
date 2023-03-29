@@ -357,6 +357,12 @@ export default function permitdashboard() {
                 <Item>{focusTask.task_issue}</Item>
               </Grid>
               <Grid item xs={4}>
+                <Item sx={{ textAlign: 'right' }}>หมวดหมู่งาน:</Item>
+              </Grid>
+              <Grid item xs={8}>
+                <Item>{focusTask.category_name}</Item>
+              </Grid>
+              <Grid item xs={4}>
                 <Item sx={{ textAlign: 'right' }}>Serial Number:</Item>
               </Grid>
               <Grid item xs={8}>
@@ -454,9 +460,9 @@ export default function permitdashboard() {
         </DialogContent>
         <DialogActions>
           <Box alignItems="flex-start">
-          <Button variant="contained" onClick={() => handlePermitTask("permitEnd")}>ส่งมอบให้ผู้แจ้งดำเนินการ</Button>
+            <Button variant="contained" onClick={() => handlePermitTask("permitEnd")}>ส่งมอบให้ผู้แจ้งดำเนินการ</Button>
           </Box>
-          <div style={{flex: '1 0 0'}} />
+          <div style={{ flex: '1 0 0' }} />
           <Button onClick={handleClosePermitTaskDialog}>ยกเลิก</Button>
           <Button variant="contained" onClick={() => handlePermitTask("permit")}>อนุมัติ</Button>
           <Button variant="contained" color="error" onClick={() => handlePermitTask("reject")}>ไม่อนุมัติ</Button>

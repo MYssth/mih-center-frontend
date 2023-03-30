@@ -7,6 +7,7 @@ import ThemeProvider from './theme';
 // components
 import ScrollToTop from './components/scroll-to-top';
 import { StyledChart } from './components/chart';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 // ----------------------------------------------------------------------
 

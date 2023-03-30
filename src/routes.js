@@ -23,8 +23,8 @@ import PermitDashboard from './pages/DMIS/PermitDashboard';
 
 // DSMS
 import DSMSDashboardLayout from './pages/DSMS/DSMSDashboardLayout';
-import DSMSDashboard from './pages/DSMS/DSMSDashboard.tsx';
-import DSMSBookShift from './pages/DSMS/DSMSBookShift.tsx';
+import DSMSDashboard from './pages/DSMS/DSMSDashboard';
+import DSMSBookShift from './pages/DSMS/DSMSBookShift';
 
 // ----------------------------------------------------------------------
 

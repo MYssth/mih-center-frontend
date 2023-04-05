@@ -42,7 +42,7 @@ export default function DSMSDashboard() {
                 // views={[Views.MONTH, Views.AGENDA]}
                 views={{
                     month: true,
-                    agenda:true,
+                    agenda: true,
                     // agenda: {
                     //     date: firstDayOfMonth,
                     //     length: 30,
@@ -54,20 +54,19 @@ export default function DSMSDashboard() {
                 endAccessor="end"
                 style={{ height: 950 }}
                 eventPropGetter={(event, start, end, isSelected) => {
-                        const backgroundColor = event.hexColor;
-                        const style = {
-                            backgroundColor: backgroundColor,
-                            borderRadius: '0px',
-                            opacity: 0.8,
-                            color: 'black',
-                            border: '0px',
-                            visibility: 'visible',
-                        };
-                        return {
-                            style: style
-                        };
-                    }
-                }
+                    const backgroundColor = event.hexColor;
+                    const style = {
+                        backgroundColor: backgroundColor,
+                        borderRadius: '0px',
+                        opacity: 0.8,
+                        color: 'black',
+                        border: '0px',
+                        visibility: 'visible',
+                    };
+                    return {
+                        style: style
+                    };
+                }}
             />
         </div>
     )
@@ -90,11 +89,14 @@ export default function DSMSDashboard() {
 
                 <Card>
                     <Paper sx={{ p: 1 }}>
+                        <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
+                            หน้าหลักระบบจองเวรแพทย์
+                        </Typography>
                         <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ sm: 5, lg: 12 }}>
                             <Grid item xs={6} sm={9} md={9} lg={10} />
                             <Grid item xs={6} sm={3} md={3} lg={2}>
                                 <Box sx={{}}>
-                                <Typography><span style={{
+                                    <Typography><span style={{
                                         height: 20,
                                         width: 20,
                                         backgroundColor: "#ed9d4c",

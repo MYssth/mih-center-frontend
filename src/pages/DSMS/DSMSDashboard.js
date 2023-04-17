@@ -28,13 +28,14 @@ export default function DSMSDashboard() {
             const response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getevent`);
             const data = await response.json();
             setMyEventsList(data);
+
         };
 
         fetchData();
 
     }, []);
 
-    const localizer = momentLocalizer(moment)
+    const localizer = momentLocalizer(moment);
 
     const MyCalendar = (props) => (
         <div>
@@ -92,7 +93,7 @@ export default function DSMSDashboard() {
                         <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
                             หน้าหลักระบบจองเวรแพทย์
                         </Typography>
-                        <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ sm: 5, lg: 12 }}>
+                        <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ sm: 5, lg: 6 }}>
                             <Grid item xs={6} sm={9} md={9} lg={10} />
                             <Grid item xs={6} sm={3} md={3} lg={2}>
                                 <Box sx={{}}>

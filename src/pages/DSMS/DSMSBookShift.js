@@ -33,7 +33,6 @@ export default function DSMSBookShift() {
 
     const [selectedSlot, setSelectedSlot] = useState(null);
 
-
     const [emptyEvent, setEmptyEvent] = useState(false);
     const [disBookBtn, setDisBookBtn] = useState(true);
 
@@ -50,7 +49,7 @@ export default function DSMSBookShift() {
                     setMonth = moment().add(2, 'month');
                 }
 
-                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getbookdata/${jwtDecode(token).personnel_id}/${setMonth.format('M')}`)
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getbookdata/${jwtDecode(token).personnel_id}/${setMonth.format('M')}/${setMonth.format('YYYY')}`)
                     .then((response) => response.json())
                     .then((data) => {
 
@@ -96,7 +95,7 @@ export default function DSMSBookShift() {
 
     }, []);
 
-    const localizer = momentLocalizer(moment)
+    const localizer = momentLocalizer(moment);
 
     const ColoredDateCellWrapper = ({ children, value }) => {
         let cellStyle = "";
@@ -137,14 +136,14 @@ export default function DSMSBookShift() {
             setSelectedSlot(moment(slotInfo.start).toDate());
             const selDate = moment(slotInfo.start).toDate();
             const selDay = `${selDate.getFullYear()}/${selDate.getMonth()}/${selDate.getDate()}`;
-            if(selDate.getMonth() !== parseInt(setMonth.format('M'))-1){
+            if (selDate.getMonth() !== parseInt(setMonth.format('M')) - 1) {
                 alert("ไม่สามารถเลือกวันดังกล่าวได้");
                 return;
             }
             if (myBookData.find(o => `${o.year}/${(parseInt(o.month) - 1)}/${o.day}` === selDay &&
-            (o.shift_id === shiftId || o.shift_id === 1 && shiftId === 4 || o.shift_id === 4 && shiftId === 1) ||
-            `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) + 1}` === selDay && o.shift_id === 1 && shiftId === 2 ||
-            `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) - 1}` === selDay && o.shift_id === 2 && shiftId === 1)) {
+                (o.shift_id === shiftId || o.shift_id === 1 && shiftId === 4 || o.shift_id === 4 && shiftId === 1) ||
+                `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) + 1}` === selDay && o.shift_id === 1 && shiftId === 2 ||
+                `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) - 1}` === selDay && o.shift_id === 2 && shiftId === 1)) {
                 alert("คุณได้จองเวรที่มีเวลาทับซ้อนกันไปแล้ว");
                 return;
             }
@@ -302,6 +301,7 @@ export default function DSMSBookShift() {
                     </Paper>
                 </Card>
             </Container>
+
         </>
     );
 }

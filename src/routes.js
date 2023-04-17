@@ -26,6 +26,7 @@ import DSMSDashboardLayout from './pages/DSMS/DSMSDashboardLayout';
 import DSMSDashboard from './pages/DSMS/DSMSDashboard';
 import DSMSBookShift from './pages/DSMS/DSMSBookShift';
 import DSMSManageBook from './pages/DSMS/DSMSManageBook';
+import DSMSSetting from './pages/DSMS/DSMSSetting';
 
 // ----------------------------------------------------------------------
 
@@ -42,7 +43,7 @@ export default function Router() {
         { path: 'newuser', element: <UserPageNewUser /> },
         { path: 'profilesetting', element: <ProfileSetting /> },
         { path: 'rolemgr', element: <RoleMgrPage /> },
-        { path: 'sitesetting', element: <SiteSetting />}
+        { path: 'sitesetting', element: <SiteSetting /> }
       ],
     },
     {
@@ -69,7 +70,8 @@ export default function Router() {
         { element: <Navigate to="/dsms/app" />, index: true },
         { path: 'app', element: <DSMSDashboard /> },
         { path: 'dsmsbookshift', element: <DSMSBookShift /> },
-        { path: 'dsmsmanagebook', element: <DSMSManageBook />},
+        { path: 'dsmsmanagebook', element: <DSMSManageBook /> },
+        { path: 'dsmssetting', element: <DSMSSetting /> }
       ],
     },
     {

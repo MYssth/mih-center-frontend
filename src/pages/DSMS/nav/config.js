@@ -42,12 +42,12 @@ try {
             navConfig.push(
               {
                 title: `จัดการสถานะการจองเวร`,
-                path: '/dmis/จัดการสถานะการจองเวร',
+                path: '/dsms/dsmssetting',
                 icon: <Icon icon="material-symbols:manage-history-rounded" width="30" height="30" />,
               },
               {
                 title: `แก้ไขเวร`,
-                path: '/dmis/แก้ไขเวร',
+                path: '/dsms/dsmsmanagebook',
                 icon: <Icon icon="material-symbols:edit-square-outline-rounded" width="30" height="30" />,
               },
             );

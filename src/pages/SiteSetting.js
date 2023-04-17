@@ -124,8 +124,8 @@ export default function SiteSetting() {
                         <Typography variant='h5'>ข้อมูลโรงพยาบาล</Typography>
                         <ValidationTextField id="siteFName" name="siteFName" inputProps={{ maxLength: 50 }} value={fname} onChange={(event) => { setFname(event.target.value) }} label="ชื่อเต็มโรงพยาบาล" />
                         <ValidationTextField id="siteSName" name="siteSName" inputProps={{ maxLength: 5 }} value={sname} onChange={(event) => { setSname(event.target.value) }} label="ชื่อย่อโรงพยาบาล" />
+                        <Button variant="contained" onClick={handleEdit}>แก้ไขข้อมูล</Button>
                     </Stack>
-                    <Button variant="contained" onClick={handleEdit}>แก้ไขข้อมูล</Button>
                 </Card>
             </Container>
         </>

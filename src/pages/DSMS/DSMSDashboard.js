@@ -1,5 +1,5 @@
 /* eslint-disable object-shorthand */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import * as React from 'react';
 import {
@@ -37,40 +37,59 @@ export default function DSMSDashboard() {
 
     const localizer = momentLocalizer(moment);
 
-    const MyCalendar = (props) => (
-        <div>
-            <Calendar
-                // views={[Views.MONTH, Views.AGENDA]}
-                views={{
-                    month: true,
-                    agenda: true,
-                    // agenda: {
-                    //     date: firstDayOfMonth,
-                    //     length: 30,
-                    // },
-                }}
-                localizer={localizer}
-                events={myEventsList}
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: 950 }}
-                eventPropGetter={(event, start, end, isSelected) => {
-                    const backgroundColor = event.hexColor;
-                    const style = {
-                        backgroundColor: backgroundColor,
-                        borderRadius: '0px',
-                        opacity: 0.8,
-                        color: 'black',
-                        border: '0px',
-                        visibility: 'visible',
-                    };
-                    return {
-                        style: style
-                    };
-                }}
-            />
-        </div>
-    )
+    const MyCalendar = (props) => {
+
+        const [currentMonth, setCurrentMonth] = useState(moment().locale('th').format('MMMM YYYY'));
+
+        // const today = new Date();
+        // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+        // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+
+        const agendaHeaderFormat = (date, culture, localizer) => `ตารางเวรแพทย์ประจำเดือน ${currentMonth}`;
+
+        const firstDayOfMonth = moment().startOf('month').toDate();
+        const lastDayOfMonth = moment().endOf('month').toDate();
+
+        const handleNavigate = (date, view) => {
+            if (view === 'agenda') {
+                setCurrentMonth(moment(date).format('MMMM YYYY'));
+            }
+        };
+
+        return (
+            <div>
+                <Calendar
+                    views={['month', 'agenda']}
+                    localizer={localizer}
+                    defaultDate={firstDayOfMonth}
+                    events={myEventsList}
+                    onNavigate={handleNavigate}
+                    formats={{
+                        agendaHeaderFormat: agendaHeaderFormat
+                    }}
+                    min={firstDayOfMonth}
+                    max={lastDayOfMonth}
+                    // startAccessor="start"
+                    // endAccessor="end"
+                    style={{ height: 950 }}
+                    eventPropGetter={(event, start, end, isSelected) => {
+                        const backgroundColor = event.hexColor;
+                        const style = {
+                            backgroundColor: backgroundColor,
+                            borderRadius: '0px',
+                            opacity: 0.8,
+                            color: 'black',
+                            border: '0px',
+                            visibility: 'visible',
+                        };
+                        return {
+                            style: style
+                        };
+                    }}
+                />
+            </div>
+        )
+    }
 
     if (myEventsList.length === 0 || myEventsList === null) {
         console.log("fetch not complete");

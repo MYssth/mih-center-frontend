@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import * as React from 'react';
+import jwtDecode from "jwt-decode";
 import {
     Container,
     Typography,
@@ -9,26 +10,47 @@ import {
     Paper,
     Grid,
     Box,
+    Checkbox,
+
 } from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
+import 'moment/locale/th'
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 
+const today = new Date();
+let defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
 export default function DSMSDashboard() {
 
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const [tokenData, setTokenData] = useState([]);
 
-    const [myEventsList, setMyEventsList] = useState([]);
+    const [allEventsList, setAllEventsList] = useState([]);
+    const [filteredEvent, setFilteredEvent] = useState([]);
+    const [operatorEvent, setOperatorEvent] = useState([]);
+    const [isOnlyOper, setIsOnlyOper] = useState(false);
+
 
     useEffect(() => {
 
-        const fetchData = async () => {
-            const response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getevent`);
-            const data = await response.json();
-            setMyEventsList(data);
+        const token = localStorage.getItem('token');
+        setTokenData(jwtDecode(token));
 
+        const fetchData = async () => {
+            let response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getevent`);
+            let data = await response.json();
+            await setAllEventsList(data);
+            await setFilteredEvent(data);
+
+            response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/geteventbypsnid/${jwtDecode(token).personnel_id}`)
+            data = await response.json();
+            if (data.length === 0) {
+                await setOperatorEvent([]);
+            }
+            else {
+                await setOperatorEvent(data);
+            }
         };
 
         fetchData();
@@ -39,33 +61,81 @@ export default function DSMSDashboard() {
 
     const MyCalendar = (props) => {
 
-        const [currentMonth, setCurrentMonth] = useState(moment().locale('th').format('MMMM YYYY'));
-
-        // const today = new Date();
-        // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-        // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+        const [currentMonth, setCurrentMonth] = useState(moment().format('MMMM YYYY'));
 
         const agendaHeaderFormat = (date, culture, localizer) => `ตารางเวรแพทย์ประจำเดือน ${currentMonth}`;
 
+        const eventTimeRangeFormat = ({ start, end }, culture, localizer) => `${localizer.format(start, 'HH:mm', culture)} - ${localizer.format(end, 'HH:mm', culture)}`;
+
+
+        const agendaDateFormat = (date, culture, localizer) => localizer.format(date, 'dddd D MMMM ');
+
+        const eventTimeFormat = (time, culture, localizer) => {
+
+            const date = new Date(time);
+            const isStartTime = allEventsList.some((event) => moment(date).isSame(event.start, 'minute'));
+            const isEndTime = allEventsList.some((event) => moment(date).isSame(event.end, 'minute'));
+            const format = 'HH:mm';
+
+            if (isStartTime && !isEndTime) {
+                return localizer.format(date, format, culture);
+            }
+            return '';
+
+        };
+
+        // const today = new Date();
+        // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth()-1, 1);
+        // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
         const firstDayOfMonth = moment().startOf('month').toDate();
         const lastDayOfMonth = moment().endOf('month').toDate();
+
+        const allDays = [];
+        for (let date = firstDayOfMonth; date <= lastDayOfMonth; date.setDate(date.getDate() + 1)) {
+            allDays.push({
+                title: '',
+                start: new Date(date),
+                end: new Date(date),
+            });
+        }
+        const eventsForAllDays = [...filteredEvent, ...allDays];
 
         const handleNavigate = (date, view) => {
             if (view === 'agenda') {
                 setCurrentMonth(moment(date).format('MMMM YYYY'));
             }
+            if (view === 'month') {
+                defaultDate = date;
+            }
         };
+
+        // const EventAgenda = ({ event }) => {
+        //     if (moment(event.start).isSame(event.end, 'day')) {
+        //       return <span>{event.title}</span>; // Return null to hide the event
+        //     }
+        //     return null; // Render the event normally
+        //   };
 
         return (
             <div>
                 <Calendar
                     views={['month', 'agenda']}
                     localizer={localizer}
-                    defaultDate={firstDayOfMonth}
-                    events={myEventsList}
+                    defaultDate={defaultDate}
+                    // events={allEventsList}
+                    events={eventsForAllDays}
                     onNavigate={handleNavigate}
+                    // components={{
+                    //     agenda: {
+                    //       event: EventAgenda,
+                    //     },
+                    //   }}
                     formats={{
-                        agendaHeaderFormat: agendaHeaderFormat
+                        agendaHeaderFormat: agendaHeaderFormat,
+                        agendaTimeRangeFormat: eventTimeRangeFormat,
+                        agendaTimeFormat: eventTimeFormat,
+                        agendaDateFormat: agendaDateFormat,
                     }}
                     min={firstDayOfMonth}
                     max={lastDayOfMonth}
@@ -82,6 +152,9 @@ export default function DSMSDashboard() {
                             border: '0px',
                             visibility: 'visible',
                         };
+                        // if (!event.title) {
+                        //     style.display = 'none';
+                        // }
                         return {
                             style: style
                         };
@@ -91,9 +164,21 @@ export default function DSMSDashboard() {
         )
     }
 
-    if (myEventsList.length === 0 || myEventsList === null) {
+    if (allEventsList.length === 0 || allEventsList === null) {
         console.log("fetch not complete");
         return <div>Loading...</div>;
+    }
+
+    const handleOnlySelect = (event) => {
+        if (event.target.checked) {
+            setIsOnlyOper(true);
+            setFilteredEvent(operatorEvent);
+        }
+        else {
+            setIsOnlyOper(false);
+            setFilteredEvent(allEventsList);
+        }
+
     }
 
     return (
@@ -116,6 +201,7 @@ export default function DSMSDashboard() {
                             <Grid item xs={6} sm={9} md={9} lg={10} />
                             <Grid item xs={6} sm={3} md={3} lg={2}>
                                 <Box sx={{}}>
+                                    <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเฉพาะตนเอง
                                     <Typography><span style={{
                                         height: 20,
                                         width: 20,

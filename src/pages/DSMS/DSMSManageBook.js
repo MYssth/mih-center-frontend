@@ -1,7 +1,6 @@
 /* eslint-disable radix */
 /* eslint-disable object-shorthand */
 import { useLocation } from 'react-router-dom';
-import jwtDecode from "jwt-decode";
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import * as React from 'react';
@@ -20,6 +19,7 @@ import {
     DialogContent,
     styled,
     DialogActions,
+    Checkbox,
 } from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
@@ -32,8 +32,8 @@ let setMonth = moment();
 
 export default function DSMSManageBook() {
 
-    const [tokenData, setTokenData] = useState([]);
-    const [myEventsList, setMyEventsList] = useState([]);
+    const [allEventsList, setAllEventsList] = useState([]);
+    const [filteredEvent, setFilteredEvent] = useState([]);
 
     const [disShiftOpt, setDisShiftOpt] = useState(true);
     const [disBookBtn, setDisBookBtn] = useState(true);
@@ -41,13 +41,14 @@ export default function DSMSManageBook() {
     const [operator, setOperator] = useState([]);
     const [operatorName, setOperatorName] = useState('');
     const [operatorId, setOperatorId] = useState('');
+    const [operatorEvent, setOperatorEvent] = useState([]);
+    const [isOnlyOper, setIsOnlyOper] = useState(false);
 
     const [shift, setShift] = useState([]);
     const [shiftName, setShiftName] = useState('');
     const [shiftId, setShiftId] = useState('');
 
     const [bookData, setBookData] = useState([]);
-    const [emptyEvent, setEmptyEvent] = useState(false);
 
     const [selectedSlot, setSelectedSlot] = useState(null);
 
@@ -65,13 +66,15 @@ export default function DSMSManageBook() {
 
         setMonth = new URLSearchParams(search).get('setMonth');
 
-        const token = localStorage.getItem('token');
-        setTokenData(jwtDecode(token));
+        if (setMonth === null) {
+            setMonth = moment();
+        }
 
         const fetchData = async () => {
             let response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getevent`);
             let data = await response.json();
-            setMyEventsList(data);
+            await setAllEventsList(data);
+            await setFilteredEvent(data);
 
             response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getoperator`);
             data = await response.json();
@@ -80,6 +83,7 @@ export default function DSMSManageBook() {
             response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getshift`);
             data = await response.json();
             setShift(data);
+
         };
 
         fetchData();
@@ -87,28 +91,34 @@ export default function DSMSManageBook() {
 
     }, []);
 
-    function getBookData(pId) {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getbookdata/${pId}/${moment().format('M')}/${moment().format('YYYY')}`)
-            .then((response) => response.json())
-            .then((data) => {
+    useEffect(() => {
+        if(isOnlyOper){
+            setFilteredEvent(operatorEvent);
+        }
+        else{
+            setFilteredEvent(allEventsList);
+        }
+    }, [operatorEvent])
 
-                if (data.length === 0) {
-                    setEmptyEvent(true);
-                    setBookData([]);
-                }
-                else {
-                    setBookData(data);
-                }
+    async function getBookData(pId) {
+        let response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getbookdata/${pId}/${moment().format('M')}/${moment().format('YYYY')}`);
+        let data = await response.json();
+        if (data.length === 0) {
+            await setBookData([]);
+        }
+        else {
+            await setBookData(data);
+        }
 
-            })
-            .catch((error) => {
-                if (error.name === "AbortError") {
-                    console.log("cancelled")
-                }
-                else {
-                    console.error('Error:', error);
-                }
-            })
+        response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/geteventbypsnid/${pId}`)
+        data = await response.json();
+        if (data.length === 0) {
+            await setOperatorEvent([]);
+        }
+        else {
+            await setOperatorEvent(data);
+        }
+
     }
 
     const localizer = momentLocalizer(moment);
@@ -187,7 +197,7 @@ export default function DSMSManageBook() {
                 selectable
                 defaultDate={setMonth}
                 longPressThreshold={50}
-                events={myEventsList}
+                events={filteredEvent}
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleEventSelection}
                 onNavigate={handleNavigate}
@@ -235,7 +245,6 @@ export default function DSMSManageBook() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === 'ok') {
-                    // window.location.reload(false);
                     window.location.href = `/dsms/dsmsmanagebook?setMonth=${setMonth}`;
                 }
                 else {
@@ -248,13 +257,12 @@ export default function DSMSManageBook() {
             });
     }
 
-    if (myEventsList.length === 0 || myEventsList === null) {
+    if (allEventsList.length === 0 || allEventsList === null) {
         console.log("fetch not complete");
         return <div>Loading...</div>;
     }
 
     const handleEventSelection = async (e) => {
-        // console.log(e.shift_id, "Event data");
         let response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getpsneventlist/${e.id}`);
         psnRender = await response.json();
 
@@ -285,8 +293,19 @@ export default function DSMSManageBook() {
             method: 'DELETE'
         });
         setFocusEventDialogOpen(false);
-        // window.location.reload(false);
         window.location.href = `/dsms/dsmsmanagebook?setMonth=${setMonth}`;
+    }
+
+    const handleOnlySelect = (event) => {
+        if (event.target.checked) {
+            setIsOnlyOper(true);
+            setFilteredEvent(operatorEvent);
+        }
+        else {
+            setIsOnlyOper(false);
+            setFilteredEvent(allEventsList);
+        }
+
     }
 
     return (
@@ -322,9 +341,11 @@ export default function DSMSManageBook() {
                                             getBookData(operator.find(o => `${o.personnel_firstname} ${o.personnel_lastname}` === newValue).personnel_id);
                                         }
                                         else {
+                                            setOperatorEvent([]);
                                             setOperatorId("");
                                             setDisShiftOpt(true);
                                         }
+
                                     }}
                                     id="controllable-states-psn-id"
                                     options={Object.values(operator).map((option) => `${option.personnel_firstname} ${option.personnel_lastname}`)}
@@ -358,6 +379,7 @@ export default function DSMSManageBook() {
                             </Grid>
                             <Grid item xs={6} sm={3} md={3} lg={2}>
                                 <Box sx={{}}>
+                                    <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเฉพาะแพทย์ที่เลือก
                                     <Typography><span style={{
                                         height: 20,
                                         width: 20,

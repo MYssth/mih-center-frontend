@@ -324,8 +324,8 @@ export default function DSMSManageBook() {
                         <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
                             แก้ไขเวร
                         </Typography>
-                        <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 1, sm: 5, lg: 1 }}>
-                            <Grid item xs={12} sm={9} md={9} lg={10}>
+                        <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 1, sm: 1, lg: 1 }}>
+                            <Grid item xs={12} sm={9} md={9} lg={9}>
                                 <Autocomplete
                                     value={operatorName}
                                     onChange={(event, newValue) => {
@@ -377,7 +377,7 @@ export default function DSMSManageBook() {
                                     sx={{ p: 2 }}
                                 />
                             </Grid>
-                            <Grid item xs={6} sm={3} md={3} lg={2}>
+                            <Grid item xs={12} sm={3} md={3} lg={3}>
                                 <Box sx={{}}>
                                     <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเฉพาะแพทย์ที่เลือก
                                     <Typography><span style={{

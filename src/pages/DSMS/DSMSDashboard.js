@@ -65,21 +65,28 @@ export default function DSMSDashboard() {
 
         const agendaHeaderFormat = (date, culture, localizer) => `ตารางเวรแพทย์ประจำเดือน ${currentMonth}`;
 
-        const eventTimeRangeFormat = ({ start, end }, culture, localizer) => `${localizer.format(start, 'HH:mm', culture)} - ${localizer.format(end, 'HH:mm', culture)}`;
+        const eventTimeRangeFormat = ({ start, end }, culture, localizer) => {
+            console.log(`start = ${localizer.format(start, 'HH', culture) === "17"}`);
+            console.log(`end = ${end}`);
+            const endTime = localizer.format(start, 'HH', culture) === "17" && localizer.format(end, 'HH', culture) === "23" ? "08:00" :
+             localizer.format(start, 'HH', culture) === "16" && localizer.format(end, 'HH', culture) === "23" ? "00:00" : localizer.format(end, 'HH:mm', culture);
+
+           return `${localizer.format(start, 'HH:mm', culture)} - ${endTime}`;
+        }
 
 
         const agendaDateFormat = (date, culture, localizer) => localizer.format(date, 'dddd D MMMM ');
 
         const eventTimeFormat = (time, culture, localizer) => {
 
-            const date = new Date(time);
-            const isStartTime = allEventsList.some((event) => moment(date).isSame(event.start, 'minute'));
-            const isEndTime = allEventsList.some((event) => moment(date).isSame(event.end, 'minute'));
-            const format = 'HH:mm';
+            // const date = new Date(time);
+            // const isStartTime = allEventsList.some((event) => moment(date).isSame(event.start, 'minute'));
+            // const isEndTime = allEventsList.some((event) => moment(date).isSame(event.end, 'minute'));
+            // const format = 'HH:mm';
 
-            if (isStartTime && !isEndTime) {
-                return localizer.format(date, format, culture);
-            }
+            // if (isStartTime && !isEndTime) {
+            //     return localizer.format(date, format, culture);
+            // }
             return '';
 
         };
@@ -92,6 +99,7 @@ export default function DSMSDashboard() {
         const lastDayOfMonth = moment().endOf('month').toDate();
 
         const allDays = [];
+        // ใส่ loop เช็คข้ามวันที่มี event อยู่แล้ว
         for (let date = firstDayOfMonth; date <= lastDayOfMonth; date.setDate(date.getDate() + 1)) {
             allDays.push({
                 title: '',
@@ -198,8 +206,8 @@ export default function DSMSDashboard() {
                             หน้าหลักระบบจองเวรแพทย์
                         </Typography>
                         <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ sm: 5, lg: 6 }}>
-                            <Grid item xs={6} sm={9} md={9} lg={10} />
-                            <Grid item xs={6} sm={3} md={3} lg={2}>
+                            <Grid item xs={0} sm={8} md={9} lg={9} />
+                            <Grid item xs={12} sm={4} md={3} lg={3}>
                                 <Box sx={{}}>
                                     <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเฉพาะตนเอง
                                     <Typography><span style={{

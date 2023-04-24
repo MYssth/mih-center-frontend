@@ -36,6 +36,8 @@ export default function DSMSBookShift() {
     const [emptyEvent, setEmptyEvent] = useState(false);
     const [disBookBtn, setDisBookBtn] = useState(true);
 
+    const isSkip = (value) => value !== '';
+
     useEffect(() => {
 
         const token = localStorage.getItem('token');
@@ -270,7 +272,7 @@ export default function DSMSBookShift() {
                                         }
                                     }}
                                     id="controllable-states-shift-id"
-                                    options={Object.values(shift).map((option) => option.name)}
+                                    options={Object.values(shift).map((option) => option.is_active ? option.name : "").filter(isSkip)}
                                     fullWidth
                                     required
                                     renderInput={(params) => <TextField {...params} label="กรุณาเลือกเวร" />}

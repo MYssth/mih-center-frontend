@@ -62,6 +62,8 @@ export default function DSMSManageBook() {
 
     const { search } = useLocation();
 
+    const isSkip = (value) => value !== '';
+
     useEffect(() => {
 
         setMonth = new URLSearchParams(search).get('setMonth');
@@ -92,10 +94,10 @@ export default function DSMSManageBook() {
     }, []);
 
     useEffect(() => {
-        if(isOnlyOper){
+        if (isOnlyOper) {
             setFilteredEvent(operatorEvent);
         }
-        else{
+        else {
             setFilteredEvent(allEventsList);
         }
     }, [operatorEvent])
@@ -370,7 +372,7 @@ export default function DSMSManageBook() {
                                         }
                                     }}
                                     id="controllable-states-shift-id"
-                                    options={Object.values(shift).map((option) => option.name)}
+                                    options={Object.values(shift).map((option) => option.is_active ? option.name : "").filter(isSkip)}
                                     fullWidth
                                     required
                                     renderInput={(params) => <TextField {...params} label="กรุณาเลือกเวร" />}

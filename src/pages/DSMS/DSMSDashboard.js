@@ -1,3 +1,4 @@
+/* eslint-disable react/no-this-in-sfc */
 /* eslint-disable object-shorthand */
 import { useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -16,11 +17,12 @@ import {
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 import 'moment/locale/th'
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 
 const today = new Date();
-let defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
+const defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
 
 export default function DSMSDashboard() {
 
@@ -61,69 +63,59 @@ export default function DSMSDashboard() {
 
     const MyCalendar = (props) => {
 
-        const [currentMonth, setCurrentMonth] = useState(moment().format('MMMM YYYY'));
+        let currentMonth = moment().format('MMMM YYYY');
 
         const agendaHeaderFormat = (date, culture, localizer) => `ตารางเวรแพทย์ประจำเดือน ${currentMonth}`;
 
         const eventTimeRangeFormat = ({ start, end }, culture, localizer) => {
-            console.log(`start = ${localizer.format(start, 'HH', culture) === "17"}`);
-            console.log(`end = ${end}`);
             const endTime = localizer.format(start, 'HH', culture) === "17" && localizer.format(end, 'HH', culture) === "23" ? "08:00" :
-             localizer.format(start, 'HH', culture) === "16" && localizer.format(end, 'HH', culture) === "23" ? "00:00" : localizer.format(end, 'HH:mm', culture);
+                localizer.format(start, 'HH', culture) === "16" && localizer.format(end, 'HH', culture) === "23" ? "00:00" : localizer.format(end, 'HH:mm', culture);
 
-           return `${localizer.format(start, 'HH:mm', culture)} - ${endTime}`;
+            return `${localizer.format(start, 'HH:mm', culture)} - ${endTime}`;
         }
 
 
         const agendaDateFormat = (date, culture, localizer) => localizer.format(date, 'dddd D MMMM ');
 
-        const eventTimeFormat = (time, culture, localizer) => {
-
-            // const date = new Date(time);
-            // const isStartTime = allEventsList.some((event) => moment(date).isSame(event.start, 'minute'));
-            // const isEndTime = allEventsList.some((event) => moment(date).isSame(event.end, 'minute'));
-            // const format = 'HH:mm';
-
-            // if (isStartTime && !isEndTime) {
-            //     return localizer.format(date, format, culture);
-            // }
-            return '';
-
-        };
-
-        // const today = new Date();
-        // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth()-1, 1);
-        // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        const eventTimeFormat = (time, culture, localizer) => '';
 
         const firstDayOfMonth = moment().startOf('month').toDate();
         const lastDayOfMonth = moment().endOf('month').toDate();
 
         const allDays = [];
-        // ใส่ loop เช็คข้ามวันที่มี event อยู่แล้ว
-        for (let date = firstDayOfMonth; date <= lastDayOfMonth; date.setDate(date.getDate() + 1)) {
-            allDays.push({
-                title: '',
-                start: new Date(date),
-                end: new Date(date),
-            });
+
+        for (let i = -3; i <= 3; i += 1) {
+            const firstDay = moment(firstDayOfMonth).subtract(i, 'months').startOf('month').toDate();
+            const lastDay = moment(lastDayOfMonth).subtract(i, 'months').endOf('month').toDate();
+            for (let date = firstDay; date <= lastDay; date.setDate(date.getDate() + 1)) {
+                if (filteredEvent.find(o => new Date(o.start).getDate() === new Date(date).getDate() &&
+                    new Date(o.start).getMonth() === new Date(date).getMonth() &&
+                    new Date(o.start).getFullYear() === new Date(date).getFullYear()) === undefined) {
+                    allDays.push({
+                        title: '',
+                        start: new Date(date),
+                        end: new Date(date),
+                    });
+                }
+            }
+
         }
         const eventsForAllDays = [...filteredEvent, ...allDays];
 
-        const handleNavigate = (date, view) => {
-            if (view === 'agenda') {
-                setCurrentMonth(moment(date).format('MMMM YYYY'));
-            }
-            if (view === 'month') {
-                defaultDate = date;
-            }
-        };
+        const handleNavigate = async (date, view) => {
 
-        // const EventAgenda = ({ event }) => {
-        //     if (moment(event.start).isSame(event.end, 'day')) {
-        //       return <span>{event.title}</span>; // Return null to hide the event
-        //     }
-        //     return null; // Render the event normally
-        //   };
+            console.log(`sssssss ${moment(new Date(date.getFullYear(), date.getMonth(), 1))}`);
+
+            // if (view === 'agenda') {
+            // currentMonth = await moment(date).format('MMMM YYYY');
+            currentMonth = await moment(new Date(date.getFullYear(), date.getMonth(), 1)).format('MMMM YYYY');
+
+            console.log(`currenMonth = ${currentMonth}`);
+            // }
+            // if (view === 'month') {
+            // defaultDate = await new Date(date.getFullYear(), date.getMonth(), 1);
+            // }
+        };
 
         return (
             <div>
@@ -131,24 +123,16 @@ export default function DSMSDashboard() {
                     views={['month', 'agenda']}
                     localizer={localizer}
                     defaultDate={defaultDate}
-                    // events={allEventsList}
                     events={eventsForAllDays}
                     onNavigate={handleNavigate}
-                    // components={{
-                    //     agenda: {
-                    //       event: EventAgenda,
-                    //     },
-                    //   }}
                     formats={{
                         agendaHeaderFormat: agendaHeaderFormat,
                         agendaTimeRangeFormat: eventTimeRangeFormat,
                         agendaTimeFormat: eventTimeFormat,
                         agendaDateFormat: agendaDateFormat,
                     }}
-                    min={firstDayOfMonth}
-                    max={lastDayOfMonth}
-                    // startAccessor="start"
-                    // endAccessor="end"
+                    startAccessor="start"
+                    endAccessor="end"
                     style={{ height: 950 }}
                     eventPropGetter={(event, start, end, isSelected) => {
                         const backgroundColor = event.hexColor;
@@ -160,9 +144,6 @@ export default function DSMSDashboard() {
                             border: '0px',
                             visibility: 'visible',
                         };
-                        // if (!event.title) {
-                        //     style.display = 'none';
-                        // }
                         return {
                             style: style
                         };

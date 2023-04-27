@@ -22,7 +22,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 const headSname = `${localStorage.getItem('sname')} Center`;
 
 const today = new Date();
-const defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
+let defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
+let firstTime = false;
 
 export default function DSMSDashboard() {
 
@@ -33,7 +34,6 @@ export default function DSMSDashboard() {
     const [operatorEvent, setOperatorEvent] = useState([]);
     const [isOnlyOper, setIsOnlyOper] = useState(false);
 
-
     useEffect(() => {
 
         const token = localStorage.getItem('token');
@@ -43,7 +43,10 @@ export default function DSMSDashboard() {
             let response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getevent`);
             let data = await response.json();
             await setAllEventsList(data);
-            await setFilteredEvent(data);
+
+            if(data.length === 0 || data === null){
+                firstTime = true;
+            }
 
             response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/geteventbypsnid/${jwtDecode(token).personnel_id}`)
             data = await response.json();
@@ -53,6 +56,8 @@ export default function DSMSDashboard() {
             else {
                 await setOperatorEvent(data);
             }
+            await setFilteredEvent(data);
+            // console.log(data);
         };
 
         fetchData();
@@ -68,6 +73,9 @@ export default function DSMSDashboard() {
         const agendaHeaderFormat = (date, culture, localizer) => `ตารางเวรแพทย์ประจำเดือน ${currentMonth}`;
 
         const eventTimeRangeFormat = ({ start, end }, culture, localizer) => {
+            console.log(`start = ${start}`);
+            console.log(`end = ${end}`);
+
             const endTime = localizer.format(start, 'HH', culture) === "17" && localizer.format(end, 'HH', culture) === "23" ? "08:00" :
                 localizer.format(start, 'HH', culture) === "16" && localizer.format(end, 'HH', culture) === "23" ? "00:00" : localizer.format(end, 'HH:mm', culture);
 
@@ -75,7 +83,7 @@ export default function DSMSDashboard() {
         }
 
 
-        const agendaDateFormat = (date, culture, localizer) => localizer.format(date, 'dddd D MMMM ');
+        const agendaDateFormat = (date, culture, localizer) => localizer.format(date, 'dd D MMM ');
 
         const eventTimeFormat = (time, culture, localizer) => '';
 
@@ -104,16 +112,16 @@ export default function DSMSDashboard() {
 
         const handleNavigate = async (date, view) => {
 
-            console.log(`sssssss ${moment(new Date(date.getFullYear(), date.getMonth(), 1))}`);
+            // console.log(`sssssss ${moment(new Date(date.getFullYear(), date.getMonth(), 1))}`);
 
             // if (view === 'agenda') {
             // currentMonth = await moment(date).format('MMMM YYYY');
             currentMonth = await moment(new Date(date.getFullYear(), date.getMonth(), 1)).format('MMMM YYYY');
 
-            console.log(`currenMonth = ${currentMonth}`);
+            // console.log(`currenMonth = ${currentMonth}`);
             // }
             // if (view === 'month') {
-            // defaultDate = await new Date(date.getFullYear(), date.getMonth(), 1);
+            defaultDate = await new Date(date.getFullYear(), date.getMonth(), 1);
             // }
         };
 
@@ -153,19 +161,19 @@ export default function DSMSDashboard() {
         )
     }
 
-    if (allEventsList.length === 0 || allEventsList === null) {
+    if ((allEventsList.length === 0 || allEventsList === null) && !firstTime) {
         console.log("fetch not complete");
         return <div>Loading...</div>;
     }
 
     const handleOnlySelect = (event) => {
         if (event.target.checked) {
-            setIsOnlyOper(true);
-            setFilteredEvent(operatorEvent);
-        }
-        else {
             setIsOnlyOper(false);
             setFilteredEvent(allEventsList);
+        }
+        else {
+            setIsOnlyOper(true);
+            setFilteredEvent(operatorEvent);
         }
 
     }
@@ -190,7 +198,7 @@ export default function DSMSDashboard() {
                             <Grid item xs={0} sm={8} md={9} lg={9} />
                             <Grid item xs={12} sm={4} md={3} lg={3}>
                                 <Box sx={{}}>
-                                    <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเฉพาะตนเอง
+                                    <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเวรแพทย์ทั้งหมด
                                     <Typography><span style={{
                                         height: 20,
                                         width: 20,
@@ -199,7 +207,7 @@ export default function DSMSDashboard() {
                                         display: 'inline-block',
                                         marginRight: 5,
                                     }} /> เวร 17.00-08.00</Typography>
-                                    <Typography><span style={{
+                                    {/* <Typography><span style={{
                                         height: 20,
                                         width: 20,
                                         backgroundColor: "#aa4ced",
@@ -222,7 +230,7 @@ export default function DSMSDashboard() {
                                         borderRadius: 50,
                                         display: 'inline-block',
                                         marginRight: 5,
-                                    }} /> เวร 16.00-24.00</Typography>
+                                    }} /> เวร 16.00-24.00</Typography> */}
                                 </Box>
                             </Grid>
                             <Grid item xs={12}>

@@ -146,6 +146,9 @@ export default function auditdashboard() {
       field: 'status_name',
       headerName: 'สถานะ',
       width: 125,
+      valueGetter: (params) =>
+        `${params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name :
+          params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
     },
     {
       field: 'informer_firstname',
@@ -171,8 +174,6 @@ export default function auditdashboard() {
   const [pageSize, setPageSize] = useState(10);
 
   const [auditTaskList, setAuditTaskList] = useState([]);
-  const [filterAuditTaskList, setFilterAuditTaskList] = useState([]);
-  const [showReplacement, setShowReplacement] = useState(false);
 
   const [focusTask, setFocusTask] = useState('');
   const [focusTaskDialogOpen, setFocusTaskDialogOpen] = useState(false);
@@ -210,7 +211,6 @@ export default function auditdashboard() {
       .then((response) => response.json())
       .then((data) => {
         setAuditTaskList(data);
-        setFilterAuditTaskList(data.filter(dt => dt.status_id !== 6));
       })
       .catch((error) => {
         if (error.name === "AbortError") {
@@ -221,15 +221,6 @@ export default function auditdashboard() {
         }
       })
   }
-
-  useEffect(() => {
-    if (showReplacement) {
-      setFilterAuditTaskList(auditTaskList.filter(dt => dt.status_id === 6));
-    }
-    else {
-      setFilterAuditTaskList(auditTaskList.filter(dt => dt.status_id !== 6));
-    }
-  }, [showReplacement])
 
   const handleOpenFocusTaskDialog = (task) => {
     setFocusTask(task);
@@ -324,10 +315,6 @@ export default function auditdashboard() {
       });
   }
 
-  const handleShowReplacement = () => {
-    setShowReplacement(!showReplacement);
-  }
-
   return (
     <>
       <Helmet>
@@ -342,11 +329,8 @@ export default function auditdashboard() {
         <Card>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
             <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
-              รายการงานรอตรวจรับ - งานที่{showReplacement ? "ซื้อใหม่ทดแทน" : "ดำเนินการเสร็จสิ้น"}
+              รายการงานรอตรวจรับ
             </Typography>
-            <Button sx={{ mt: 1, mr: 1 }} variant="contained" onClick={handleShowReplacement}>
-              แสดงงาน{showReplacement ? "ที่ดำเนินการเสร็จสิ้น" : "ซื้อใหม่ทดแทน"}
-            </Button>
           </Stack>
           <div style={{ display: 'flex', height: '100%' }}>
             <div style={{ flexGrow: 1 }}>
@@ -359,7 +343,7 @@ export default function auditdashboard() {
                   },
                 }}
                 columns={columns}
-                rows={filterAuditTaskList}
+                rows={auditTaskList}
                 pageSize={pageSize}
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                 rowsPerPageOptions={[10, 25, 100]}

@@ -29,6 +29,7 @@ const headSname = `${localStorage.getItem('sname')} Center`;
 let selectedDate = [];
 let psnRender = [];
 let setMonth = moment();
+let firstTime = false;
 
 export default function DSMSManageBook() {
 
@@ -42,7 +43,7 @@ export default function DSMSManageBook() {
     const [operatorName, setOperatorName] = useState('');
     const [operatorId, setOperatorId] = useState('');
     const [operatorEvent, setOperatorEvent] = useState([]);
-    const [isOnlyOper, setIsOnlyOper] = useState(false);
+    const [isOnlyOper, setIsOnlyOper] = useState(true);
 
     const [shift, setShift] = useState([]);
     const [shiftName, setShiftName] = useState('');
@@ -76,15 +77,18 @@ export default function DSMSManageBook() {
             let response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getevent`);
             let data = await response.json();
             await setAllEventsList(data);
-            await setFilteredEvent(data);
+
+            if (data.length === 0 || data === null) {
+                firstTime = true;
+            }
 
             response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getoperator`);
             data = await response.json();
-            setOperator(data);
+            await setOperator(data);
 
             response = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/getshift`);
             data = await response.json();
-            setShift(data);
+            await setShift(data);
 
         };
 
@@ -259,7 +263,7 @@ export default function DSMSManageBook() {
             });
     }
 
-    if (allEventsList.length === 0 || allEventsList === null) {
+    if ((allEventsList.length === 0 || allEventsList === null) && !firstTime) {
         console.log("fetch not complete");
         return <div>Loading...</div>;
     }
@@ -300,12 +304,12 @@ export default function DSMSManageBook() {
 
     const handleOnlySelect = (event) => {
         if (event.target.checked) {
-            setIsOnlyOper(true);
-            setFilteredEvent(operatorEvent);
-        }
-        else {
             setIsOnlyOper(false);
             setFilteredEvent(allEventsList);
+        }
+        else {
+            setIsOnlyOper(true);
+            setFilteredEvent(operatorEvent);
         }
 
     }
@@ -381,7 +385,7 @@ export default function DSMSManageBook() {
                             </Grid>
                             <Grid item xs={12} sm={3} md={3} lg={3}>
                                 <Box sx={{}}>
-                                    <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเฉพาะแพทย์ที่เลือก
+                                    <Checkbox onChange={handleOnlySelect} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />แสดงเวรแพทย์ทั้งหมด
                                     <Typography><span style={{
                                         height: 20,
                                         width: 20,
@@ -390,7 +394,7 @@ export default function DSMSManageBook() {
                                         display: 'inline-block',
                                         marginRight: 5,
                                     }} /> เวร 17.00-08.00</Typography>
-                                    <Typography><span style={{
+                                    {/* <Typography><span style={{
                                         height: 20,
                                         width: 20,
                                         backgroundColor: "#aa4ced",
@@ -413,7 +417,7 @@ export default function DSMSManageBook() {
                                         borderRadius: 50,
                                         display: 'inline-block',
                                         marginRight: 5,
-                                    }} /> เวร 16.00-24.00</Typography>
+                                    }} /> เวร 16.00-24.00</Typography> */}
                                 </Box>
                             </Grid>
                             <Grid item xs={12}>

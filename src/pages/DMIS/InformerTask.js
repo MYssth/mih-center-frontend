@@ -19,6 +19,10 @@ import {
   DialogActions,
   DialogContentText,
   Grid,
+  Stack,
+  TextField,
+  CardActionArea,
+  CardMedia,
 } from '@mui/material';
 
 import reportPDF from './components/report-pdf'
@@ -77,25 +81,26 @@ function QuickSearchToolbar() {
   );
 }
 
-let lvId = "";
+let pId = "";
+let viewId = "";
 const headSname = `${localStorage.getItem('sname')} Center`;
 
-export default function permitdashboard() {
+export default function InformerTask() {
 
   const columns = [
     {
       field: 'action',
       disableExport: true,
       headerName: '',
-      width: 120,
+      width: 110,
       sortable: false,
       renderCell: (params) => {
         const onClick = () => {
-          handleOpenPermitTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id_request);
+          handleOpenInformerTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id, params.row.audit_comment);
           // return alert(`you choose level = ${params.row.level_id}`);
         };
 
-        return <Button variant="contained" onClick={onClick}>ดำเนินการ</Button>;
+        return <Button variant="contained" onClick={onClick}>ตรวจรับ</Button>;
       },
     },
     {
@@ -130,13 +135,18 @@ export default function permitdashboard() {
       width: 150,
     },
     {
+      field: 'audit_comment',
+      headerName: 'การตรวจรับ',
+      width: 150,
+    },
+    {
       field: 'issue_department_name',
       headerName: 'แผนก',
       width: 130,
     },
     {
-      field: 'status_name_request',
-      headerName: 'สถานะที่ขออนุมัติ',
+      field: 'status_name',
+      headerName: 'สถานะ',
       width: 125,
     },
     {
@@ -156,29 +166,35 @@ export default function permitdashboard() {
       headerName: 'ผู้รับผิดชอบ',
       width: 100,
     },
-
   ];
 
   // =========================================================
 
   const [pageSize, setPageSize] = useState(10);
 
-  const [permitTaskList, setPermitTaskList] = useState([]);
+  const [informerTaskList, setInformerTaskList] = useState([]);
+  const [filterInformerTaskList, setFilterInformerTaskList] = useState([]);
 
   const [focusTask, setFocusTask] = useState('');
   const [focusTaskDialogOpen, setFocusTaskDialogOpen] = useState(false);
 
   const [taskId, setTaskId] = useState('');
   const [levelId, setLevelId] = useState('');
-  const [permitId, setPermitId] = useState('');
-  const [statusIdRequest, setStatusIdRequest] = useState('');
+  const [auditId, setAuditId] = useState('');
+  const [statusId, setStatusId] = useState('');
+  const [auditComment, setAuditComment] = useState('');
 
-  const [permitTaskDialogOpen, setPermitTaskDialogOpen] = useState(false);
+  const [informerTaskDialogOpen, setInformerTaskDialogOpen] = useState(false);
+
+  const [filterStatusId, setFilterStatusId] = useState('all');
+  const [taskCount, setTaskCount] = useState([]);
 
   useEffect(() => {
 
     const token = jwtDecode(localStorage.getItem('token'));
-    setPermitId(token.personnel_id);
+    pId = token.personnel_id;
+
+    setAuditId(token.personnel_id);
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].level_id === "DMIS_USER" ||
         token.level_list[i].level_id === "DMIS_IT" ||
@@ -187,18 +203,40 @@ export default function permitdashboard() {
         token.level_list[i].level_id === "DMIS_ENV" ||
         token.level_list[i].level_id === "DMIS_HIT" ||
         token.level_list[i].level_id === "DMIS_ALL") {
-        lvId = token.level_list[i].level_id;
+        viewId = token.level_list[i].view_id;
         refreshTable();
         break;
       }
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+
+    setFilterInformerTaskList(filterStatusId === 'all' ? informerTaskList : informerTaskList.filter(dt => dt.status_id === filterStatusId));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterStatusId])
 
   function refreshTable() {
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getpermittasklist/${lvId}`)
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getinformertasklist/${pId}/${viewId}`)
       .then((response) => response.json())
       .then((data) => {
-        setPermitTaskList(data);
+        setInformerTaskList(data);
+        setFilterInformerTaskList(data);
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          console.log("cancelled")
+        }
+        else {
+          console.error('Error:', error);
+        }
+      })
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/countinfortask/${pId}/${viewId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setTaskCount(data);
       })
       .catch((error) => {
         if (error.name === "AbortError") {
@@ -220,27 +258,29 @@ export default function permitdashboard() {
     setFocusTaskDialogOpen(false);
   }
 
-  const handleOpenPermitTaskDialog = (taskId, levelId, statusIdRequest) => {
+  const handleOpenInformerTaskDialog = (taskId, levelId, statusId, auditComment) => {
     setTaskId(taskId);
     setLevelId(levelId);
-    setStatusIdRequest(statusIdRequest);
-    setPermitTaskDialogOpen(true);
+    setStatusId(statusId);
+    setAuditComment(auditComment);
+    setInformerTaskDialogOpen(true);
   }
 
-  const handleClosePermitTaskDialog = () => {
+  const handleCloseInformerTaskDialog = () => {
     setTaskId('');
     setLevelId('');
-    setPermitTaskDialogOpen(false);
+    setStatusId('');
+    setAuditComment('');
+    setInformerTaskDialogOpen(false);
   }
 
-  const handlePermitTask = (permitCase) => {
+  const handleInformerTaskComment = () => {
 
     const jsonData = {
       task_id: taskId,
       level_id: levelId,
-      permit_id: permitId,
-      status_id_request: statusIdRequest,
-      taskCase: permitCase,
+      audit_comment: auditComment,
+      taskCase: "comment",
     };
 
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
@@ -253,16 +293,51 @@ export default function permitdashboard() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 'ok') {
-          handleClosePermitTaskDialog();
+          handleCloseInformerTaskDialog();
           refreshTable();
         }
         else {
-          alert('ไม่สามารถยืนยันการตรวจสอบงานได้');
+          alert('ไม่สามารถบันทึกหมายเหตุการตรวจรับงานได้');
         }
       })
       .catch((error) => {
         console.error('Error:', error);
-        alert('เกิดข้อผิดพลาดในการยืนยันตรวจสอบงาน');
+        alert('เกิดข้อผิดพลาดในการบันทึกหมายเหตุการตรวจรับงาน');
+      });
+
+  }
+
+  const handleInformerTask = () => {
+
+    const jsonData = {
+      task_id: taskId,
+      level_id: levelId,
+      audit_id: auditId,
+      status_id: statusId,
+      audit_comment: auditComment,
+      taskCase: "audit",
+    };
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData)
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 'ok') {
+          handleCloseInformerTaskDialog();
+          refreshTable();
+        }
+        else {
+          alert('ไม่สามารถตรวจรับงานได้');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการตรวจรับงาน');
       });
   }
 
@@ -277,12 +352,65 @@ export default function permitdashboard() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           ระบบแจ้งปัญหาออนไลน์ - Issue Inform Online Service(IIOS)
         </Typography>
+
+        <Grid container spacing={{ xs: 2, md: 3, }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent='center'>
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(3)}>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_spare.jpg`}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.wait}
+                  </Typography>
+                </div>
+              </div>
+            </CardActionArea>
+          </Card>
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(4)}>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_outsource.jpg`}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.outside}
+                  </Typography>
+                </div>
+              </div>
+            </CardActionArea>
+          </Card>
+
+          <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
+            <CardActionArea onClick={() => setFilterStatusId(6)}>
+              <div style={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  image={`${process.env.PUBLIC_URL}/DMIS/DMIS_replace.jpg`}
+                  alt="checkin"
+                />
+                <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
+                  <Typography variant="h4">
+                    {taskCount.replace}
+                  </Typography>
+                </div>
+              </div>
+            </CardActionArea>
+          </Card>
+        </Grid>
+
         <Card>
-
-          <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
-            รายการงานรอตรวจสอบ
-          </Typography>
-
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
+            <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
+              งานที่ต้องดำเนินการเอง
+            </Typography>
+          </Stack>
           <div style={{ display: 'flex', height: '100%' }}>
             <div style={{ flexGrow: 1 }}>
               <StripedDataGrid
@@ -294,7 +422,7 @@ export default function permitdashboard() {
                   },
                 }}
                 columns={columns}
-                rows={permitTaskList}
+                rows={filterInformerTaskList}
                 pageSize={pageSize}
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                 rowsPerPageOptions={[10, 25, 100]}
@@ -312,6 +440,7 @@ export default function permitdashboard() {
             </div>
           </div>
         </Card>
+
       </Container>
 
       {/* ============================รายละเอียดงานแจ้งปัญหาออนไลน์======================================= */}
@@ -393,7 +522,7 @@ export default function permitdashboard() {
                 <Item>{focusTask.task_date_accept ? (focusTask.task_date_accept).replace("T", " ").replace(".000Z", " น.") : ""}</Item>
               </Grid>
               <Grid item xs={4}>
-                <Item sx={{ textAlign: 'right' }}>เวลาดำเนินงาน:</Item>
+                <Item item sx={{ textAlign: 'right' }}>เวลาดำเนินงาน:</Item>
               </Grid>
               <Grid item xs={8}>
                 <Item>{focusTask.estimation_name}</Item>
@@ -450,31 +579,28 @@ export default function permitdashboard() {
       </Dialog>
       {/* ================================================================================== */}
 
-      {/* ==================================อนุมัติงาน============================================= */}
-      <Dialog fullWidth maxWidth="md" open={permitTaskDialogOpen} onClose={handleClosePermitTaskDialog}>
-        <DialogTitle>อนุมัติงาน</DialogTitle>
+      {/* ==================================ตรวจรับงาน============================================= */}
+      <Dialog fullWidth maxWidth="md" open={informerTaskDialogOpen} onClose={handleCloseInformerTaskDialog}>
+        <DialogTitle>ตรวจรับงาน</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            คุณต้องการอนุมัติงานนี้ใช่หรือไม่
+            คุณต้องการตรวจรับงานนี้ใช่หรือไม่
           </DialogContentText>
+          <TextField id="auditComment" name="auditComment"
+            value={auditComment === null ? "" : auditComment}
+            onChange={(event) => { setAuditComment(event.target.value) }}
+            fullWidth
+            sx={{ mt: 1 }}
+            label="หมายเหตุการตรวจรับ" />
         </DialogContent>
         <DialogActions>
-          {
-            statusIdRequest === 3 || statusIdRequest === 4 || statusIdRequest === 6 ?
-              <Box alignItems="flex-start">
-                <Button variant="contained" onClick={() => handlePermitTask("permitEnd")}>ส่งมอบให้ผู้แจ้งดำเนินการ</Button>
-              </Box>
-              :
-              <>
-              </>
-          }
-          <div style={{ flex: '1 0 0' }} />
-          <Button onClick={handleClosePermitTaskDialog}>ยกเลิก</Button>
-          <Button variant="contained" onClick={() => handlePermitTask("permit")}>อนุมัติ</Button>
-          <Button variant="contained" color="error" onClick={() => handlePermitTask("reject")}>ไม่อนุมัติ</Button>
+          <Button onClick={handleCloseInformerTaskDialog} >ยกเลิก</Button>
+          <Button variant="contained" onClick={handleInformerTaskComment} >บันทึกหมายเหตุ</Button>
+          <Button variant="contained" onClick={handleInformerTask} >ยืนยันการตรวจรับงาน</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}
+
     </>
   );
 }

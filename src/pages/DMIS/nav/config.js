@@ -39,59 +39,15 @@ try {
               },
             );
           }
-
-        // fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/countpermittask/${token.level_list[i].level_id}`)
-        //   .then((response) => response.json())
-        //   // eslint-disable-next-line no-loop-func
-        //   .then((data) => {
-        //     havePermitTask = data.value;
-        //     console.log(havePermitTask)
-
-        //     navConfig.push(
-        //       {
-        //         title: 'งานที่ได้รับ',
-        //         path: '/dmis/itmtdashboard',
-        //         icon: <Icon icon="ic:baseline-settings-suggest" width="30" height="30" />,
-        //       },
-        //     );
-        //     if (token.level_list[i].level_id === "DMIS_ENV" || token.level_list[i].level_id === "DMIS_HIT") {
-        //       navConfig.push(
-        //         {
-        //           title: `งานรอตรวจสอบ${data.value!==0 ? `(${data.value})` : ``}`,
-        //           path: '/dmis/permitdashboard',
-        //           icon: <Icon icon="ic:outline-fact-check" width="30" height="30" />,
-        //         },
-        //       );
-        //     }
-
-        //     navConfig.push(
-        //       {
-        //         title: 'งานรอตรวจรับ',
-        //         path: '/dmis/auditdashboard',
-        //         icon: <Icon icon="ic:baseline-recommend" width="30" height="30" />,
-        //       },
-        //       {
-        //         title: 'แจ้งซ่อมอุปกรณ์',
-        //         path: '/dmis/dmisnewcase',
-        //         icon: <Icon icon="ic:baseline-note-add" width="30" height="30" />,
-        //       },
-        //       {
-        //         title: 'รายงาน',
-        //         path: '/dmis/dmisreport',
-        //         icon: <Icon icon="ic:baseline-folder-copy" width="30" height="30" />,
-        //       },
-        //       {
-        //         title: 'ย้อนกลับ',
-        //         path: '/dashboard/app',
-        //         icon: <Icon icon="ic:baseline-keyboard-return" width="30" height="30" />,
-        //       },
-        //     );
-
-        //   })
         break;
       }
     }
     navConfig.push(
+      {
+        title: 'งานที่ต้องดำเนินการเอง',
+        path: '/dmis/informertask',
+        icon: <Icon icon="mdi:user-arrow-left" width="30" height="30" />,
+      },
       {
         title: 'งานรอตรวจรับ',
         path: '/dmis/auditdashboard',

@@ -44,7 +44,7 @@ export default function DSMSDashboard() {
             let data = await response.json();
             await setAllEventsList(data);
 
-            if(data.length === 0 || data === null){
+            if (data.length === 0 || data === null) {
                 firstTime = true;
             }
 
@@ -125,6 +125,14 @@ export default function DSMSDashboard() {
             // }
         };
 
+        const isMobile = window.innerWidth < 768;
+
+        const sizeStyle = {
+            height: isMobile ? '600px' : '950px',
+            // margin: isMobile ? '20px' : '40px',
+            fontSize: isMobile ? '9px' : '16px',
+        };
+
         return (
             <div>
                 <Calendar
@@ -141,7 +149,8 @@ export default function DSMSDashboard() {
                     }}
                     startAccessor="start"
                     endAccessor="end"
-                    style={{ height: 950 }}
+                    // style={{ height: 950 }}
+                    style={sizeStyle}
                     eventPropGetter={(event, start, end, isSelected) => {
                         const backgroundColor = event.hexColor;
                         const style = {

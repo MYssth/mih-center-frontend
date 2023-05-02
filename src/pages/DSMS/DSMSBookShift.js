@@ -14,9 +14,19 @@ import {
     Grid,
     Box,
     Autocomplete,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Dialog,
+    styled,
 } from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
+
+const Item = styled('div')(({ theme }) => ({
+    padding: theme.spacing(1),
+    textAlign: 'left',
+}));
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 let selectedDate = [];
@@ -35,6 +45,9 @@ export default function DSMSBookShift() {
 
     const [emptyEvent, setEmptyEvent] = useState(false);
     const [disBookBtn, setDisBookBtn] = useState(true);
+
+    const [focusEvent, setFocusEvent] = useState(null);
+    const [deleteEventDialogOpen, setDeleteEventDialogOpen] = useState(false);
 
     const isSkip = (value) => value !== '';
 
@@ -142,11 +155,15 @@ export default function DSMSBookShift() {
                 alert("ไม่สามารถเลือกวันดังกล่าวได้");
                 return;
             }
-            if (myBookData.find(o => `${o.year}/${(parseInt(o.month) - 1)}/${o.day}` === selDay &&
+            const dayCheck = myBookData.find(o => `${o.year}/${(parseInt(o.month) - 1)}/${o.day}` === selDay &&
                 (o.shift_id === shiftId || o.shift_id === 1 && shiftId === 4 || o.shift_id === 4 && shiftId === 1) ||
                 `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) + 1}` === selDay && o.shift_id === 1 && shiftId === 2 ||
-                `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) - 1}` === selDay && o.shift_id === 2 && shiftId === 1)) {
-                alert("คุณได้จองเวรที่มีเวลาทับซ้อนกันไปแล้ว");
+                `${o.year}/${(parseInt(o.month) - 1)}/${parseInt(o.day) - 1}` === selDay && o.shift_id === 2 && shiftId === 1 ? o.name : "");
+            if (dayCheck !== "" && dayCheck !== null && dayCheck !== undefined) {
+                console.log(dayCheck);
+                setFocusEvent(dayCheck);
+                handleOpenDeleteEventDialog();
+                // alert("คุณได้จองเวรที่มีเวลาทับซ้อนกันไปแล้ว");
                 return;
             }
             if (selectedDate.find(o => o === selDay)) {
@@ -158,47 +175,59 @@ export default function DSMSBookShift() {
         }
     })
 
-    const MyCalendar = (props) => (
-        <div>
-            <Calendar
-                // views={[Views.MONTH, Views.AGENDA]}
-                views={{
-                    month: true,
-                    agenda: true,
-                    // agenda: {
-                    //     date: firstDayOfMonth,
-                    //     length: 30,
-                    // },
-                }}
-                selectable
-                longPressThreshold={50}
-                onSelectSlot={handleSelectSlot}
-                defaultDate={setMonth}
-                toolbar={false}
-                localizer={localizer}
-                startAccessor="start"
-                endAccessor="end"
-                components={{
-                    dateCellWrapper: ColoredDateCellWrapper
-                }}
-                style={{ height: 950 }}
-                eventPropGetter={(event, start, end, isSelected) => {
-                    const backgroundColor = event.hexColor;
-                    const style = {
-                        backgroundColor: backgroundColor,
-                        borderRadius: '0px',
-                        opacity: 0.8,
-                        color: 'black',
-                        border: '0px',
-                        visibility: 'visible',
-                    };
-                    return {
-                        style: style
-                    };
-                }}
-            />
-        </div>
-    )
+    const MyCalendar = (props) => {
+
+        const isMobile = window.innerWidth < 768;
+
+        const sizeStyle = {
+            height: isMobile ? '600px' : '950px',
+            // margin: isMobile ? '20px' : '40px',
+            fontSize: isMobile ? '9px' : '16px',
+        };
+
+        return (
+            <div>
+                <Calendar
+                    // views={[Views.MONTH, Views.AGENDA]}
+                    views={{
+                        month: true,
+                        agenda: true,
+                        // agenda: {
+                        //     date: firstDayOfMonth,
+                        //     length: 30,
+                        // },
+                    }}
+                    selectable
+                    longPressThreshold={50}
+                    onSelectSlot={handleSelectSlot}
+                    defaultDate={setMonth}
+                    toolbar={false}
+                    localizer={localizer}
+                    startAccessor="start"
+                    endAccessor="end"
+                    components={{
+                        dateCellWrapper: ColoredDateCellWrapper
+                    }}
+                    // style={{ height: 950 }}
+                    style={sizeStyle}
+                    eventPropGetter={(event, start, end, isSelected) => {
+                        const backgroundColor = event.hexColor;
+                        const style = {
+                            backgroundColor: backgroundColor,
+                            borderRadius: '0px',
+                            opacity: 0.8,
+                            color: 'black',
+                            border: '0px',
+                            visibility: 'visible',
+                        };
+                        return {
+                            style: style
+                        };
+                    }}
+                />
+            </div>
+        )
+    }
 
     const handleBookBtn = () => {
         const jsonData = {
@@ -206,8 +235,6 @@ export default function DSMSBookShift() {
             shift_id: shiftId,
             personnel_id: tokenData.personnel_id,
         }
-
-        // console.log(jsonData);
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/addevent`, {
             method: 'POST',
@@ -235,6 +262,30 @@ export default function DSMSBookShift() {
         console.log("fetch not complete");
         return <div>Loading...</div>;
     }
+
+    const handleOpenDeleteEventDialog = () => {
+        setDeleteEventDialogOpen(true);
+    }
+
+    const handleCloseDeleteEventDialog = () => {
+        setFocusEvent("");
+        setDeleteEventDialogOpen(false);
+    }
+
+    const handleDeletePSN = async () => {
+        await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dsmsPort}/api/dsms/deleteevent/${focusEvent.id}/${tokenData.personnel_id}`, {
+            method: 'DELETE'
+        });
+        setDeleteEventDialogOpen(false);
+        window.location.reload(false);
+    }
+
+    function getMonthName(monthNumber) {
+        const date = new Date();
+        date.setMonth(monthNumber - 1);
+      
+        return date.toLocaleString('th-TH', { month: 'long' });
+      }
 
     return (
         <>
@@ -304,6 +355,24 @@ export default function DSMSBookShift() {
                 </Card>
             </Container>
 
+            {/* ============================ลบเวร======================================= */}
+            <Dialog fullWidth maxWidth="md" open={deleteEventDialogOpen} onClose={handleCloseDeleteEventDialog}>
+                <DialogTitle>ยืนยันการลบเวร</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Typography>
+                            ไม่สามารถเลือกวันดังกล่าวได้เนื่องจากมีเวลาจากเวรอื่นทับซ้อนหรือได้ลงเวรในวันนี้ไปแล้ว<br />
+                            เวรที่ลงไว้ : วันที่ {focusEvent?.day} {getMonthName(focusEvent?.month)} {focusEvent?.year} เวลา {focusEvent?.name}น.<br />
+                            ต้องการยกเลิกเวรที่ลงไว้หรือไม่
+                        </Typography>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" color="error" onClick={handleDeletePSN}>ยกเลิกเวร</Button>
+                    <Button onClick={handleCloseDeleteEventDialog}>ปิดหน้าต่าง</Button>
+                </DialogActions>
+            </Dialog>
+            {/* ================================================================================== */}
         </>
     );
 }

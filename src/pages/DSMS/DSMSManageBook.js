@@ -189,49 +189,60 @@ export default function DSMSManageBook() {
         setMonth = newDate;
     };
 
-    const MyCalendar = (props) => (
-        <div>
-            <Calendar
-                // views={[Views.MONTH, Views.AGENDA]}
-                views={{
-                    month: true,
-                    // agenda: {
-                    //     date: firstDayOfMonth,
-                    //     length: 30,
-                    // },
-                }}
-                selectable
-                defaultDate={setMonth}
-                longPressThreshold={50}
-                events={filteredEvent}
-                onSelectSlot={handleSelectSlot}
-                onSelectEvent={handleEventSelection}
-                onNavigate={handleNavigate}
-                localizer={localizer}
-                startAccessor="start"
-                endAccessor="end"
-                components={{
-                    dateCellWrapper: ColoredDateCellWrapper
-                }}
-                style={{ height: 950 }}
-                eventPropGetter={(event, start, end, isSelected) => {
-                    const backgroundColor = event.hexColor;
-                    const style = {
-                        backgroundColor: backgroundColor,
-                        borderRadius: '0px',
-                        opacity: 0.8,
-                        color: 'black',
-                        border: '0px',
-                        visibility: 'visible',
-                    };
-                    return {
-                        style: style
-                    };
-                }}
-            />
-        </div>
-    )
+    const MyCalendar = (props) => {
 
+        const isMobile = window.innerWidth < 768;
+
+        const sizeStyle = {
+            height: isMobile ? '600px' : '950px',
+            // margin: isMobile ? '20px' : '40px',
+            fontSize: isMobile ? '9px' : '16px',
+        };
+
+        return (
+            <div>
+                <Calendar
+                    // views={[Views.MONTH, Views.AGENDA]}
+                    views={{
+                        month: true,
+                        // agenda: {
+                        //     date: firstDayOfMonth,
+                        //     length: 30,
+                        // },
+                    }}
+                    selectable
+                    defaultDate={setMonth}
+                    longPressThreshold={50}
+                    events={filteredEvent}
+                    onSelectSlot={handleSelectSlot}
+                    onSelectEvent={handleEventSelection}
+                    onNavigate={handleNavigate}
+                    localizer={localizer}
+                    startAccessor="start"
+                    endAccessor="end"
+                    components={{
+                        dateCellWrapper: ColoredDateCellWrapper
+                    }}
+                    // style={{ height: 950 }}
+                    style={sizeStyle}
+                    eventPropGetter={(event, start, end, isSelected) => {
+                        const backgroundColor = event.hexColor;
+                        const style = {
+                            backgroundColor: backgroundColor,
+                            borderRadius: '0px',
+                            opacity: 0.8,
+                            color: 'black',
+                            border: '0px',
+                            visibility: 'visible',
+                        };
+                        return {
+                            style: style
+                        };
+                    }}
+                />
+            </div>
+        )
+    }
     const handleBookBtn = () => {
         const jsonData = {
             selectedDate: selectedDate,

@@ -29,6 +29,11 @@ import DSMSBookShift from './pages/DSMS/DSMSBookShift';
 import DSMSManageBook from './pages/DSMS/DSMSManageBook';
 import DSMSSetting from './pages/DSMS/DSMSSetting';
 
+// CBS
+import MIHIntranet from './mih_intranet/MIHIntranet';
+import CBSDashboard from './mih_intranet/carbooking/CBSDashboard'
+import CBSBooking from './mih_intranet/carbooking/CBSBooking';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -75,6 +80,18 @@ export default function Router() {
         { path: 'dsmsmanagebook', element: <DSMSManageBook /> },
         { path: 'dsmssetting', element: <DSMSSetting /> }
       ],
+    },
+    {
+      path: '/intranet',
+      element: <MIHIntranet />,
+    },
+    {
+      path: '/cbsdashboard',
+      element: <CBSDashboard />,
+    },
+    {
+      path: '/cbsbooking',
+      element: <CBSBooking />,
     },
     {
       element: <SimpleLayout />,

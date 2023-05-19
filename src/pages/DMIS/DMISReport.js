@@ -2,13 +2,13 @@
 import * as React from 'react';
 import { DataGrid, GridToolbarColumnsButton, gridClasses, GridToolbarExportContainer, GridCsvExportMenuItem, GridToolbarContainer, GridToolbarQuickFilter, GridToolbar } from '@mui/x-data-grid';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import jwtDecode from "jwt-decode";
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Container, Stack, Typography, Card, Divider, TextField, Button, alpha, styled, Box, } from '@mui/material';
+import { Container, Stack, Typography, Card, Divider, TextField, Button, alpha, styled, Box, Checkbox, Grid, } from '@mui/material';
 
 import reportPDF from './components/report-pdf'
 
@@ -57,7 +57,7 @@ const CustomExportButton = (props) => (
     </GridToolbarExportContainer>
 );
 
-function CustomToolbar(){
+function CustomToolbar() {
     <GridToolbarContainer>
         <GridToolbarColumnsButton />
         <CustomExportButton />
@@ -77,9 +77,14 @@ const headSname = `${localStorage.getItem('sname')} Center`;
 export default function DMISReport() {
 
     const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState(dateFns.format(new Date(), 'yyyy-MM-dd'));
+    // const [toDate, setToDate] = useState(dateFns.format(new Date(), 'yyyy-MM-dd'));
+    const [toDate, setToDate] = useState(new Date());
+    const [taskList, setTaskList] = useState([]);
     const [completeTaskList, setCompleteTaskList] = useState([]);
     const [filterTaskList, setFilterTaskList] = useState([]);
+
+    const [isIncomplete, setIsincomplete] = useState(false);
+    const [mode, setMode] = useState("");
 
     const [pageSize, setPageSize] = useState(25);
 
@@ -109,6 +114,20 @@ export default function DMISReport() {
                             console.error('Error:', error);
                         }
                     });
+
+                fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/report`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        setTaskList(data);
+                    })
+                    .catch((error) => {
+                        if (error.name === "AbortError") {
+                            console.log("cancelled")
+                        }
+                        else {
+                            console.error('Error:', error);
+                        }
+                    });
                 break;
             }
         }
@@ -120,12 +139,53 @@ export default function DMISReport() {
     }, []);
 
     const handleFindTaskId = () => {
-        setFilterTaskList(completeTaskList.filter(dt => (dt.task_id).includes(document.getElementById('taskId').value)));
+        setMode("byId");
+        if (isIncomplete) {
+            setFilterTaskList(taskList.filter(dt => (dt.task_id).includes(document.getElementById('taskId').value)));
+        }
+        else {
+            setFilterTaskList(completeTaskList.filter(dt => (dt.task_id).includes(document.getElementById('taskId').value)));
+        }
     };
 
     const handleFindDate = () => {
-        setFilterTaskList(completeTaskList.filter(dt => dt.task_date_start >= fromDate && dt.task_date_start <= dateFns.format(dateFns.addDays(new Date(toDate), 1), 'yyyy-MM-dd')));
+        setMode("byDate");
+        const tmpFromDate = dateFns.format(fromDate, 'yyyy-MM-dd');
+        if (isIncomplete) {
+            setFilterTaskList(taskList.filter(dt => dt.task_date_start >= tmpFromDate && dt.task_date_start <= dateFns.format(dateFns.addDays(new Date(toDate), 1), 'yyyy-MM-dd')));
+        }
+        else {
+            setFilterTaskList(completeTaskList.filter(dt => dt.task_date_start >= tmpFromDate && dt.task_date_start <= dateFns.format(dateFns.addDays(new Date(toDate), 1), 'yyyy-MM-dd')));
+        }
 
+    }
+
+    const handleOnlyIncomplete = (event) => {
+        const tmpFromDate = dateFns.format(fromDate, 'yyyy-MM-dd')
+        if (event.target.checked) {
+            setIsincomplete(true);
+            if (mode === "byId") {
+                setFilterTaskList(taskList.filter(dt => (dt.task_id).includes(document.getElementById('taskId').value)));
+            }
+            else if (mode === "byDate") {
+                setFilterTaskList(taskList.filter(dt => dt.task_date_start >= tmpFromDate && dt.task_date_start <= dateFns.format(dateFns.addDays(new Date(toDate), 1), 'yyyy-MM-dd')));
+            }
+            else {
+                setFilterTaskList(taskList);
+            }
+        }
+        else {
+            setIsincomplete(false);
+            if (mode === "byId") {
+                setFilterTaskList(completeTaskList.filter(dt => (dt.task_id).includes(document.getElementById('taskId').value)));
+            }
+            else if (mode === "byDate") {
+                setFilterTaskList(completeTaskList.filter(dt => dt.task_date_start >= tmpFromDate && dt.task_date_start <= dateFns.format(dateFns.addDays(new Date(toDate), 1), 'yyyy-MM-dd')));
+            }
+            else {
+                setFilterTaskList(completeTaskList);
+            }
+        }
     }
 
     const columns = [
@@ -232,7 +292,7 @@ export default function DMISReport() {
             headerName: 'สถานะ',
             width: 125,
             valueGetter: (params) =>
-                `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` :`ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
+                `${(params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
         },
         {
             field: 'receiver_firstname',
@@ -308,23 +368,23 @@ export default function DMISReport() {
                                 <Stack direction="row" spacing={1}>
                                     <DatePicker
                                         disableFuture
-                                        inputFormat="dd-MM-yyyy"
+                                        format="dd-MM-yyyy"
                                         maxDate={toDate}
                                         label="จากวันที่"
                                         value={fromDate}
                                         onChange={(newValue) => {
-                                            setFromDate(dateFns.format(newValue, 'yyyy-MM-dd'));
+                                            setFromDate(newValue);
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
                                     />
                                     <DatePicker
                                         disableFuture
-                                        inputFormat="dd-MM-yyyy"
+                                        format="dd-MM-yyyy"
                                         minDate={fromDate}
                                         label="ถึงวันที่"
                                         value={toDate}
                                         onChange={(newValue) => {
-                                            setToDate(dateFns.format(newValue, 'yyyy-MM-dd'));
+                                            setToDate(newValue);
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
                                     />
@@ -335,7 +395,17 @@ export default function DMISReport() {
                     </Stack>
                     <Divider />
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
-                        <Typography variant='h5'>รายการงานแจ้งปัญหาออนไลน์</Typography>
+                        <Grid container>
+                            <Grid item sm={12} md={9.5}>
+                                <Typography variant='h5'>รายการงานแจ้งปัญหาออนไลน์</Typography>
+                            </Grid>
+                            <Grid item sm={12} md={2.5} >
+                                <Box>
+                                    <Checkbox onChange={handleOnlyIncomplete} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ซ่อนงานที่ดำเนินการเสร็จสิ้น
+                                </Box>
+                            </Grid>
+
+                        </Grid>
                         <div style={{ width: '100%' }}>
                             <StripedDataGrid
                                 getRowClassName={(params) =>

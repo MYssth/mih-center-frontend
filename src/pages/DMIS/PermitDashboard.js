@@ -91,7 +91,7 @@ export default function permitdashboard() {
       sortable: false,
       renderCell: (params) => {
         const onClick = () => {
-          handleOpenPermitTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id_request);
+          handleOpenPermitTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id_request, params.row.status_id_request === 5 && params.row.category_id === 1);
           // return alert(`you choose level = ${params.row.level_id}`);
         };
 
@@ -138,6 +138,9 @@ export default function permitdashboard() {
       field: 'status_name_request',
       headerName: 'สถานะที่ขออนุมัติ',
       width: 125,
+      valueGetter: (params) =>
+        `${params.row.status_id_request === 2 && params.row.category_id === 1 ? "กำลังดำเนินการ (HIMS)" :
+          params.row.status_id_request === 5 && params.row.category_id === 1 ? "ดำเนินการเสร็จสิ้น (ขอวางโปรแกรม)" : params.row.status_name_request}`,
     },
     {
       field: 'informer_firstname',
@@ -172,6 +175,7 @@ export default function permitdashboard() {
   const [levelId, setLevelId] = useState('');
   const [permitId, setPermitId] = useState('');
   const [statusIdRequest, setStatusIdRequest] = useState('');
+  const [pChange, setPChange] = useState(false);
 
   const [permitTaskDialogOpen, setPermitTaskDialogOpen] = useState(false);
 
@@ -220,10 +224,11 @@ export default function permitdashboard() {
     setFocusTaskDialogOpen(false);
   }
 
-  const handleOpenPermitTaskDialog = (taskId, levelId, statusIdRequest) => {
+  const handleOpenPermitTaskDialog = (taskId, levelId, statusIdRequest, isPChange) => {
     setTaskId(taskId);
     setLevelId(levelId);
     setStatusIdRequest(statusIdRequest);
+    setPChange(isPChange);
     setPermitTaskDialogOpen(true);
   }
 
@@ -470,8 +475,8 @@ export default function permitdashboard() {
           }
           <div style={{ flex: '1 0 0' }} />
           <Button onClick={handleClosePermitTaskDialog}>ยกเลิก</Button>
-          <Button variant="contained" onClick={() => handlePermitTask("permit")}>อนุมัติ</Button>
-          <Button variant="contained" color="error" onClick={() => handlePermitTask("reject")}>ไม่อนุมัติ</Button>
+          <Button variant="contained" onClick={() => handlePermitTask(pChange ? "pConfirm" : "permit")}>อนุมัติ</Button>
+          <Button variant="contained" color="error" onClick={() => handlePermitTask(pChange ? "pReject" : "reject")}>ไม่อนุมัติ</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

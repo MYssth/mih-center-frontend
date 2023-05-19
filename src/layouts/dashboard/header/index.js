@@ -65,7 +65,7 @@ export default function Header({ onOpenNav }) {
           }}
         >
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            version: v3.2
+            version: v3.3
           </Typography>
           <AccountPopover />
         </Stack>

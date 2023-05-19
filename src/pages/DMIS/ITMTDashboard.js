@@ -26,6 +26,8 @@ import {
   styled,
   alpha,
   Box,
+  Checkbox,
+  Radio,
 } from '@mui/material';
 
 import reportPDF from './components/report-pdf'
@@ -72,20 +74,6 @@ const Item = styled('div')(({ theme }) => ({
   padding: theme.spacing(1),
   textAlign: 'left',
 }));
-
-function QuickSearchToolbar() {
-  return (
-    <Box
-      sx={{
-        p: 0.5,
-        pb: 0,
-      }}
-    >
-      <GridToolbarQuickFilter />
-      <Button variant="outlined" sx={{ ml: 1 }} startIcon={<Icon icon="ic:baseline-refresh" width="24" height="24" />} onClick={() => { window.location.reload(false); }} >แสดงทั้งหมด</Button>
-    </Box>
-  );
-}
 
 let pId = "";
 let lvId = "";
@@ -215,6 +203,13 @@ export default function ITMTDashboard() {
 
   const isSkip = (value) => value !== '';
 
+  const [isHide, setIsHide] = useState(false);
+  const [disIsHide, setDisIsHide] = useState(false);
+
+  const [isProgramChange, setIsProgramChange] = useState(null);
+  const [tempNote, setTempNote] = useState("");
+  const [permitId, setPermitId] = useState("");
+
   useEffect(() => {
 
     const token = jwtDecode(localStorage.getItem('token'));
@@ -324,7 +319,13 @@ export default function ITMTDashboard() {
   useEffect(() => {
 
     setDisableProcessTaskButton(false);
-    setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+    setDisIsHide(false);
+    if (isHide) {
+      setFilterTaskList(filterStatusId === 'all' ? taskList.filter(dt => dt.status_id_request === null) : taskList.filter(dt => dt.status_id === filterStatusId && dt.status_id_request === null));
+    }
+    else {
+      setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+    }
 
     if (filterStatusId === 1) {
       setHeadStatus("งานรอรับเรื่อง");
@@ -341,6 +342,7 @@ export default function ITMTDashboard() {
     else if (filterStatusId === 5) {
       setHeadStatus("งานดำเนินการเสร็จสิ้น");
       setDisableProcessTaskButton(true);
+      setDisIsHide(true);
       setFilterTaskList(completeTaskList);
     }
     else if (filterStatusId === 6) {
@@ -351,6 +353,32 @@ export default function ITMTDashboard() {
   }, [filterStatusId])
 
   // ========================================================
+
+  function QuickSearchToolbar() {
+    return (
+      <Box
+        sx={{
+          p: 0.5,
+          pb: 0,
+        }}
+      >
+        <GridToolbarQuickFilter />
+        <Button variant="outlined" sx={{ ml: 1 }} startIcon={<Icon icon="ic:baseline-refresh" width="24" height="24" />} onClick={() => { window.location.reload(false); }} >แสดงทั้งหมด</Button>
+        <Checkbox checked={isHide} disabled={disIsHide} onChange={handleIsHide} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ซ่อนงานรออนุมัติ
+      </Box>
+    );
+  }
+
+  const handleIsHide = (event) => {
+    if (event.target.checked) {
+      setIsHide(true);
+      setFilterTaskList(filterStatusId === 'all' ? taskList.filter(dt => dt.status_id_request === null) : taskList.filter(dt => dt.status_id === filterStatusId && dt.status_id_request === null));
+    }
+    else {
+      setIsHide(false);
+      setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+    }
+  }
 
   const setTempTask = (taskId, inputLevelId) => {
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettask/${taskId}/${inputLevelId}`)
@@ -369,6 +397,9 @@ export default function ITMTDashboard() {
         setCategoryName(data.category_name);
         setEstimationId(data.estimation_id);
         setEstimationName(data.estimation_name);
+        setPermitId(data.permit_id);
+
+        setTempNote(data.task_note);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -442,6 +473,9 @@ export default function ITMTDashboard() {
     setEstimationName("");
     setProcessTaskDialogOpen(false);
     setIsStatusChange(false);
+    setIsProgramChange(null);
+
+    setTempNote("");
   };
 
   const handleAcceptTask = () => {
@@ -482,6 +516,20 @@ export default function ITMTDashboard() {
 
   const handleProcessTask = (taskCase) => {
 
+    if (isProgramChange === null && statusId === 5 && categoryId === 1) {
+      alert("กรุณาเลือกการวางโปรแกรม");
+      return;
+    }
+
+    if (categoryId === 1) {
+      if (permitId === "" || permitId === null) {
+        taskCase = "request";
+      }
+      if (permitId !== "" && permitId !== null && statusId === 5) {
+        taskCase = "pRequest";
+      }
+    }
+
     if (isStatusChange && tempStatus !== 2) {
       taskCase = statusId === 5 ? "complete" : "request";
     }
@@ -493,12 +541,13 @@ export default function ITMTDashboard() {
       task_cost: document.getElementById('cost').value,
       task_serialnumber: serialnumber,
       task_device_id: deviceId,
-      status_id_request: statusId,
+      status_id_request: (permitId === "" || permitId === null) && categoryId === 1 ? 2 : statusId,
       operator_id: operatorId,
       category_id: categoryId,
       task_phone_no: phoneNo,
-      task_note: taskNote,
+      task_note: (taskCase === "complete" || taskCase === "pRequest") && taskNote === tempNote ? "" : taskNote,
       estimation_id: estimationId,
+      is_program_change: isProgramChange,
       // eslint-disable-next-line object-shorthand
       taskCase: taskCase,
     }
@@ -514,6 +563,7 @@ export default function ITMTDashboard() {
     // console.log(`category_id ${jsonData.category_id}`);
     // console.log(`task_phone_no ${jsonData.task_phone_no}`);
     // console.log(`task_note ${jsonData.task_note}`);
+    // console.log(`is_program_change ${jsonData.is_program_change}`);
     // console.log(`taskCase ${jsonData.taskCase}`);
 
     if (jsonData.status_id === "" || jsonData.status_id === null) {
@@ -562,6 +612,7 @@ export default function ITMTDashboard() {
       .then((data) => {
         if (data.status === 'ok') {
           handleCloseProcessTaskDialog();
+          setIsHide(false);
           refreshTable();
         }
         else {
@@ -953,6 +1004,27 @@ export default function ITMTDashboard() {
                 }
               }}
             />
+            {(permitId === "" || permitId === null) && categoryId === 1 ?
+              <Box>
+                <Typography sx={{ color: 'error.main', ml: 1 }}>งานนี้จะเข้าสู่กระบวนการอนุมัติเมื่อกดดำเนินการ กรณีที่งานนี้เสร็จสิ้นแล้วผู้ดำเนินงานต้องกลับมาปิดงานนี้อีกครั้งหลังอนุมัติ</Typography>
+              </Box>
+              :
+              ""
+            }
+            {categoryId === 1 && statusId === 5 ?
+              <Box>
+                <Radio
+                  checked={isProgramChange === true}
+                  onClick={() => setIsProgramChange(true)}
+                  name="radio-buttons"
+                />มีการวางโปรแกรม
+                <Radio
+                  checked={isProgramChange === false}
+                  onClick={() => setIsProgramChange(false)}
+                  name="radio-buttons"
+                />ไม่มีการวางโปรแกรม
+              </Box>
+              : ""}
             <TextField
               id="taskNote"
               name="taskNote"
@@ -978,8 +1050,8 @@ export default function ITMTDashboard() {
           )}
           <div style={{ flex: '1 0 0' }} />
           <Button onClick={handleCloseProcessTaskDialog}>ยกเลิก</Button>
-
-          <Button variant="contained" onClick={() => { handleProcessTask(dialogStatus === 2 ? "request" : "edit") }}>ดำเนินการ</Button>
+          {/* <Button variant="contained" onClick={() => { handleProcessTask(dialogStatus === 2 && isStatusChange ? "request" : "edit") }}>ดำเนินการ</Button> */}
+          <Button variant="contained" onClick={() => { handleProcessTask(isStatusChange ? "request" : "edit") }}>ดำเนินการ</Button>
         </DialogActions>
       </Dialog>
       {/* ================================================================================== */}

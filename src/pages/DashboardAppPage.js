@@ -16,7 +16,7 @@ const headSname = `${localStorage.getItem('sname')} Center`;
 
 export default function DashboardAppPage() {
 
-  
+
 
   const navigate = useNavigate();
   const [showDMIS, setShowDMIS] = useState(false);
@@ -51,6 +51,10 @@ export default function DashboardAppPage() {
     navigate('/dsms', { replace: true });
   }
 
+  const handleIntranet = () => {
+    navigate('/intranet', { replace: true });
+  }
+
   return (
     <>
       <Helmet>
@@ -62,8 +66,8 @@ export default function DashboardAppPage() {
           ยินดีต้อนรับเข้าสู่ระบบ {headSname}
         </Typography>
         <Grid container spacing={{ xs: 2, md: 3, }} columns={{ xs: 4, sm: 8, md: 12 }} >
-        {/* <Grid container spacing={1}> */}
-          {showDMIS ? (            
+          {/* <Grid container spacing={1}> */}
+          {showDMIS ? (
             <>
               <Grid item xs={4}>
                 <Button variant="contained" onClick={handleDMIS}> <Icon icon="ic:baseline-settings-suggest" width="50" height="50" />ระบบแจ้งปัญหาออนไลน์</Button>
@@ -81,8 +85,9 @@ export default function DashboardAppPage() {
           ) : (
             <></>
           )}
-
-
+          <Grid item xs={4}>
+            <Button variant="contained" onClick={handleIntranet}><Icon icon="material-symbols:fiber-new-outline" width="50" height="50" />หน้าระบบภายในใหม่</Button>
+          </Grid>
         </Grid>
       </Container>
     </>

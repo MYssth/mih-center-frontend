@@ -19,6 +19,8 @@ import {
   DialogActions,
   DialogContentText,
   Grid,
+  Autocomplete,
+  TextField,
 } from '@mui/material';
 
 import reportPDF from './components/report-pdf'
@@ -91,7 +93,7 @@ export default function permitdashboard() {
       sortable: false,
       renderCell: (params) => {
         const onClick = () => {
-          handleOpenPermitTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id_request, params.row.status_id_request === 5 && params.row.category_id === 1);
+          handleOpenPermitTaskDialog(params.row.task_id, params.row.level_id, params.row.status_id_request, params.row.status_id_request === 5 && params.row.category_id === 1, params.row.category_id, params.row.category_name);
           // return alert(`you choose level = ${params.row.level_id}`);
         };
 
@@ -179,6 +181,12 @@ export default function permitdashboard() {
 
   const [permitTaskDialogOpen, setPermitTaskDialogOpen] = useState(false);
 
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+
+  const isSkip = (value) => value !== '';
+
   useEffect(() => {
 
     const token = jwtDecode(localStorage.getItem('token'));
@@ -211,7 +219,7 @@ export default function permitdashboard() {
         else {
           console.error('Error:', error);
         }
-      })
+      });
   }
 
   const handleOpenFocusTaskDialog = (task) => {
@@ -224,17 +232,34 @@ export default function permitdashboard() {
     setFocusTaskDialogOpen(false);
   }
 
-  const handleOpenPermitTaskDialog = (taskId, levelId, statusIdRequest, isPChange) => {
+  const handleOpenPermitTaskDialog = (taskId, levelId, statusIdRequest, isPChange, categoryId, categoryName) => {
+
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcategories/${levelId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
     setTaskId(taskId);
     setLevelId(levelId);
     setStatusIdRequest(statusIdRequest);
     setPChange(isPChange);
+    setCategoryId(categoryId);
+    setCategoryName(categoryName)
     setPermitTaskDialogOpen(true);
   }
 
   const handleClosePermitTaskDialog = () => {
     setTaskId('');
     setLevelId('');
+    setStatusIdRequest('');
+    setPChange('');
+    setCategoryId('');
+    setCategoryName('');
+    setCategories([]);
     setPermitTaskDialogOpen(false);
   }
 
@@ -246,7 +271,13 @@ export default function permitdashboard() {
       permit_id: permitId,
       status_id_request: statusIdRequest,
       taskCase: permitCase,
+      category_id: categoryId,
     };
+
+    if ((jsonData.category_id === "" || jsonData.category_id === null) && (permitCase === "pConfirm" || permitCase === "permit")) {
+      alert("กรุณาเลือกหมวดหมู่งาน");
+      return;
+    }
 
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
       method: 'POST',
@@ -462,6 +493,36 @@ export default function permitdashboard() {
           <DialogContentText>
             คุณต้องการอนุมัติงานนี้ใช่หรือไม่
           </DialogContentText>
+          <br />
+          <Autocomplete
+            value={categoryName === null ? "" : categoryName}
+            onChange={(event, newValue) => {
+              setCategoryName(newValue);
+              if (newValue !== null) {
+                setCategoryId(categories.find(o => o.category_name === newValue).category_id);
+              }
+              else {
+                setCategoryId("");
+              }
+            }}
+            id="controllable-states-categories-id"
+            options={
+              levelId === "DMIS_IT" ?
+                Object.values(categories).map((option) => option.level_id === "DMIS_IT" ? option.category_name : "").filter(isSkip)
+                : levelId === "DMIS_MT" ? Object.values(categories).map((option) => option.level_id === "DMIS_MT" ? option.category_name : "").filter(isSkip)
+                  : Object.values(categories).map((option) => option.level_id === "DMIS_MER" ? option.category_name : "").filter(isSkip)
+            }
+            fullWidth
+            required
+            renderInput={(params) => <TextField {...params} label="หมวดหมู่งาน" />}
+            sx={{
+              "& .MuiAutocomplete-inputRoot": {
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: categoryName ? 'green' : 'red'
+                }
+              }
+            }}
+          />
         </DialogContent>
         <DialogActions>
           {

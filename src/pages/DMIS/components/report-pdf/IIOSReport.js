@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 /* eslint-disable react/style-prop-object */
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -23,21 +24,23 @@ pdfMake.fonts = {
     }
 }
 
+let cmBox = "";
 let noSig = "";
 let inforSig = "";
 let recvSig = "";
 let operSig = "";
 let permitSig = "";
-let auditSig = "";
 let endSig = "";
 let endName = "";
 let pconfirmSig = "";
 let pconfirmName = "";
+let auditSig = "";
 let header = {};
 
 export default async function IIOSReport(data) {
 
     noSig = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/nosignature.png`)}`;
+    cmBox = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/CMBox.png`)}`;
 
     header = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/getsitesetting`)
         .then((response) => response.json())
@@ -161,107 +164,121 @@ export default async function IIOSReport(data) {
                 <td><img src="${header.logo}" width="50" alt="logo" /></td>
                 <td><h2>โรงพยาบาลมุกดาหารอินเตอร์เนชั่นแนล</h2></td>
             </tr>
-        </table><table border="1" cellpadding="1" cellspacing="1" data-pdfmake="{'widths':['auto','*','auto']}">
+        </table><table class="marbot" data-pdfmake="{'widths':['auto','*','auto']}">
                 <tr>
                     <td style="text-align:center">รหัสแบบฟอร์ม<br />
                         DMIS-001</td>
                     <td style="text-align:center"><strong>ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา<br />
                         ${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : (data.level_id === 'DMIS_MT' ? '(งานซ่อมบำรุงทั่วไป)' : '(งานซ่อมบำรุงเครื่องมือแพทย์)')}</strong></td>
-                    <td>เริ่มใช้วันที่ 22 พ.ค. 2566<br />
-                        ปรับปรุงครั้งที่ 4 เมื่อ 19 พ.ค. 2566</td>
+                    <td>เริ่มใช้วันที่ 23 พ.ค. 2566<br />
+                        ปรับปรุงครั้งที่ 4 เมื่อ 23 พ.ค. 2566</td>
                 </tr>
-        </table><div style="text-align:right">เลขที่เอกสาร ${data.task_id}</div><table border="1" cellpadding="1" cellspacing="1" data-pdfmake="{'widths':['*']}">
+        </table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
             <tr>
-                <td><strong>รายละเอียดการแจ้งปัญหา</strong></td>
+                <td><table data-pdfmake="{'widths':['*','auto'],'layout':'noBorders'}"><tr><td><strong>รายละเอียดการแจ้งปัญหา</strong></td><td><div style="text-align:right">เลขที่เอกสาร ${data.task_id}</div></td></tr></table></td>
             </tr>
             <tr>
                 <td>ชื่อผู้แจ้ง: ${data.informer_firstname} ${data.informer_lastname}\tตำแหน่ง: ${data.informer_position_name}\tเบอร์โทรศัพท์: ${data.task_phone_no === null || data.task_phone_no === "" ? "ไม่ได้ระบุ" : data.task_phone_no}<br />
                     แผนกที่พบปัญหา: ${data.issue_department_name}\tวันที่แจ้ง: ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_start), 543), 7), 'dd/MM/yyyy')}<br />
                     รหัสทรัพย์สิน: ${data.task_device_id === null || data.task_device_id === "" ? "ไม่ได้ระบุ" : data.task_device_id}\tSerial number: ${data.task_serialnumber === null || data.task_serialnumber === "" ? "ไม่ได้ระบุ" : data.task_serialnumber}<br />
-                    รายละเอียดของปัญหา: ${data.task_issue}<br />
-                    &nbsp;</td>
+                    รายละเอียดของปัญหา: ${data.task_issue}</td>
             </tr>
-        </table><table border="1" cellpadding="1" cellspacing="1" data-pdfmake="{'widths':['*','*']}">
+        </table><table data-pdfmake="{'layout':'noBorders'}" data-pdfmake="{'widths':['*','*']}">
             <tr>
-                <td style="text-align:center"><table data-pdfmake="{'widths':['auto',110,'auto']}"><tr><td><br /><div style="text-align:right">ลงชื่อ</div></td><td><img src="${inforSig}" width="110" height="40" alt="inforSig" /></td><td><br /><div style="text-align:left">ผู้แจ้ง</div></td></tr></table>
-                (${data.informer_firstname} ${data.informer_lastname})</td>
-                <td></td>
+                <td style="text-align:center"><table data-pdfmake="{'widths':['*',105,'*'],'layout':'noBorders'}">
+                    <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${inforSig}" width="110" height="30" alt="inforSig" /></td><td><div style="text-align:left">ผู้แจ้ง</div></td></tr>
+                    </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
+                    <tr><td>(${data.informer_firstname} ${data.informer_lastname})<br/>
+                    ${`วันที่ ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_start), 543), 7), 'dd/MM/yyyy')}`}</td></td></table></td>
+
+                <td style="text-align:center"><table data-pdfmake="{'widths':['*',110,'*'],'layout':'noBorders'}">
+                    <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${recvSig}" width="110" height="30" alt="recvSig" /></td><td><div style="text-align:left">ผู้รับเรื่อง</div></td></tr>
+                    </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
+                    <tr><td>(${data.receiver_firstname === null || data.receiver_firstname === "" ? "........................................" : `${data.receiver_firstname} ${data.receiver_lastname}`})<br/>
+                    ${`วันที่${data.task_date_accept === null || data.task_date_accept === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_accept), 543), 7), 'dd/MM/yyyy')}`}`}</td></td></table></td>
             </tr>
-        </table>
+        </table><table data-pdfmake="{'heights':['auto',65],'widths':['*']}">
+            <tr>
+                <td><strong>การประเมิณงาน</strong></td>
+            </tr>
+            <tr>
+                <td>การดำเนินงาน: ${data.status_id !== 2 && data.status_id !== 5 ? data.status_name : "ดำเนินการโดยผู้รับผิดชอบ"}<br />
+                    หมายเหตุ: ${data.task_note === null || data.task_note === "" ? "-" : data.task_note}</td>
+                </tr>
+        </table><table data-pdfmake="{'layout':'noBorders'}" data-pdfmake="{'widths':['*','*']}">
+            <tr>
+                <td style="text-align:center"><table data-pdfmake="{'widths':['*',110,'*'],'layout':'noBorders'}">
+                    <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${operSig}" width="110" height="30" alt="operSig" /></td><td><div style="text-align:left">ผู้ดำเนินการ</div></td></tr>
+                    </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
+                    <tr><td>(${data.operator_firstname === null || data.operator_firstname === "" ? "........................................" : `${data.operator_firstname} ${data.operator_lastname}`})<br/>
+                    ${`วันที่ ${data.task_date_process === null || data.task_date_process === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_process), 543), 7), 'dd/MM/yyyy')}`}`}</td></td></table></td>
 
-            <table border="1" cellpadding="1" cellspacing="1">
-                <tbody>
-                    <tr>
-                        <td>การประเมิณงาน</td>
-                    </tr>
-                    <tr>
-                        <td>การดำเนินงาน: *สถานะการดำเนินงาน*<br />
-                            หมายเหตุ: *หมายเหตุการดำเนินงาน*<br />
-                            &nbsp;</td>
-                    </tr>
-                </tbody>
-            </table>
+                <td style="text-align:center"><table data-pdfmake="{'widths':['*',110,'*'],'layout':'noBorders'}">
+                    <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${permitSig}" width="110" height="30" alt="permitSig" /></td><td><div style="text-align:left">ผู้ตรวจสอบ</div></td></tr>
+                    </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
+                    <tr><td>(${data.permit_firstname === null || data.permit_firstname === "" ? "........................................" : `${data.permit_firstname} ${data.permit_lastname}`})<br/>
+                    ${`วันที่ ${data.permit_date === null || data.permit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.permit_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></td></table></td>
+            </tr>
+        </table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
+            <tr>
+                <td><strong>ผลการดำเนินงาน</strong></td>
+            </tr>
+            <tr>
+                <td>งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}<br/>
+                รายละเอียดการแก้ไขปัญหา: ${data.status_name === "ยกเลิก" ? "ยกเลิกใบงาน" : (data.task_iscomplete === null || data.task_iscomplete === "") ? "-<br/>" : data.task_solution}<br/>
+                    หมายเหตุ: ${data.complete_note !== null ? data.complete_note : "-"}</td>
+            </tr>
+        </table>${data.is_program_change === null || data.is_program_change === "" ? "" : `<table data-pdfmake="{'layout':'noBorders'}"><tr><td><img src="${cmBox}" width="20" alt="cmBox" /></td><td>โปรแกรมได้รับการทดสอบ UAT แล้ว ขอนุมัติวางโปรแกรม</td></tr></table>`}<table data-pdfmake="{'widths':['*','*','*'], 'layout':'noBorders'}">
+            <tr style="text-align:center">
+                <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ดำเนินการ</td></tr>
+                    <tr><td><img src="${endSig}" width="110" height="30" alt="endSig" /></td></tr>
+                    <tr><td>(${endName === null || endName === "" ? "........................................" : `${endName}`})</td></tr>
+                    <tr><td>${`วันที่ ${data.task_date_end === null || data.task_date_end === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_end), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+                </table></td>
 
-            <table border="1" cellpadding="1" cellspacing="1">
-                <tbody>
-                    <tr>
-                        <td style="text-align:center">ลงชื่อ *รูปลายเซ็นผู้ดำเนินการ*&nbsp;ผู้ดำเนินการ<br />
-                            (*ชื่อผู้ดำเนินการ*)<br />
-                            วันที่ *วันที่ดำเนินการ*</td>
-                        <td style="text-align:center">ลงชื่อ *รูปลายเซ็นผู้ตรวจสอบ*&nbsp;ผู้ตรวจสอบ<br />
-                            (*ชื่อผู้ตรวจสอบ*)<br />
-                            วันที่ *วันที่ตรวจสอบ*</td>
-                    </tr>
-                </tbody>
-            </table>
+                <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้อนุมัติวางโปรแกรม (ถ้ามี)</td></tr>
+                    <tr><td><img src="${pconfirmSig}" width="110" height="30" alt="pconfirmSig" /></td></tr>
+                    <tr><td>(${pconfirmName === null || pconfirmName === "" ? "........................................" : `${pconfirmName}`})</td></tr>
+                    <tr><td>${`วันที่ ${data.pconfirm_date === null || data.pconfirm_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.pconfirm_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+                </table></td>
 
-            <p>&nbsp;</p>
+                <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้รับทราบผลดำเนินงาน</td></tr>
+                    <tr><td><img src="${auditSig}" width="110" height="30" alt="auditSig" /></td></tr>
+                    <tr><td>(${data.audit_firstname === null || data.audit_firstname === "" ? "........................................" : `${data.audit_firstname} ${data.audit_lastname}`})</td></tr>
+                    <tr><td>${`วันที่${data.audit_date === null || data.audit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.audit_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+                </table></td></tr></table>`, {
+        removeExtraBlanks: true,
+        defaultStyles: { // change the default styles
+            table: ''
 
-            <table border="1" cellpadding="1" cellspacing="1">
-                <tbody>
-                    <tr>
-                        <td>ผลการดำเนินงาน</td>
-                    </tr>
-                    <tr>
-                        <td>งบประมาณที่ใช้: *งบประมาณที่ใช้*<br />
-                            รายละเอียดการแก้ไขปัญหา: *รายละเอียดการแก้ไขปัญหา*<br />
-                            <br />
-                            หมายเหคุ: *หมายเหตุการแก้ไขปัญหา*<br />
-                            &nbsp;</td>
-                    </tr>
-                </tbody>
-            </table>
+        }
+    });
 
-            <table border="1" cellpadding="1" cellspacing="1">
-                <tbody>
-                    <tr>
-                        <td style="text-align:center">ลงชื่อ *รูปลายเซ็นผู้ปิดงาน*&nbsp;ผู้ปิดงาน<br />
-                            (*ชื่อผู้ปิดงาน*)<br />
-                            วันที่ *วันที่เสร็จสิ้น*</td>
-                        <td style="text-align:center">ขออนุมัติวางโปรแกรม (ถ้ามี)<br />
-                            ลงชื่อ *รูปลายเซ็นผู้อนุมัติ*&nbsp;ผู้อนุมัติ<br />
-                            (*ชื่อผู้อนุมัติ*)<br />
-                            วันที่ *วันที่อนุมัติ*</td>
-                        <td style="text-align:center">ลงชื่อ *รูปลายเซ็นผู้รับทราบผลดำเนินงาน*&nbsp;ผู้รับทราบผลดำเนินงาน<br />
-                            (*ชื่อผู้รับทราบผลดำเนินงาน*)<br />
-                            วันที่ *วันที่รับทราบผลดำเนินงาน*</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p>&nbsp;</p>
-
-    `);
-
-    console.log(html);
+    const date = new Date();
 
     const docDefinition = {
+        info: {
+            title: `IIOS${date.getDate()}${(`0${parseInt(date.getMonth())+1}`).slice(-2)}${date.getFullYear()}`,
+        },
         content: [
             html
         ],
         defaultStyle: {
             font: 'THSarabunNew',
             fontSize: 16,
+        },
+        styles: {
+            center: {
+                marginBottom: 0,
+                marginLeft: 15,
+                alignment: 'center',
+            },
+            marbot: {
+                marginBottom: 7
+            },
+            test: {
+                marginLeft: 2
+            }
         },
     };
     pdfMake.createPdf(docDefinition).open();

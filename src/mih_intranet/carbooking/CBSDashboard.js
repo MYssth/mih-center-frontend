@@ -1,11 +1,13 @@
 /* eslint-disable import/extensions */
 import { Helmet } from 'react-helmet-async';
+import { useState } from 'react';
 import MainHeader from '../component/MainHeader';
 import CBSSidebar from './component/CBSSidebar';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 
 export default function CBSDashboard() {
+    const [open, setOpen] = useState(false);
 
     return (
         <>
@@ -14,8 +16,8 @@ export default function CBSDashboard() {
             </Helmet>
 
             <div>
-                <MainHeader />
-                <CBSSidebar name="dashboard" />
+                <MainHeader onOpenNav={() => setOpen(true)} />
+                <CBSSidebar name="dashboard" openNav={open} onCloseNav={() => setOpen(false)} />
                 {/* <!-- ======= Main ======= --> */}
                 <main id="main" className="main">
                     <section className="section dashboard">

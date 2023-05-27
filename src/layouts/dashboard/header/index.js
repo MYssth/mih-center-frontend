@@ -65,7 +65,7 @@ export default function Header({ onOpenNav }) {
           }}
         >
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            version: v3.4
+            version: {process.env.REACT_APP_version ? `v${process.env.REACT_APP_version}` : `Unknown`}
           </Typography>
           <AccountPopover />
         </Stack>

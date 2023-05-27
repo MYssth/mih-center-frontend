@@ -149,7 +149,7 @@ export default async function IIOSReport(data) {
         pconfirmSig = await noSig;
     }
 
-    if (data.operator_id !== "" && data.operator_id !== null && data.task_iscomplete) {
+    if (data.operator_id !== "" && data.operator_id !== null && data.task_date_end) {
         endSig = await operSig
         endName = await `${data.operator_firstname} ${data.operator_lastname}`;
     }
@@ -225,8 +225,8 @@ export default async function IIOSReport(data) {
             </tr>
             <tr>
                 <td>งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}<br/>
-                รายละเอียดการแก้ไขปัญหา: ${data.status_name === "ยกเลิก" ? "ยกเลิกใบงาน" : (data.task_iscomplete === null || data.task_iscomplete === "") ? "-<br/>" : data.task_solution}<br/>
-                    หมายเหตุ: ${data.complete_note !== null ? data.complete_note : "-"}</td>
+                รายละเอียดการแก้ไขปัญหา: ${data.status_name === "ยกเลิก" ? "ยกเลิกใบงาน" : (data.task_date_end === null || data.task_date_end === "") ? "-<br/>" : data.task_solution}<br/>
+                    หมายเหตุ: ${data.complete_note !== null && data.complete_note !== "" ? data.complete_note : "-"}</td>
             </tr>
         </table>${data.is_program_change === null || data.is_program_change === "" ? "" : `<table data-pdfmake="{'layout':'noBorders'}"><tr><td><img src="${cmBox}" width="20" alt="cmBox" /></td><td>โปรแกรมได้รับการทดสอบ UAT แล้ว ขอนุมัติวางโปรแกรม</td></tr></table>`}<table data-pdfmake="{'widths':['*','*','*'], 'layout':'noBorders'}">
             <tr style="text-align:center">

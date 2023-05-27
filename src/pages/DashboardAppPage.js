@@ -85,9 +85,9 @@ export default function DashboardAppPage() {
           ) : (
             <></>
           )}
-          <Grid item xs={4}>
+          {/* <Grid item xs={4}>
             <Button variant="contained" onClick={handleIntranet}><Icon icon="material-symbols:fiber-new-outline" width="50" height="50" />หน้าระบบภายในใหม่</Button>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </>

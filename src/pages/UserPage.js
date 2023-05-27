@@ -117,6 +117,11 @@ export default function UserPage() {
   const [DSMSLevelDescription, setDSMSLevelDescription] = useState('');
   const [isDSMS, setIsDSMS] = useState(false);
 
+  const [CBSLevelName, setCBSLevelName] = useState('');
+  const [CBSLevelId, setCBSLevelId] = useState('');
+  const [CBSLevelDescription, setCBSLevelDescription] = useState('');
+  const [isCBS, setIsCBS] = useState(false);
+
   const [pageSize, setPageSize] = useState(25);
 
   const navigate = useNavigate();
@@ -281,6 +286,11 @@ export default function UserPage() {
     setDSMSLevelDescription('');
     setIsDSMS(false);
 
+    setCBSLevelId('');
+    setCBSLevelName('');
+    setCBSLevelDescription('');
+    setIsCBS(false);
+
     setImageUrl(null);
   };
 
@@ -316,11 +326,17 @@ export default function UserPage() {
             setPMSLevelDescription(data[i].level_description);
             setIsPMS(true);
           }
-          if(data[i].mihapp_id === "DSMS") {
+          if (data[i].mihapp_id === "DSMS") {
             setDSMSLevelId(data[i].level_id);
             setDSMSLevelName(data[i].level_name);
             setDSMSLevelDescription(data[i].level_description);
             setIsDSMS(true);
+          }
+          if (data[i].mihapp_id === "CBS") {
+            setCBSLevelId(data[i].level_id);
+            setCBSLevelName(data[i].level_name);
+            setCBSLevelDescription(data[i].level_description);
+            setIsCBS(true);
           }
         }
       })
@@ -377,12 +393,20 @@ export default function UserPage() {
       levelList.push(PMSLevelId);
     }
 
-    if(isDSMS) {
-      if(DSMSLevelId === ""){
+    if (isDSMS) {
+      if (DSMSLevelId === "") {
         alert("กรุณาใส่หน้าที่ของระบบจองเวรแพทย์");
         return;
       }
       levelList.push(DSMSLevelId);
+    }
+
+    if (isCBS) {
+      if (CBSLevelId === "") {
+        alert("กรุณาใส่หน้าที่ของระบบขอใช้รถ");
+        return;
+      }
+      levelList.push(CBSLevelId);
     }
 
     let secret = personnelSecret;
@@ -553,14 +577,26 @@ export default function UserPage() {
   }
 
   const handleChangeDSMS = (event) => {
-    if(event.target.checked) {
+    if (event.target.checked) {
       setIsDSMS(true);
     }
-    else{
+    else {
       setIsDSMS(false);
       setDSMSLevelId("");
       setDSMSLevelName("");
       setDSMSLevelDescription("");
+    }
+  }
+
+  const handleChangeCBS = (event) => {
+    if (event.target.checked) {
+      setIsCBS(true);
+    }
+    else {
+      setIsCBS(false);
+      setCBSLevelId("");
+      setCBSLevelName("");
+      setCBSLevelDescription("");
     }
   }
 
@@ -866,6 +902,40 @@ export default function UserPage() {
             />
             <Typography sx={{ pl: 1.5 }}>{`${DSMSLevelDescription}`}</Typography><br />
             {/* ==== END OF DSMS ==== */}
+
+            {/* ==== CBS ==== */}
+            <Checkbox checked={isCBS} onChange={handleChangeCBS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />ระบบขอใช้รถ
+            {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
+            <Autocomplete
+              disabled={!isCBS}
+              value={CBSLevelName}
+              onChange={(event, newValue) => {
+                setCBSLevelName(newValue);
+                if (newValue !== null) {
+                  setCBSLevelId(levels.find(o => o.level_name === newValue && o.mihapp_id === "CBS").level_id);
+                  setCBSLevelDescription(`รายละเอียด: ${levels.find(o => o.level_name === newValue && o.mihapp_id === "CBS").level_description}`);
+                }
+                else {
+                  setCBSLevelId("");
+                  setCBSLevelDescription("");
+                }
+              }}
+              id="controllable-states-CBS-levels-id"
+              // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
+              options={Object.values(levels).map((option) => option.mihapp_id === "CBS" ? `${option.level_name}` : '').filter(isSkip)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="ระบบขอใช้รถ" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: isCBS ? (CBSLevelName ? 'green' : 'red') : ''
+                  }
+                }
+              }}
+            />
+            <Typography sx={{ pl: 1.5 }}>{`${CBSLevelDescription}`}</Typography><br />
+            {/* ==== END OF CBS ==== */}
 
           </Box>
 

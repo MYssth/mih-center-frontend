@@ -1,15 +1,59 @@
 import React from 'react'
+import { Icon } from '@iconify/react';
+import { IconButton, AppBar, Toolbar, } from '@mui/material';
+import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
+import { bgBlur } from '../../utils/cssStyles';
 
-function MainHeader() {
+MainHeader.propTypes = {
+    onOpenNav: PropTypes.func,
+};
+
+// const NAV_WIDTH = 280;
+
+// const HEADER_MOBILE = 64;
+
+// const HEADER_DESKTOP = 92;
+
+// const StyledRoot = styled(AppBar)(({ theme }) => ({
+//     ...bgBlur({ color: theme.palette.background.default }),
+//     boxShadow: 'none',
+//     [theme.breakpoints.up('lg')]: {
+//         width: `calc(100% - ${NAV_WIDTH + 1}px)`,
+//     },
+// }));
+
+// const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+//     minHeight: HEADER_MOBILE,
+//     [theme.breakpoints.up('lg')]: {
+//         minHeight: HEADER_DESKTOP,
+//         padding: theme.spacing(0, 5),
+//     },
+// }));
+
+export default function MainHeader({ onOpenNav }) {
     return (
         <>
+            {/*  <StyledRoot>
+             <StyledToolbar> */}
+
             {/* <!-- ======= Heade ======= --> */}
             <header id="header" className="header fixed-top d-flex align-items-center">
                 <div className="d-flex align-items-center justify-content-between">
                     <a href="/dashboard" className="logo d-flex align-items-center">
                         <img src="assets/img/logo_sticky.png" alt="" />
                     </a>
-                    <i className="bi bi-list toggle-sidebar-btn" />
+                    {/* <i className="bi bi-list toggle-sidebar-btn" /> */}
+                    <IconButton
+                        onClick={onOpenNav}
+                        sx={{
+                            mr: 1,
+                            color: 'text.primary',
+                            display: { lg: 'none' },
+                        }}
+                    >
+                        <Icon icon="eva:menu-2-fill" />
+                    </IconButton>
                 </div>
                 <nav className="header-nav ms-auto">
                     <ul className="d-flex align-items-center">
@@ -73,8 +117,9 @@ function MainHeader() {
                     </ul>
                 </nav>
             </header>
+
+            {/* </StyledToolbar>
+        </StyledRoot> */}
         </>
     )
 }
-
-export default MainHeader

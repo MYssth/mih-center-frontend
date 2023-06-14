@@ -226,9 +226,9 @@ export default async function IIOSReport(data) {
             <tr>
                 <td>งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === "" ? "0" : data.task_cost}<br/>
                 รายละเอียดการแก้ไขปัญหา: ${data.status_name === "ยกเลิก" ? "ยกเลิกใบงาน" : (data.task_date_end === null || data.task_date_end === "") ? "-<br/>" : data.task_solution}<br/>
-                    หมายเหตุ: ${data.complete_note !== null && data.complete_note !== "" ? data.complete_note : "-"}</td>
+                    หมายเหตุ: ${data.complete_note !== null && data.complete_note !== "" && data.permit_id !== null ? data.complete_note : "-"}</td>
             </tr>
-        </table>${data.is_program_change === null || data.is_program_change === "" ? "" : `<table data-pdfmake="{'layout':'noBorders'}"><tr><td><img src="${cmBox}" width="20" alt="cmBox" /></td><td>โปรแกรมได้รับการทดสอบ UAT แล้ว ขอนุมัติวางโปรแกรม</td></tr></table>`}<table data-pdfmake="{'widths':['*','*','*'], 'layout':'noBorders'}">
+        </table>${data.is_program_change === null || data.is_program_change === "" ? "" : `<table data-pdfmake="{'layout':'noBorders'}"><tr><td><img src="${cmBox}" width="20" alt="cmBox" /></td><td>โปรแกรมได้รับการทดสอบ UAT แล้ว ขอนุมัติวางโปรแกรม</td></tr></table>`}<table data-pdfmake="{'widths':${data.level_id === 'DMIS_IT' ? "['*','*','*']" : "['*','*']" }, 'layout':'noBorders'}">
             <tr style="text-align:center">
                 <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ดำเนินการ</td></tr>
                     <tr><td><img src="${endSig}" width="110" height="30" alt="endSig" /></td></tr>
@@ -236,12 +236,14 @@ export default async function IIOSReport(data) {
                     <tr><td>${`วันที่ ${data.task_date_end === null || data.task_date_end === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_end), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
                 </table></td>
 
-                <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้อนุมัติวางโปรแกรม (ถ้ามี)</td></tr>
-                    <tr><td><img src="${pconfirmSig}" width="110" height="30" alt="pconfirmSig" /></td></tr>
-                    <tr><td>(${pconfirmName === null || pconfirmName === "" ? "........................................" : `${pconfirmName}`})</td></tr>
-                    <tr><td>${`วันที่ ${data.pconfirm_date === null || data.pconfirm_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.pconfirm_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
-                </table></td>
-
+                ${data.level_id === 'DMIS_IT' ?
+            `<td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้อนุมัติวางโปรแกรม (ถ้ามี)</td></tr>
+            <tr><td><img src="${pconfirmSig}" width="110" height="30" alt="pconfirmSig" /></td></tr>
+            <tr><td>(${pconfirmName === null || pconfirmName === "" ? "........................................" : `${pconfirmName}`})</td></tr>
+            <tr><td>${`วันที่ ${data.pconfirm_date === null || data.pconfirm_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.pconfirm_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+        </table></td>`
+            : ''
+        }
                 <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้รับทราบผลดำเนินงาน</td></tr>
                     <tr><td><img src="${auditSig}" width="110" height="30" alt="auditSig" /></td></tr>
                     <tr><td>(${data.audit_firstname === null || data.audit_firstname === "" ? "........................................" : `${data.audit_firstname} ${data.audit_lastname}`})</td></tr>
@@ -258,7 +260,7 @@ export default async function IIOSReport(data) {
 
     const docDefinition = {
         info: {
-            title: `IIOS${date.getDate()}${(`0${parseInt(date.getMonth())+1}`).slice(-2)}${date.getFullYear()}`,
+            title: `IIOS${date.getDate()}${(`0${parseInt(date.getMonth()) + 1}`).slice(-2)}${date.getFullYear()}`,
         },
         content: [
             html

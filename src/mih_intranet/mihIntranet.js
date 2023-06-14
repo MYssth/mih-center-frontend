@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
-import MainHeader from './component/MainHeader';
-import MainSidebar from './component/MainSidebar';
+import MainHeader from './layouts/MainHeader';
+import MainSidebar from './layouts/MainSidebar';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 
@@ -28,7 +28,7 @@ export default function MIHIntranet() {
                                         <div className="card recent-sales">
                                             <div className="card-body">
                                                 <h5 className="card-title">ประกาศ / ใบสื่อสารองค์กรภายใน</h5>
-
+                                                
                                                 <table className="table table-borderless table-hover">
                                                     <thead>
                                                         <tr>
@@ -40,7 +40,7 @@ export default function MIHIntranet() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
+                                                        {/* <tr>
                                                             <th scope="row" className="badge bg-primary">
                                                                 <i className="bi bi-bookmark me-1" />ประกาศ
                                                             </th>
@@ -88,9 +88,10 @@ export default function MIHIntranet() {
                                                             <td><a href="#">ใบสื่อสารองค์กร</a></td>
                                                             <td>01 เม.ย. 2566</td>
                                                             <td>เทคโนโลยีสารสนเทศ</td>
-                                                        </tr>
+                                                        </tr> */}
                                                     </tbody>
                                                 </table>
+                                                (Coming soon)
                                             </div>
                                         </div>
                                     </div>
@@ -101,7 +102,7 @@ export default function MIHIntranet() {
                                             <div className="card-body">
                                                 <h5 className="card-title">ข่าวสาร และกิจกรรม</h5>
                                                 <div className="news">
-                                                    <div className="post-item clearfix mb-5">
+                                                    {/* <div className="post-item clearfix mb-5">
                                                         <img src="assets/img/news-1.jpg" alt="" />
                                                         <h4>
                                                             <a href="#">Nihil blanditiis at in nihil autem</a>
@@ -150,7 +151,8 @@ export default function MIHIntranet() {
                                                             Sit recusandae non aspernatur laboriosam. Quia enim
                                                             eligendi sed ut harum...
                                                         </p>
-                                                    </div>
+                                                    </div> */}
+                                                    (Coming soon)
                                                 </div>
                                             </div>
                                         </div>
@@ -164,7 +166,7 @@ export default function MIHIntranet() {
                                         <h5 className="card-title">
                                             รายการขอใช้ห้องประชุม <span>| ToDay</span>
                                         </h5>
-                                        <div className="activity">
+                                        {/* <div className="activity">
                                             <div className="activity-item d-flex">
                                                 <div className="activite-label">11.00 น.</div>
                                                 <i className="bi bi-circle-fill activity-badge text-success align-self-start" />
@@ -175,14 +177,15 @@ export default function MIHIntranet() {
                                                 <i className="bi bi-circle-fill activity-badge text-success align-self-start" />
                                                 <div className="activity-content">ประชุมเตรียมความพร้อม</div>
                                             </div>
-                                        </div>
+                                        </div> */}
+                                        (Coming soon)
                                     </div>
                                 </div>
                                 <div className="card">
                                     <div className="card-body pb-5">
                                         <h5 className="card-title">รายการขอใช้รถ <span>| ToDay</span></h5>
                                         <div className="activity">
-                                            <div className="activity-item d-flex">
+                                            {/* <div className="activity-item d-flex">
                                                 <div className="activite-label">11.00 น.</div>
                                                 <i className="bi bi-circle-fill activity-badge text-success align-self-start" />
                                                 <div className="activity-content">ไปร้านขายยาอิสานโอสถ</div>
@@ -196,7 +199,8 @@ export default function MIHIntranet() {
                                                 <div className="activite-label">16.30 น.</div>
                                                 <i className="bi bi-circle-fill activity-badge text-success align-self-start" />
                                                 <div className="activity-content">ไปส่ง LAB</div>
-                                            </div>
+                                            </div> */}
+                                            (Coming soon)
                                         </div>
                                     </div>
                                 </div>
@@ -207,7 +211,7 @@ export default function MIHIntranet() {
                                         </h5>
 
                                         <div className="activity">
-                                            <div className="activity-item d-flex">
+                                            {/* <div className="activity-item d-flex">
                                                 <div className="activite-label">01 เม.ย. 2566</div>
                                                 <i className="bi bi-circle-fill activity-badge text-success align-self-start" />
                                                 <div className="activity-content">คลีนนิ่งเดย์ ประจำเดือน</div>
@@ -243,7 +247,8 @@ export default function MIHIntranet() {
                                                 <div className="activite-label">01 เม.ย. 2566</div>
                                                 <i className="bi bi-circle-fill activity-badge text-info align-self-start" />
                                                 <div className="activity-content">ประชุมเตรียมความพร้อม</div>
-                                            </div>
+                                            </div> */}
+                                            (Coming soon)
                                         </div>
                                     </div>
                                 </div>

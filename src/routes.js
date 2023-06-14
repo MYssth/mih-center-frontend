@@ -31,14 +31,21 @@ import DSMSSetting from './pages/DSMS/DSMSSetting';
 
 // CBS
 import MIHIntranet from './mih_intranet/MIHIntranet';
-import CBSDashboard from './mih_intranet/carbooking/CBSDashboard'
-import CBSBooking from './mih_intranet/carbooking/CBSBooking';
+import CBSDashboard from './mih_intranet/CBS/Dashboard';
+import CBSBooking from './mih_intranet/CBS/Booking';
+import CBSPermit from './mih_intranet/CBS/Permit';
+import CBSUseRec from './mih_intranet/CBS/UseRec';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
 
+    {
+      path: '/intranet',
+      element: <MIHIntranet />,
+      index: true
+    },
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -82,10 +89,6 @@ export default function Router() {
       ],
     },
     {
-      path: '/intranet',
-      element: <MIHIntranet />,
-    },
-    {
       path: '/cbsdashboard',
       element: <CBSDashboard />,
     },
@@ -94,9 +97,17 @@ export default function Router() {
       element: <CBSBooking />,
     },
     {
+      path: '/cbspermit',
+      element: <CBSPermit />,
+    },
+    {
+      path: '/cbsuserec',
+      element: <CBSUseRec />
+    },
+    {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard" />, index: true },
+        { element: <Navigate to="/intranet" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

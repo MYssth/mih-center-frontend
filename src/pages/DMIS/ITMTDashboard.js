@@ -233,6 +233,13 @@ export default function ITMTDashboard() {
 
   }, []);
 
+  useEffect(() => {
+    if ((permitId === "" || permitId === null) && categoryId === 1) {
+      setStatusId(2);
+      setStatusName("กำลังดำเนินการ");
+    }
+  }, [categoryId])
+
   function refreshTable() {
     fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getoperator/${lvId}`)
       .then((response) => response.json())
@@ -552,19 +559,7 @@ export default function ITMTDashboard() {
       taskCase: taskCase,
     }
 
-    // console.log(`task_id ${jsonData.task_id}`);
-    // console.log(`level_id ${jsonData.level_id}`);
-    // console.log(`task_solution ${jsonData.task_solution}`);
-    // console.log(`task_cost ${jsonData.task_cost}`);
-    // console.log(`task_serialnumber ${jsonData.task_serialnumber}`);
-    // console.log(`task_device_id ${jsonData.task_device_id}`);
-    // console.log(`status_id ${jsonData.status_id}`);
-    // console.log(`operator_id ${jsonData.operator_id}`);
-    // console.log(`category_id ${jsonData.category_id}`);
-    // console.log(`task_phone_no ${jsonData.task_phone_no}`);
-    // console.log(`task_note ${jsonData.task_note}`);
-    // console.log(`is_program_change ${jsonData.is_program_change}`);
-    // console.log(`taskCase ${jsonData.taskCase}`);
+    // console.log(jsonData);
 
     if (jsonData.status_id === "" || jsonData.status_id === null) {
       alert("กรุณาระบุสถานะของงาน");
@@ -854,6 +849,7 @@ export default function ITMTDashboard() {
           <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
             <Autocomplete
               value={statusName}
+              disabled={(permitId === "" || permitId === null) && categoryId === 1}
               onChange={(event, newValue) => {
                 setStatusName(newValue);
                 if (newValue !== null) {

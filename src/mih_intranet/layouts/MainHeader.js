@@ -1,6 +1,7 @@
-import React from 'react'
+import jwtDecode from "jwt-decode";
+import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
-import { IconButton, AppBar, Toolbar, } from '@mui/material';
+import { IconButton, AppBar, Toolbar, Typography, } from '@mui/material';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { bgBlur } from '../../utils/cssStyles';
@@ -9,38 +10,27 @@ MainHeader.propTypes = {
     onOpenNav: PropTypes.func,
 };
 
-// const NAV_WIDTH = 280;
-
-// const HEADER_MOBILE = 64;
-
-// const HEADER_DESKTOP = 92;
-
-// const StyledRoot = styled(AppBar)(({ theme }) => ({
-//     ...bgBlur({ color: theme.palette.background.default }),
-//     boxShadow: 'none',
-//     [theme.breakpoints.up('lg')]: {
-//         width: `calc(100% - ${NAV_WIDTH + 1}px)`,
-//     },
-// }));
-
-// const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-//     minHeight: HEADER_MOBILE,
-//     [theme.breakpoints.up('lg')]: {
-//         minHeight: HEADER_DESKTOP,
-//         padding: theme.spacing(0, 5),
-//     },
-// }));
-
 export default function MainHeader({ onOpenNav }) {
+
+    const [tokenData, setTokenData] = useState([]);
+
+    useEffect(() => {
+
+        const token = localStorage.getItem('token');
+        setTokenData(jwtDecode(token));
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        // navigate('/login', { replace: true });
+    };
+
     return (
         <>
-            {/*  <StyledRoot>
-             <StyledToolbar> */}
-
-            {/* <!-- ======= Heade ======= --> */}
+            {/* <!-- ======= Head ======= --> */}
             <header id="header" className="header fixed-top d-flex align-items-center">
                 <div className="d-flex align-items-center justify-content-between">
-                    <a href="/dashboard" className="logo d-flex align-items-center">
+                    <a href="/intranet" className="logo d-flex align-items-center">
                         <img src="assets/img/logo_sticky.png" alt="" />
                     </a>
                     {/* <i className="bi bi-list toggle-sidebar-btn" /> */}
@@ -55,9 +45,15 @@ export default function MainHeader({ onOpenNav }) {
                         <Icon icon="eva:menu-2-fill" />
                     </IconButton>
                 </div>
+
                 <nav className="header-nav ms-auto">
+
                     <ul className="d-flex align-items-center">
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            version: {process.env.REACT_APP_version ? `v${process.env.REACT_APP_version}` : `Unknown`}
+                        </Typography>
                         <li className="nav-item dropdown pe-3">
+
                             <a
                                 className="nav-link nav-profile d-flex align-items-center pe-0"
                                 href="#"
@@ -68,16 +64,17 @@ export default function MainHeader({ onOpenNav }) {
                                     src="assets/img/user profile.webp"
                                     alt="User Profile"
                                 />
-                                <span className="d-none d-md-block dropdown-toggle ps-2"
-                                >Karnanan Purimanuruk</span
-                                >
+                                <span className="d-none d-md-block dropdown-toggle ps-2">
+                                    {tokenData.personnel_name}
+                                </span>
                             </a>
                             <ul
                                 className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
                             >
                                 <li className="dropdown-header">
-                                    <h6>Karnanan Purimanuruk</h6>
-                                    <span>Information Technology Dep.</span>
+                                    <h6>{tokenData.personnel_name}</h6>
+                                    <span>Coming soon.</span>
+                                    {/* <span>Information Technology Dep.</span> */}
                                 </li>
                                 <li>
                                     <hr className="dropdown-divider" />
@@ -88,7 +85,7 @@ export default function MainHeader({ onOpenNav }) {
                                         href="users-profile.html"
                                     >
                                         <i className="bi bi-person" />
-                                        <span>My Profile</span>
+                                        <span>My Profile (Coming soon)</span>
                                     </a>
                                 </li>
                                 <li>
@@ -97,7 +94,7 @@ export default function MainHeader({ onOpenNav }) {
                                 <li>
                                     <a
                                         className="dropdown-item d-flex align-items-center"
-                                        href="users-profile.html"
+                                        href="/dashboard/profilesetting"
                                     >
                                         <i className="bi bi-gear" />
                                         <span>Account Settings</span>
@@ -107,7 +104,7 @@ export default function MainHeader({ onOpenNav }) {
                                     <hr className="dropdown-divider" />
                                 </li>
                                 <li>
-                                    <a className="dropdown-item d-flex align-items-center" href="#">
+                                    <a className="dropdown-item d-flex align-items-center" href="/login" onClick={handleLogout}>
                                         <i className="bi bi-box-arrow-right" />
                                         <span>Sign Out</span>
                                     </a>
@@ -117,9 +114,6 @@ export default function MainHeader({ onOpenNav }) {
                     </ul>
                 </nav>
             </header>
-
-            {/* </StyledToolbar>
-        </StyledRoot> */}
         </>
     )
 }

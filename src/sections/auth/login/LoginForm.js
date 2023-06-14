@@ -33,7 +33,7 @@ export default function LoginForm() {
         if (data.status === 'ok') {
           localStorage.setItem('token', data.token);
           sessionStorage.setItem('reloadCount', String(1));
-          navigate('/dashboard', { replace: true });
+          navigate('/intranet', { replace: true });
         }
       })
       .catch((error) => {

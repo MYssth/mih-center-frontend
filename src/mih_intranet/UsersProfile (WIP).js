@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import MainHeader from './component/MainHeader';
+import MainHeader from './layouts/MainHeader';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 

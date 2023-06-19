@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
-import MainHeader from './layouts/MainHeader';
-import MainSidebar from './layouts/MainSidebar';
+import MainHeader from './components/MainHeader';
+import MainSidebar from './nav/MainSidebar';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 

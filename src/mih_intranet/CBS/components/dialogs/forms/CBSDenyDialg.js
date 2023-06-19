@@ -12,8 +12,10 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
-import CBSSubmtERR from './SubmtERR';
-import CBSSubmtComp from './SubmtComp';
+import {
+    SubmtComp,
+    SubmtERR,
+} from '../../../../components/dialogs/response';
 
 let token = "";
 
@@ -69,8 +71,8 @@ function CBSDenyDialg({ openDialg, onCloseDialg, data }) {
 
     return (
         <>
-            <CBSSubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
-            <CBSSubmtComp openDialg={submitComp} onCloseDialg={() => {
+            <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
+            <SubmtComp openDialg={submitComp} onCloseDialg={() => {
                 setSubmitComp(false);
                 onCloseDialg();
             }} />

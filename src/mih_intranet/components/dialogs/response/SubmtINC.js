@@ -8,7 +8,7 @@ import {
     Button,
 } from '@mui/material';
 
-function CBSSubmtComp({ openDialg, onCloseDialg }) {
+function SubmtINC({ openDialg, onCloseDialg }) {
     return (
         <>
             <Dialog
@@ -16,11 +16,11 @@ function CBSSubmtComp({ openDialg, onCloseDialg }) {
                 onClose={onCloseDialg}
             >
                 <DialogTitle>
-                    Success!
+                    ดำเนินการไม่สำเร็จ
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        ดำเนินการเสร็จสิ้น
+                        กรุณากรอกข้อมูลในกรอบสีแดงให้ครบถ้วน
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -31,4 +31,4 @@ function CBSSubmtComp({ openDialg, onCloseDialg }) {
     )
 }
 
-export default CBSSubmtComp
+export default SubmtINC

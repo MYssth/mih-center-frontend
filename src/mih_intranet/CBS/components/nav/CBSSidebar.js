@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Drawer } from '@mui/material';
 
-import useResponsive from '../../../hooks/useResponsive';
+import useResponsive from '../../../../hooks/useResponsive';
 
 CBSSidebar.propTypes = {
     openNav: PropTypes.bool,
@@ -32,7 +32,7 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
                 ""
                 :
                 <div className="d-flex align-items-center justify-content-between">
-                    <a href="/dashboard" className="logo d-flex align-items-center">
+                    <a href="/intranet" className="logo d-flex align-items-center">
                         <img src="assets/img/logo_sticky.png" alt="" />
                     </a>
                 </div>

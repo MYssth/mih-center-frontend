@@ -6,8 +6,8 @@ import {
     styled,
     alpha,
 } from '@mui/material';
-import MainHeader from '../layouts/MainHeader';
-import CBSSidebar from './components/Sidebar';
+import MainHeader from '../components/MainHeader';
+import CBSSidebar from './components/nav/CBSSidebar';
 
 const ODD_OPACITY = 0.2;
 
@@ -143,7 +143,7 @@ export default function CBSDashboard() {
     return (
         <>
             <Helmet>
-                <title> ข้อมูลผู้ใช้ | {headSname} </title>
+                <title> ระบบขอใช้รถ | {headSname} </title>
             </Helmet>
 
             <div>
@@ -152,7 +152,7 @@ export default function CBSDashboard() {
                 {/* <!-- ======= Main ======= --> */}
                 <main id="main" className="main">
                     <div className="pagetitle">
-                        <h1>หน้าหลักระบบขอใช้รถ</h1>
+                        <h1>หน้าหลักระบบขอใช้รถ - Car Booking Service(CBS)</h1>
                         <nav>
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item my-2">

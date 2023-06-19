@@ -29,23 +29,29 @@ import DSMSBookShift from './pages/DSMS/DSMSBookShift';
 import DSMSManageBook from './pages/DSMS/DSMSManageBook';
 import DSMSSetting from './pages/DSMS/DSMSSetting';
 
-// CBS
+//
 import MIHIntranet from './mih_intranet/MIHIntranet';
-import CBSDashboard from './mih_intranet/CBS/Dashboard';
-import CBSBooking from './mih_intranet/CBS/Booking';
-import CBSPermit from './mih_intranet/CBS/Permit';
-import CBSUseRec from './mih_intranet/CBS/UseRec';
+
+// CBS
+import CBSDashboard from './mih_intranet/CBS/CBSDashboard';
+import CBSBooking from './mih_intranet/CBS/CBSBooking';
+import CBSPermit from './mih_intranet/CBS/CBSPermit';
+import CBSUseRec from './mih_intranet/CBS/CBSUseRec';
+
+// IIOS
+import IIOSUserDashboard from './mih_intranet/IIOS/IIOSUserDashboard';
+import IIOSITMTDashboard from './mih_intranet/IIOS/IIOSITMTDashboard';
+import IIOSPermit from './mih_intranet/IIOS/IIOSPermit';
+import IIOSInformerTask from './mih_intranet/IIOS/IIOSInformerTask';
+import IIOSAudit from './mih_intranet/IIOS/IIOSAudit';
+import IIOSNewCase from './mih_intranet/IIOS/IIOSNewCase';
+import IIOSReport from './mih_intranet/IIOS/IIOSReportPage';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
 
-    {
-      path: '/intranet',
-      element: <MIHIntranet />,
-      index: true
-    },
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -89,6 +95,13 @@ export default function Router() {
       ],
     },
     {
+      path: '/intranet',
+      element: <MIHIntranet />,
+      index: true
+    },
+
+    // CBS
+    {
       path: '/cbsdashboard',
       element: <CBSDashboard />,
     },
@@ -102,8 +115,39 @@ export default function Router() {
     },
     {
       path: '/cbsuserec',
-      element: <CBSUseRec />
+      element: <CBSUseRec />,
     },
+
+    // IIOS
+    {
+      path: '/iiosuserdashboard',
+      element: <IIOSUserDashboard />,
+    },
+    {
+      path: '/iiositmtdashboard',
+      element: <IIOSITMTDashboard />,
+    },
+    {
+      path: '/iiospermit',
+      element: <IIOSPermit />,
+    },
+    {
+      path: '/iiosinformertask',
+      element: <IIOSInformerTask />,
+    },
+    {
+      path: '/iiosaudit',
+      element: <IIOSAudit />,
+    },
+    {
+      path: '/iiosnewcase',
+      element: <IIOSNewCase />,
+    },
+    {
+      path: '/iiosreport',
+      element: <IIOSReport />,
+    },
+
     {
       element: <SimpleLayout />,
       children: [

@@ -1,5 +1,6 @@
 /* eslint-disable react/button-has-type */
-/* eslint-disable arrow-body-style */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import { DataGrid, gridClasses, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import {
@@ -7,11 +8,11 @@ import {
     styled,
     alpha,
     Box,
+    Button,
 } from '@mui/material';
-import MainHeader from '../layouts/MainHeader';
-import CBSSidebar from './components/Sidebar';
-import CBSPermitDialg from './components/PermitDialg';
-import CBSDenyDialg from './components/DenyDialg';
+import MainHeader from '../components/MainHeader';
+import CBSSidebar from './components/nav/CBSSidebar';
+import { CBSUseRecDialg } from './components/dialogs/forms';
 
 const ODD_OPACITY = 0.2;
 
@@ -48,7 +49,16 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     },
 }));
 
-function CBSPermit() {
+const headSname = `${localStorage.getItem('sname')} Center`;
+
+function CBSUseRec() {
+
+    const [sched, setSched] = useState([]);
+    const [pageSize, setPageSize] = useState(10);
+    const [open, setOpen] = useState(false);
+
+    const [useRecDialg, setUseRecDialg] = useState(false);
+    const [useRecData, setUseRecData] = useState([]);
 
     const columns = [
         {
@@ -56,25 +66,19 @@ function CBSPermit() {
             headerName: '',
             sortable: false,
             flex: 1,
-            minWidth: 155,
+            minWidth: 100,
+            align: 'center',
             renderCell: (params) => {
-                const handlePermit = () => {
-                    setPermitData(params.row);
-                    setPermitDialg(true);
+                const handleUseRec = () => {
+                    setUseRecData(params.row);
+                    setUseRecDialg(true);
                 }
-                const handleDeny = () => {
-                    setPermitData(params.row);
-                    setDenyDialg(true);
-                }
-                
+
                 return (
                     <Stack direction="row" spacing={1}>
-                        <button onClick={handlePermit} className="btn btn-success">
-                            อนุมัติ
-                        </button>
-                        <button type="submit" className="btn btn-danger" onClick={handleDeny}>
-                            ยกเลิก
-                        </button>
+                        <Button onClick={handleUseRec} className="btn btn-success">
+                            บันทึก
+                        </Button>
                     </Stack>
                 );
             },
@@ -151,15 +155,6 @@ function CBSPermit() {
         );
     }
 
-    const [sched, setSched] = useState([]);
-    const [pageSize, setPageSize] = useState(10);
-
-    const [open, setOpen] = useState(false);
-
-    const [permitDialg, setPermitDialg] = useState(false);
-    const [denyDialg, setDenyDialg] = useState(false);
-    const [permitData, setPermitData] = useState([]);
-
     useEffect(() => {
 
         refreshTable();
@@ -167,7 +162,7 @@ function CBSPermit() {
     }, []);
 
     function refreshTable() {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getreqsched`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdrvsched`)
             .then((response) => response.json())
             .then((data) => {
                 setSched(data);
@@ -183,47 +178,45 @@ function CBSPermit() {
     }
 
     return (
-        <div>
+        <>
 
-            <CBSDenyDialg openDialg={denyDialg} onCloseDialg={() => {
-                setDenyDialg(false);
-                refreshTable();
-            }}
-                data={permitData} />
+            <Helmet>
+                <title> ระบบขอใช้รถ | {headSname} </title>
+            </Helmet>
 
-            <CBSPermitDialg openDialg={permitDialg} onCloseDialg={() => {
-                setPermitDialg(false);
-                refreshTable();
-            }}
-                data={permitData} />
+            <div>
 
-            <MainHeader onOpenNav={() => setOpen(true)} />
-            <CBSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} />
+                <CBSUseRecDialg openDialg={useRecDialg} onCloseDialg={() => {
+                    setUseRecDialg(false);
+                    refreshTable();
+                }}
+                    data={useRecData} />
 
-            {/* <!-- ======= Main ======= --> */}
-            <main id="main" className="main">
-                <div className="pagetitle">
-                    <h1>จัดการคำขอใช้รถ</h1>
-                    <nav>
-                        <ol className="breadcrumb">
-                            <li className="breadcrumb-item my-2">
-                                <a href="/intranet">หน้าหลัก</a>
-                            </li>
-                            <li className="breadcrumb-item my-2">
-                                <a href="/cbsdashboard">หน้าหลักระบบขอใช้รถ</a>
-                            </li>
-                            <li className="breadcrumb-item my-2">จัดการคำขอใช้รถ</li>
-                        </ol>
-                    </nav>
-                </div>
-                {/* <!-- End Page Title --> */}
-                <section className="section">
-                    <div className="row">
-                        <div className="col-lg-12">
+                <MainHeader onOpenNav={() => setOpen(true)} />
+                <CBSSidebar name="userec" openNav={open} onCloseNav={() => setOpen(false)} />
+                {/* <!-- ======= Main ======= --> */}
+                <main id="main" className="main">
+                    <div className="pagetitle">
+                        <h1>บันทึกการใช้รถ</h1>
+                        <nav>
+                            <ol className="breadcrumb">
+                                <li className="breadcrumb-item my-2">
+                                    <a href="../mih-intranet.html">หน้าหลัก</a>
+                                </li>
+                                <li className="breadcrumb-item my-2">
+                                    <a href="car-booking.html">หน้าหลักระบบขอใช้รถ</a>
+                                </li>
+                                <li className="breadcrumb-item my-2">บันทึกการใช้รถ</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    {/* <!-- End Page Title --> */}
+                    <section className="section">
+                        <div className="row">
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body pt-3">
-                                        <h5 className="card-title">รายการขอใช้รถ</h5>
+                                        <h5 className="card-title">บันทึกการใช้รถ</h5>
                                         <StripedDataGrid
                                             autoHeight
                                             getRowHeight={() => 'auto'}
@@ -253,11 +246,11 @@ function CBSPermit() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
-            </main>
-        </div>
+                    </section>
+                </main>
+            </div>
+        </>
     )
 }
 
-export default CBSPermit
+export default CBSUseRec

@@ -60,7 +60,7 @@ export default function MainSidebar({ openNav, onCloseNav }) {
                 ""
                 :
                 <div className="d-flex align-items-center justify-content-between">
-                    <a href="/dashboard" className="logo d-flex align-items-center">
+                    <a href="/intranet" className="logo d-flex align-items-center">
                         <img src="assets/img/logo_sticky.png" alt="" />
                     </a>
                 </div>
@@ -75,7 +75,7 @@ export default function MainSidebar({ openNav, onCloseNav }) {
                 </li>
                 {isIIOS ?
                     <li className="nav-item">
-                        <a className="nav-link collapsed" href="/dmis">
+                        <a className="nav-link collapsed" href="/iiosuserdashboard">
                             <i className="bi bi-tools" />
                             <span>ระบบแจ้งปัญหา/แจ้งซ่อม</span>
                         </a>
@@ -150,7 +150,8 @@ export default function MainSidebar({ openNav, onCloseNav }) {
 
                 <li className="nav-heading">เอกสารเผยแพร่</li>
                 <li className="nav-item">
-                    <a className="nav-link collapsed" href="mihdocuments/announce.html">
+                    {/* <a className="nav-link collapsed" href="mihdocuments/announce.html"> */}
+                    <a className="nav-link collapsed" href="#">
                         <i className="bi bi-bookmark" />
                         <span>ใบสื่อสารองค์กร (Coming soon)</span>
                     </a>

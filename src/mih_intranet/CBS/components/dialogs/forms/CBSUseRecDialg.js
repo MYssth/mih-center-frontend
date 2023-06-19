@@ -21,10 +21,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import thLocale from "date-fns/locale/th";
-import CBSSubmtINC from './SubmtINC';
-import CBSSubmtERR from './SubmtERR';
-import CBSSubmtComp from './SubmtComp';
-import CBSDenyDialg from './DenyDialg';
+import {
+    SubmtComp,
+    SubmtERR,
+    SubmtINC,
+} from '../../../../components/dialogs/response';
+import CBSDenyDialg from './CBSDenyDialg';
 
 let token = "";
 
@@ -113,9 +115,9 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
                 onCloseDialg();
             }}
                 data={data} />
-            <CBSSubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
-            <CBSSubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
-            <CBSSubmtComp openDialg={submitComp} onCloseDialg={() => {
+            <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
+            <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
+            <SubmtComp openDialg={submitComp} onCloseDialg={() => {
                 setSubmitComp(false);
                 onCloseDialg();
             }} />

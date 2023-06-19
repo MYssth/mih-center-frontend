@@ -8,7 +8,7 @@ import {
     Button,
 } from '@mui/material';
 
-function CBSSubmtERR({ openDialg, onCloseDialg }) {
+function SubmtERR({ openDialg, onCloseDialg }) {
     return (
         <>
             <Dialog
@@ -31,4 +31,4 @@ function CBSSubmtERR({ openDialg, onCloseDialg }) {
     )
 }
 
-export default CBSSubmtERR
+export default SubmtERR

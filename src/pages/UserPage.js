@@ -117,9 +117,15 @@ export default function UserPage() {
   const [DSMSLevelDescription, setDSMSLevelDescription] = useState('');
   const [isDSMS, setIsDSMS] = useState(false);
 
+  const [PSNLvViews, setPSNLvViews] = useState([]);
+
   const [CBSLevelName, setCBSLevelName] = useState('');
   const [CBSLevelId, setCBSLevelId] = useState('');
   const [CBSLevelDescription, setCBSLevelDescription] = useState('');
+  const [CBSLvViewId, setCBSLvViewId] = useState('');
+  const [CBSLvViewName, setCBSLvViewName] = useState('');
+  const [CBSLvViewDescr, setCBSLvViewDescr] = useState('');
+
   const [isCBS, setIsCBS] = useState(false);
 
   const [pageSize, setPageSize] = useState(25);
@@ -214,29 +220,32 @@ export default function UserPage() {
         console.error('Error:', error);
       })
 
-      .then(
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevels`)
+      .then((response) => response.json())
+      .then((data) => {
+        setLevels(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevels`)
-          .then((response) => response.json())
-          .then((data) => {
-            setLevels(data);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          })
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevelviews`)
+      .then((response) => response.json())
+      .then((data) => {
+        setLevelViews(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
 
-      ).then(
-
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlevelviews`)
-          .then((response) => response.json())
-          .then((data) => {
-            setLevelViews(data);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          })
-
-      )
+    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getlvviews`)
+      .then((response) => response.json())
+      .then((data) => {
+        setPSNLvViews(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
 
   }, []);
 
@@ -336,6 +345,9 @@ export default function UserPage() {
             setCBSLevelId(data[i].level_id);
             setCBSLevelName(data[i].level_name);
             setCBSLevelDescription(data[i].level_description);
+            setCBSLvViewId(data[i].view_id);
+            setCBSLvViewName(data[i].view_name);
+            setCBSLvViewDescr(data[i].view_description);
             setIsCBS(true);
           }
         }
@@ -935,6 +947,37 @@ export default function UserPage() {
               }}
             />
             <Typography sx={{ pl: 1.5 }}>{`${CBSLevelDescription}`}</Typography><br />
+
+            <Autocomplete
+              disabled={!isCBS}
+              value={CBSLvViewName}
+              onChange={(event, newValue) => {
+                setCBSLvViewName(newValue);
+                if (newValue !== null) {
+                  setCBSLvViewId(PSNLvViews.find(o => o.name === newValue).id);
+                  setCBSLvViewDescr(`รายละเอียด: ${PSNLvViews.find(o => o.name === newValue).descr}`);
+                }
+                else {
+                  setCBSLvViewId("");
+                  setCBSLvViewDescr("");
+                }
+              }}
+              id="controllable-states-DMIS-level-views-id"
+              // options={Object.values(levelViews).map((option) => option.mihapp_id === "DMIS" ? `${option.view_name}` : '').filter(isSkip)}
+              options={Object.values(PSNLvViews).map((option) =>option.name)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งขอใช้รถ" />}
+              sx={{
+                "& .MuiAutocomplete-inputRoot": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: isCBS ? (CBSLvViewName ? 'green' : 'red') : ''
+                  }
+                }
+              }}
+            />
+            <Typography sx={{ pl: 1.5 }}>{`${CBSLvViewDescr}`}</Typography><br />
+
             {/* ==== END OF CBS ==== */}
 
           </Box>

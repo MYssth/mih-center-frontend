@@ -208,6 +208,9 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             .then((data) => {
                 if (data.status === 'ok') {
                     onCloseDialg();
+                    setIsStatusChange(false);
+                    setIsProgramChange(null);
+                    setSolution("");
                 }
                 else {
                     setSubmitERR(true);
@@ -224,7 +227,12 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
         <>
             <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
             <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
-            <Dialog fullWidth maxWidth="md" open={openDialg} onClose={onCloseDialg}>
+            <Dialog fullWidth maxWidth="md" open={openDialg} onClose={() => {
+                onCloseDialg();
+                setIsStatusChange(false);
+                setIsProgramChange(null);
+                setSolution("");
+            }}>
                 <DialogTitle>บันทึกงานแจ้งซ่อม</DialogTitle>
                 <DialogContent>
                     <DialogContentText>

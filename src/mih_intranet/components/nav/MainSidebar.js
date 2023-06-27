@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Drawer } from '@mui/material';
 import jwtDecode from "jwt-decode";
 
-import useResponsive from '../../hooks/useResponsive';
+import useResponsive from '../../../hooks/useResponsive';
 
 MainSidebar.propTypes = {
     openNav: PropTypes.bool,
@@ -13,7 +13,7 @@ MainSidebar.propTypes = {
 
 const NAV_WIDTH = 280;
 
-export default function MainSidebar({ openNav, onCloseNav }) {
+export default function MainSidebar({ name, openNav, onCloseNav }) {
     const { pathname } = useLocation();
 
     const isDesktop = useResponsive('up', 'lg');
@@ -31,14 +31,16 @@ export default function MainSidebar({ openNav, onCloseNav }) {
             }
             else if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT"
                 || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
-                || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
+                || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL"
+                || token.level_list[i].level_id === "DMIS_USER") {
                 setIsIIOS(true);
             }
             else if (token.level_list[i].level_id === "DSMS_USER" || token.level_list[i].level_id === "DSMS_ADMIN") {
                 setIsDSMS(true);
             }
             else if (token.level_list[i].level_id === "CBS_DRV" || token.level_list[i].level_id === "CBS_MGR"
-                || token.level_list[i].level_id === "CBS_USER") {
+                || token.level_list[i].level_id === "CBS_USER" || token.level_list[i].level_id === "CBS_RCV"
+                || token.level_list[i].level_id === "CBS_ADMIN") {
                 setIsCBS(true);
             }
         }
@@ -51,6 +53,100 @@ export default function MainSidebar({ openNav, onCloseNav }) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
+
+    const main = (
+        <li className="nav-item">
+            {name === "main" ?
+                <a className="nav-link" href="#">
+                    <i className="bi bi-house" />
+                    <span>หน้าหลัก</span>
+                </a>
+                :
+                <a className="nav-link collapsed" href="/intranet">
+                    <i className="bi bi-house" />
+                    <span>หน้าหลัก</span>
+                </a>
+            }
+        </li>
+    );
+
+    const IIOS = (
+        <>
+            {isIIOS ?
+                <li className="nav-item">
+                    <a className="nav-link collapsed" href="/iiosuserdashboard">
+                        <i className="bi bi-tools" />
+                        <span>ระบบแจ้งปัญหา/แจ้งซ่อม</span>
+                    </a>
+                </li>
+                : ""
+            }
+        </>
+    );
+
+    const CBS = (
+        <>
+            {isCBS ?
+                <li className="nav-item">
+                    <a className="nav-link collapsed" href="/cbsdashboard">
+                        <i className="bi bi-car-front" />
+                        <span>ระบบขอใช้รถ</span>
+                    </a>
+                </li>
+                : ""
+            }
+        </>
+    )
+
+    const DSMS = (
+        <>
+            {isDSMS ?
+                <li className="nav-item">
+                    <a className="nav-link collapsed" href="/dsms">
+                        <i className="bi bi-calendar3" />
+                        <span>ระบบตารางการทำงานแพทย์</span>
+                    </a>
+                </li>
+                : ""
+            }
+        </>
+    );
+
+    const PMS = (
+        <>
+            {isPMS ?
+                <>
+                    <li className="nav-item">
+                        {name === "pmsusermgr" ?
+                            <a className="nav-link" href="#">
+                                <i className="bi bi-person-gear" />
+                                <span>จัดการผู้ใช้</span>
+                            </a>
+                            :
+                            // <a className="nav-link collapsed" href="/pmsusermgr">
+                            <a className="nav-link collapsed" href="/dashboard/user">
+                                <i className="bi bi-person-gear" />
+                                <span>จัดการผู้ใช้</span>
+                            </a>
+                        }
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link collapsed" href="/dashboard/rolemgr">
+                            <i className="bi bi-building-gear" />
+                            <span>จัดการโครงสร้างองค์กร</span>
+                        </a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link collapsed" href="/dashboard/sitesetting">
+                            <i className="bi bi-gear" />
+                            <span>ตั้งค่า</span>
+                        </a>
+                    </li>
+                </>
+                : ""
+            }
+        </>
+    );
 
     const renderContent = (
         <>
@@ -67,21 +163,8 @@ export default function MainSidebar({ openNav, onCloseNav }) {
             }
 
             <ul className="sidebar-nav" id="sidebar-nav">
-                <li className="nav-item">
-                    <a className="nav-link" href="intranet">
-                        <i className="bi bi-house" />
-                        <span>หน้าหลัก</span>
-                    </a>
-                </li>
-                {isIIOS ?
-                    <li className="nav-item">
-                        <a className="nav-link collapsed" href="/iiosuserdashboard">
-                            <i className="bi bi-tools" />
-                            <span>ระบบแจ้งปัญหา/แจ้งซ่อม</span>
-                        </a>
-                    </li>
-                    : ""
-                }
+                {main}
+                {IIOS}
 
                 {/* <li className="nav-item">
                     <a className="nav-link collapsed" href="#">
@@ -90,15 +173,7 @@ export default function MainSidebar({ openNav, onCloseNav }) {
                     </a>
                 </li> */}
 
-                {isCBS ?
-                    <li className="nav-item">
-                        <a className="nav-link collapsed" href="/cbsdashboard">
-                            <i className="bi bi-car-front" />
-                            <span>ระบบขอใช้รถ</span>
-                        </a>
-                    </li>
-                    : ""
-                }
+                {CBS}
 
                 {/* <li className="nav-item">
                     <a className="nav-link collapsed" href="#">
@@ -114,39 +189,8 @@ export default function MainSidebar({ openNav, onCloseNav }) {
                     </a>
                 </li> */}
 
-                {isDSMS ?
-                    <li className="nav-item">
-                        <a className="nav-link collapsed" href="/dsms">
-                            <i className="bi bi-calendar3" />
-                            <span>ระบบตารางการทำงานแพทย์</span>
-                        </a>
-                    </li>
-                    : ""
-                }
-
-                {isPMS ?
-                    <>
-                        <li className="nav-item">
-                            <a className="nav-link collapsed" href="/dashboard/user">
-                                <i className="bi bi-car-front" />
-                                <span>จัดการผู้ใช้</span>
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link collapsed" href="/dashboard/rolemgr">
-                                <i className="bi bi-car-front" />
-                                <span>จัดการโครงสร้างองค์กร</span>
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link collapsed" href="/dashboard/sitesetting">
-                                <i className="bi bi-car-front" />
-                                <span>ตั้งค่า</span>
-                            </a>
-                        </li>
-                    </>
-                    : ""
-                }
+                {DSMS}
+                {PMS}
 
                 <li className="nav-heading">เอกสารเผยแพร่</li>
                 <li className="nav-item">

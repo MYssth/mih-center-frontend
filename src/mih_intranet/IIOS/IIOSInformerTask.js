@@ -241,7 +241,7 @@ function IIOSInformerTask() {
             </Helmet>
 
             <MainHeader onOpenNav={() => setOpen(true)} />
-            <IIOSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} />
+            <IIOSSidebar name="informertask" openNav={open} onCloseNav={() => setOpen(false)} />
 
             <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
 

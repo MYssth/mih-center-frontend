@@ -13,7 +13,7 @@ import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import {
     CBSDenyDialg,
-    CBSPermitDialg,
+    CBSPermitRepDialg,
 } from './components/dialogs/forms';
 
 const ODD_OPACITY = 0.2;
@@ -53,7 +53,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 
-function CBSPermit() {
+function CBSReqPermit() {
 
     const columns = [
         {
@@ -64,11 +64,11 @@ function CBSPermit() {
             minWidth: 155,
             renderCell: (params) => {
                 const handlePermit = () => {
-                    setPermitData(params.row);
-                    setPermitDialg(true);
+                    setPermitRepData(params.row);
+                    setPermitRepDialg(true);
                 }
                 const handleDeny = () => {
-                    setPermitData(params.row);
+                    setPermitRepData(params.row);
                     setDenyDialg(true);
                 }
 
@@ -173,9 +173,9 @@ function CBSPermit() {
 
     const [open, setOpen] = useState(false);
 
-    const [permitDialg, setPermitDialg] = useState(false);
+    const [permitRepDialg, setPermitRepDialg] = useState(false);
     const [denyDialg, setDenyDialg] = useState(false);
-    const [permitData, setPermitData] = useState([]);
+    const [permitRepData, setPermitRepData] = useState([]);
 
     useEffect(() => {
 
@@ -184,7 +184,7 @@ function CBSPermit() {
     }, []);
 
     function refreshTable() {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getpermitsched`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getpermitreqsched`)
             .then((response) => response.json())
             .then((data) => {
                 setSched(data);
@@ -212,21 +212,21 @@ function CBSPermit() {
                     setDenyDialg(false);
                     refreshTable();
                 }}
-                    data={permitData} />
+                    data={permitRepData} />
 
-                <CBSPermitDialg openDialg={permitDialg} onCloseDialg={() => {
-                    setPermitDialg(false);
+                <CBSPermitRepDialg openDialg={permitRepDialg} onCloseDialg={() => {
+                    setPermitRepDialg(false);
                     refreshTable();
                 }}
-                    data={permitData} />
+                    data={permitRepData} />
 
                 <MainHeader onOpenNav={() => setOpen(true)} />
-                <CBSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} />
+                <CBSSidebar name="permitReq" openNav={open} onCloseNav={() => setOpen(false)} />
 
                 {/* <!-- ======= Main ======= --> */}
                 <main id="main" className="main">
                     <div className="pagetitle">
-                        <h1>อนุมัติคำขอใช้รถ</h1>
+                        <h1>จัดการคำขอใช้รถ</h1>
                         <nav>
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item my-2">
@@ -235,7 +235,7 @@ function CBSPermit() {
                                 <li className="breadcrumb-item my-2">
                                     <a href="/cbsdashboard">หน้าหลักระบบขอใช้รถ</a>
                                 </li>
-                                <li className="breadcrumb-item my-2">อนุมัติคำขอใช้รถ</li>
+                                <li className="breadcrumb-item my-2">จัดการคำขอใช้รถ</li>
                             </ol>
                         </nav>
                     </div>
@@ -245,7 +245,7 @@ function CBSPermit() {
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body pt-3">
-                                        <h5 className="card-title">รายการขออนุมัติใช้รถ</h5>
+                                        <h5 className="card-title">รายการขอใช้รถ</h5>
                                         <StripedDataGrid
                                             autoHeight
                                             getRowHeight={() => 'auto'}
@@ -283,4 +283,4 @@ function CBSPermit() {
     )
 }
 
-export default CBSPermit
+export default CBSReqPermit

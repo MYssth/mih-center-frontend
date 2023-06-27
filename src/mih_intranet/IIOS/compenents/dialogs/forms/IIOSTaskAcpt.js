@@ -34,7 +34,9 @@ function IIOSTaskAcpt({ openDialg, onCloseDialg, data, operList, estList, recvId
             task_id: data.task_id,
             level_id: data.level_id,
             receiver_id: recvId,
+            receiver_name: `${operList.find(o => o.personnel_id === recvId).personnel_firstname} ${operList.find(o => o.personnel_id === recvId).personnel_lastname}`,
             operator_id: operatorId,
+            operator_name: operatorName,
             estimation_id: estimationId,
         };
 

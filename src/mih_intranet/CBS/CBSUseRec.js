@@ -77,7 +77,7 @@ function CBSUseRec() {
                 return (
                     <Stack direction="row" spacing={1}>
                         <Button onClick={handleUseRec} className="btn btn-success">
-                            บันทึก
+                            ลงข้อมูล
                         </Button>
                     </Stack>
                 );
@@ -92,7 +92,7 @@ function CBSUseRec() {
         {
             field: 'from_date',
             headerName: 'วันที่ไป',
-            flex: 1,
+            flex: 0.8,
             minWidth: 100,
             valueGetter: (params) =>
                 `${String(new Date(params.row.from_date).getUTCDate()).padStart(2, '0')}/${String(parseInt(new Date(params.row.from_date).getUTCMonth(), 10) + 1).padStart(2, '0')}/${new Date(params.row.from_date).getUTCFullYear()}`,
@@ -101,7 +101,7 @@ function CBSUseRec() {
         {
             field: 'from_time',
             headerName: 'เวลาไป',
-            flex: 1,
+            flex: 0.6,
             minWidth: 60,
             valueGetter: (params) =>
                 `${String(new Date(params.row.from_date).getUTCHours()).padStart(2, '0')}:${String(new Date(params.row.from_date).getUTCMinutes()).padStart(2, '0')}`
@@ -109,7 +109,7 @@ function CBSUseRec() {
         {
             field: 'to_date',
             headerName: 'วันที่กลับ',
-            flex: 1,
+            flex: 0.8,
             minWidth: 100,
             valueGetter: (params) =>
                 `${String(new Date(params.row.to_date).getUTCDate()).padStart(2, '0')}/${String(parseInt(new Date(params.row.to_date).getUTCMonth(), 10) + 1).padStart(2, '0')}/${new Date(params.row.to_date).getUTCFullYear()}`,
@@ -119,7 +119,7 @@ function CBSUseRec() {
         {
             field: 'to_time',
             headerName: 'เวลากลับ',
-            flex: 1,
+            flex: 0.6,
             minWidth: 60,
             valueGetter: (params) =>
                 `${String(new Date(params.row.to_date).getUTCHours()).padStart(2, '0')}:${String(new Date(params.row.to_date).getUTCMinutes()).padStart(2, '0')}`
@@ -134,7 +134,13 @@ function CBSUseRec() {
             field: 'place',
             headerName: 'สถานที่',
             flex: 1,
-            minWidth: 100,
+            minWidth: 150,
+        },
+        {
+            field: 'drv_name',
+            headerName: 'ผู้ขับ',
+            flex: 1,
+            minWidth: 180,
         },
 
     ];
@@ -230,6 +236,7 @@ function CBSUseRec() {
                                             pageSize={pageSize}
                                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                             rowsPerPageOptions={[10, 25, 100]}
+                                            hideFooterSelectedRowCount
                                             // onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
                                             // onCellDoubleClick={(params) => { showDetail(params.row, true) }}
                                             initialState={{

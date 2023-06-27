@@ -82,7 +82,7 @@ export default function MainHeader({ onOpenNav }) {
                                 <li>
                                     <a
                                         className="dropdown-item d-flex align-items-center"
-                                        href="users-profile.html"
+                                        href="#"
                                     >
                                         <i className="bi bi-person" />
                                         <span>My Profile (Coming soon)</span>
@@ -94,10 +94,11 @@ export default function MainHeader({ onOpenNav }) {
                                 <li>
                                     <a
                                         className="dropdown-item d-flex align-items-center"
-                                        href="/dashboard/profilesetting"
+                                        href="#"
+                                        // href="/dashboard/profilesetting"
                                     >
                                         <i className="bi bi-gear" />
-                                        <span>Account Settings</span>
+                                        <span>Account Settings (Coming soon)</span>
                                     </a>
                                 </li>
                                 <li>

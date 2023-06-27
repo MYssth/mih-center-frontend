@@ -32,11 +32,16 @@ import DSMSSetting from './pages/DSMS/DSMSSetting';
 //
 import MIHIntranet from './mih_intranet/MIHIntranet';
 
+// PMS
+import PMSUserMgr from './mih_intranet/PMS/PMSUserMgr';
+
 // CBS
 import CBSDashboard from './mih_intranet/CBS/CBSDashboard';
 import CBSBooking from './mih_intranet/CBS/CBSBooking';
+import CBSPermitRep from './mih_intranet/CBS/CBSPermitRep';
 import CBSPermit from './mih_intranet/CBS/CBSPermit';
 import CBSUseRec from './mih_intranet/CBS/CBSUseRec';
+import CBSBookRprt from './mih_intranet/CBS/CBSBookRprt';
 
 // IIOS
 import IIOSUserDashboard from './mih_intranet/IIOS/IIOSUserDashboard';
@@ -100,6 +105,12 @@ export default function Router() {
       index: true
     },
 
+    // PMS
+    {
+      path: '/pmsusermgr',
+      element: <PMSUserMgr />,
+    },
+
     // CBS
     {
       path: '/cbsdashboard',
@@ -110,12 +121,20 @@ export default function Router() {
       element: <CBSBooking />,
     },
     {
+      path: '/cbspermitreq',
+      element: <CBSPermitRep />,
+    },
+    {
       path: '/cbspermit',
       element: <CBSPermit />,
     },
     {
       path: '/cbsuserec',
       element: <CBSUseRec />,
+    },
+    {
+      path: '/cbsbookrprt',
+      element: <CBSBookRprt />,
     },
 
     // IIOS

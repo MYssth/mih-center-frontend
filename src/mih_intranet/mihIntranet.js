@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import MainHeader from './components/MainHeader';
-import MainSidebar from './nav/MainSidebar';
+import MainSidebar from './components/nav/MainSidebar';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
 
@@ -16,7 +16,7 @@ export default function MIHIntranet() {
 
             <div>
                 <MainHeader onOpenNav={() => setOpen(true)} />
-                <MainSidebar openNav={open} onCloseNav={() => setOpen(false)} />
+                <MainSidebar name={"main"} openNav={open} onCloseNav={() => setOpen(false)} />
                 {/* <!-- ======= Main ======= --> */}
                 <main id="main" className="main">
                     <section className="section dashboard">

@@ -133,6 +133,12 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
                     <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 2 }}>
                         <Grid item md={12}>
                             <Stack direction="row" >
+                                <Typography variant="subtitle1" sx={{ mr: 1 }}>แผนก:</Typography>{data?.dept_name}
+                            </Stack>
+                            <Stack direction="row" >
+                                <Typography variant="subtitle1" sx={{ mr: 1 }}>สถานที่:</Typography>{data?.place}
+                            </Stack>
+                            <Stack direction="row" >
                                 <Typography variant="subtitle1" sx={{ mr: 1 }}>ประเภทรถ:</Typography>{data?.car_type_name}
                             </Stack>
                             <Stack direction="row" >

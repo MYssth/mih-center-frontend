@@ -30,7 +30,7 @@ import provinceList from '../../../../utils/ProvinceList';
 
 let token = "";
 
-function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
+function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
     const [openFrmTm, setOpenFrmTm] = useState(false);
     const [openToDt, setOpenToDt] = useState(false);
@@ -191,7 +191,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
             pax_amt: paxAmt,
             tel_no: telNo,
             detail: detail,
-            permit_pid: token.personnel_id,
+            rcv_pid: token.personnel_id,
             drv_pid: driverId,
             car_type_id: carTypeId,
             car_id: carId,
@@ -209,7 +209,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
         }
         // console.log(jsonData);
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/permitbook`, {
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/reqpermit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
                 onClose={onCloseDialg}
             >
                 <DialogTitle>
-                    อนุมัติคำขอเลขที่ {data?.id}
+                    ขออนุมัติคำขอเลขที่ {data?.id}
                 </DialogTitle>
                 <DialogContent>
 
@@ -551,7 +551,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handlePermit} disabled={duplicate && duplicate !== id} className="btn btn-success">
-                        อนุมัติคำขอใช้รถ
+                        ขออนุมัติคำขอใช้รถ
                     </Button>
                     <Button onClick={onCloseDialg}>ปิด</Button>
                 </DialogActions>
@@ -560,4 +560,4 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
     )
 }
 
-export default CBSPermitDialg
+export default CBSPermitRepDialg

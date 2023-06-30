@@ -22,16 +22,15 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
 
   const [tokenData, setTokenData] = useState([]);
 
+  const [tokenViewData, setTokenViewData] = useState([]);
+
   useEffect(() => {
 
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
-    setTokenData(token.level_list.find(
-      o => o.level_id === "DMIS_IT" || o.level_id === "DMIS_MT"
-        || o.level_id === "DMIS_MER" || o.level_id === "DMIS_ENV"
-        || o.level_id === "DMIS_HIT" || o.level_id === "DMIS_ALL"
-        || o.level_id === "DMIS_USER").level_id);
+    setTokenData(token.level_list.find(o => o.mihapp_id === "DMIS").level_id);
+    setTokenViewData(token.level_list.find(o => o.mihapp_id === "DMIS").view_id);
 
     if (openNav) {
       onCloseNav();
@@ -88,6 +87,21 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
         <a className="nav-link collapsed" href="/iiospermit">
           <i className="bi bi-list-check" />
           <span>งานรอตรวจสอบ</span>
+        </a>}
+    </li>
+  );
+
+  const usrPermitDashboard = (
+    <li className="nav-item">
+      {name === "usrpermit" ?
+        <a className="nav-link" href="#">
+          <i className="bi bi-clipboard-check" />
+          <span>งานรออนุมัติแก้ไขโปรแกรม</span>
+        </a>
+        :
+        <a className="nav-link collapsed" href="/iiosusrpermit">
+          <i className="bi bi-clipboard-check" />
+          <span>งานรออนุมัติแก้ไขโปรแกรม</span>
         </a>}
     </li>
   );
@@ -173,6 +187,13 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
               <>{permitDashboard}</>
               :
               ""}
+          </>
+          :
+          ""
+        }
+        {tokenViewData === "VDMIS_DPMH" || tokenViewData === "VDMIS_FAC" || tokenViewData === "VDMIS_FLD" || tokenViewData === "VDMIS_ALL" ?
+          <>
+            {usrPermitDashboard}
           </>
           :
           ""

@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-// @mui
 import {
     Box,
     Button,
@@ -18,7 +15,7 @@ import {
     SubmtINC,
 } from '../../../../components/dialogs/response';
 
-function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
+function IIOSTaskUsrPrmt({ openDialg, onCloseDialg, data, permitId }) {
 
     const [levelId, setLevelId] = useState('');
     const [statusIdRequest, setStatusIdRequest] = useState('');
@@ -38,7 +35,7 @@ function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
             // setTaskId(data.task_id);
             setLevelId(data.level_id);
             setStatusIdRequest(data.status_id_request);
-            setPChange(data.status_id_request === 5 && (data.category_id === 1 || data.category_id === 16 ));
+            setPChange(data.status_id_request === 5 && data.category_id === 1);
             setCategoryId(data.category_id);
             setCategoryName(data.category_name);
 
@@ -59,18 +56,10 @@ function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
             task_id: data.task_id,
             level_id: data.level_id,
             permit_id: permitId,
-            status_id_request: statusIdRequest,
             taskCase: permitCase,
-            category_id: categoryId,
         };
 
         // console.log(jsonData);
-
-        if ((jsonData.category_id === "" || jsonData.category_id === null) && (permitCase === "pConfirm" || permitCase === "permit")) {
-            // alert("กรุณาเลือกหมวดหมู่งาน");
-            setSubmitINC(true);
-            return;
-        }
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
             method: 'POST',
@@ -101,60 +90,22 @@ function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
             <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
             <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
             <Dialog fullWidth maxWidth="md" open={openDialg} onClose={onCloseDialg}>
-                <DialogTitle>อนุมัติงาน</DialogTitle>
+                <DialogTitle>อนุมัติงานรออนุมัติแก้ไขโปรแกรม</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         คุณต้องการอนุมัติงานนี้ใช่หรือไม่
                     </DialogContentText>
                     <br />
-                    <Autocomplete
-                        value={categoryName === null ? "" : categoryName}
-                        onChange={(event, newValue) => {
-                            setCategoryName(newValue);
-                            if (newValue !== null) {
-                                setCategoryId(categories.find(o => o.category_name === newValue).category_id);
-                            }
-                            else {
-                                setCategoryId("");
-                            }
-                        }}
-                        id="controllable-states-categories-id"
-                        options={
-                            levelId === "DMIS_IT" ?
-                                Object.values(categories).map((option) => option.level_id === "DMIS_IT" ? option.category_name : "").filter(isSkip)
-                                : levelId === "DMIS_MT" ? Object.values(categories).map((option) => option.level_id === "DMIS_MT" ? option.category_name : "").filter(isSkip)
-                                    : Object.values(categories).map((option) => option.level_id === "DMIS_MER" ? option.category_name : "").filter(isSkip)
-                        }
-                        fullWidth
-                        required
-                        renderInput={(params) => <TextField {...params} label="หมวดหมู่งาน" />}
-                        sx={{
-                            "& .MuiAutocomplete-inputRoot": {
-                                "& .MuiOutlinedInput-notchedOutline": {
-                                    borderColor: categoryName ? 'green' : 'red'
-                                }
-                            }
-                        }}
-                    />
                 </DialogContent>
                 <DialogActions>
-                    {
-                        statusIdRequest === 3 || statusIdRequest === 4 || statusIdRequest === 6 ?
-                            <Box alignItems="flex-start">
-                                <Button variant="contained" onClick={() => handlePermitTask("permitEnd")}>ส่งมอบให้ผู้แจ้งดำเนินการ</Button>
-                            </Box>
-                            :
-                            <>
-                            </>
-                    }
                     <div style={{ flex: '1 0 0' }} />
                     <Button onClick={onCloseDialg}>ยกเลิก</Button>
-                    <Button variant="contained" onClick={() => handlePermitTask(pChange ? "pConfirm" : "permit")}>อนุมัติ</Button>
-                    <Button variant="contained" color="error" onClick={() => handlePermitTask(pChange ? "pReject" : "reject")}>ไม่อนุมัติ</Button>
+                    <Button variant="contained" onClick={() => handlePermitTask("usrPermit")}>อนุมัติ</Button>
+                    <Button variant="contained" color="error" onClick={() => handlePermitTask("reject")}>ไม่อนุมัติ</Button>
                 </DialogActions>
             </Dialog>
         </>
     )
 }
 
-export default IIOSTaskPrmt
+export default IIOSTaskUsrPrmt

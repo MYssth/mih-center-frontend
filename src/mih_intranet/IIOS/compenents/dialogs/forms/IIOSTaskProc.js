@@ -47,12 +47,14 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
     const [taskCost, setTaskCost] = useState('');
     const [permitId, setPermitId] = useState('');
     const [solution, setSolution] = useState('');
+    const [userPermitId, setUserPermitId] = useState('');
 
     const [taskNote, setTaskNote] = useState('');
     const [tempNote, setTempNote] = useState('');
 
     const [isProgramChange, setIsProgramChange] = useState(null);
     const [isStatusChange, setIsStatusChange] = useState(false);
+    const [isDisStatus, setIsDisStatus] = useState(false);
 
     const [dialogStatus, setDialogStatus] = useState('');
 
@@ -86,6 +88,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             setEstimationId(data.estimation_id);
             setEstimationName(data.estimation_name);
             setPermitId(data.permit_id);
+            setUserPermitId(data.user_permit_id);
 
             setTempNote(data.task_note);
 
@@ -102,11 +105,33 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
     }, [openDialg])
 
     useEffect(() => {
-        if ((permitId === "" || permitId === null) && categoryId === 1) {
+        setIsDisStatus(false);
+        if (((permitId === "" || permitId === null) && categoryId === 1) || ((userPermitId === "" || userPermitId === null) && categoryId === 16)) {
+            setIsDisStatus(true);
             setStatusId(2);
             setStatusName("กำลังดำเนินการ");
         }
-    }, [categoryId])
+    }, [categoryId]);
+
+    function clearData() {
+        setLevelId("");
+        setOperatorId("");
+        setOperatorName("");
+        setPhoneNo("");
+        setDeviceId("");
+        setSolution("");
+        setTaskCost("");
+        setSerialnumber("");
+        setCategoryName("");
+        setCategoryId("");
+        setTaskNote("");
+        setEstimationId("");
+        setEstimationName("");
+        setIsStatusChange(false);
+        setIsProgramChange(null);
+
+        setTempNote("");
+    }
 
     const handleProcessTask = (taskCase) => {
 
@@ -118,6 +143,19 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
         if (categoryId === 1) {
             if (permitId === "" || permitId === null) {
                 taskCase = "request";
+            }
+            if (permitId !== "" && permitId !== null && statusId === 5) {
+                taskCase = "pRequest";
+            }
+        }
+        else if (categoryId === 16) {
+            if (userPermitId === "" || userPermitId === null) {
+                if (permitId !== "" && permitId !== null && statusId === 5) {
+                    taskCase = "pRequest";
+                }
+                else {
+                    taskCase = "request";
+                }
             }
             if (permitId !== "" && permitId !== null && statusId === 5) {
                 taskCase = "pRequest";
@@ -135,7 +173,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             task_cost: document.getElementById('cost').value,
             task_serialnumber: serialnumber,
             task_device_id: deviceId,
-            status_id_request: (permitId === "" || permitId === null) && categoryId === 1 ? 2 : statusId,
+            // status_id_request: (permitId === "" || permitId === null) && categoryId === 1 ? 2 : statusId,
+            status_id_request: statusId,
             operator_id: operatorId,
             category_id: categoryId,
             task_phone_no: phoneNo,
@@ -146,7 +185,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             taskCase: taskCase,
         }
 
-        // console.log(jsonData);
+        console.log(jsonData);
 
         // if (1) {
         //     if (jsonData.status_id === "" || jsonData.status_id === null) {
@@ -207,10 +246,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === 'ok') {
+                    clearData();
                     onCloseDialg();
-                    setIsStatusChange(false);
-                    setIsProgramChange(null);
-                    setSolution("");
                 }
                 else {
                     setSubmitERR(true);
@@ -228,10 +265,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
             <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
             <Dialog fullWidth maxWidth="md" open={openDialg} onClose={() => {
+                clearData();
                 onCloseDialg();
-                setIsStatusChange(false);
-                setIsProgramChange(null);
-                setSolution("");
             }}>
                 <DialogTitle>บันทึกงานแจ้งซ่อม</DialogTitle>
                 <DialogContent>
@@ -241,7 +276,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                     <Stack spacing={2} sx={{ width: 'auto', p: 2 }}>
                         <Autocomplete
                             value={statusName}
-                            disabled={(permitId === "" || permitId === null) && categoryId === 1}
+                            // disabled={(permitId === "" || permitId === null) && categoryId === 1}
+                            disabled={isDisStatus}
                             onChange={(event, newValue) => {
                                 setStatusName(newValue);
                                 if (newValue !== null) {
@@ -392,14 +428,22 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                                 }
                             }}
                         />
-                        {(permitId === "" || permitId === null) && categoryId === 1 ?
+                        {/* {(permitId === "" || permitId === null) && categoryId === 1 ? */}
+                        {isDisStatus ?
                             <Box>
-                                <Typography sx={{ color: 'error.main', ml: 1 }}>งานนี้จะเข้าสู่กระบวนการอนุมัติเมื่อกดดำเนินการ กรณีที่งานนี้เสร็จสิ้นแล้วผู้ดำเนินงานต้องกลับมาปิดงานนี้อีกครั้งหลังอนุมัติ</Typography>
+                                {categoryId === 1 ?
+                                    <Typography sx={{ color: 'error.main', ml: 1 }}>งานนี้จะเข้าสู่กระบวนการอนุมัติเมื่อกดดำเนินการ กรณีที่งานนี้เสร็จสิ้นแล้วผู้ดำเนินงานต้องกลับมาปิดงานนี้อีกครั้งหลังอนุมัติ</Typography>
+                                    :
+                                    categoryId === 16 ?
+                                        <Typography sx={{ color: 'error.main', ml: 1 }}>งานนี้จะเข้าสู่กระบวนการรออนุมัติแก้ไขโปรแกรม กรุณาแจ้งหน่วยงานต้นเรื่องเพื่อทำการอนุมัติ</Typography>
+                                        :
+                                        ""
+                                }
                             </Box>
                             :
                             ""
                         }
-                        {categoryId === 1 && statusId === 5 ?
+                        {(categoryId === 1 || categoryId === 16) && statusId === 5 ?
                             <Box>
                                 <Radio
                                     checked={isProgramChange === true}
@@ -442,7 +486,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                     <Button
                         variant="contained"
                         onClick={() => { handleProcessTask(isStatusChange ? "request" : "edit") }}
-                        disabled={isProgramChange === null && statusId === 5 && categoryId === 1}
+                        disabled={isProgramChange === null && statusId === 5 && (categoryId === 1 || categoryId === 16)}
                     >ดำเนินการ</Button>
                 </DialogActions>
             </Dialog>

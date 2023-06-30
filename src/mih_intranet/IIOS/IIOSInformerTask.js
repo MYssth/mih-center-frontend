@@ -157,6 +157,11 @@ function IIOSInformerTask() {
             headerName: 'ผู้รับผิดชอบ',
             width: 100,
         },
+        {
+            field: 'task_device_id',
+            headerName: 'รหัสทรัพย์สิน',
+            width: 150,
+        },
     ];
 
     // =========================================================
@@ -354,11 +359,13 @@ function IIOSInformerTask() {
                                                         setFocusTask(params.row);
                                                         setOpenTaskDetail(true);
                                                     }}
+                                                    hideFooterSelectedRowCount
                                                     initialState={{
                                                         columns: {
                                                             columnVisibilityModel: {
                                                                 // Hide columns status and traderName, the other columns will remain visible
                                                                 id: false,
+                                                                task_device_id: false,
                                                             },
                                                         },
                                                     }}

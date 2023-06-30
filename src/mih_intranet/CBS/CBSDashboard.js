@@ -170,67 +170,73 @@ export default function CBSDashboard() {
                             <div className="col-lg-12">
                                 <div className="row">
                                     <div className="col-xxl-3 col-md-6">
-                                        <div className="card info-card request-card">
-                                            <div className="card-body">
-                                                <h2 className="card-title">ขอใช้รถ | Request</h2>
+                                        <a className="nav-link collapsed" href="/cbspermitreq">
+                                            <div className="card info-card request-card">
+                                                <div className="card-body">
+                                                    <h2 className="card-title">ขอใช้รถ | Request</h2>
 
-                                                <div className="d-flex align-items-center">
-                                                    <div
-                                                        className="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                                                    >
-                                                        <i className="bi bi-chat-left-text" />
-                                                    </div>
-                                                    <div
-                                                        className="d-flex align-items-end justify-content-end"
-                                                        style={{ "width": "100%" }}
-                                                    >
-                                                        <h1>{statCntr.request}</h1>
+                                                    <div className="d-flex align-items-center">
+                                                        <div
+                                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                                        >
+                                                            <i className="bi bi-chat-left-text" />
+                                                        </div>
+                                                        <div
+                                                            className="d-flex align-items-end justify-content-end"
+                                                            style={{ "width": "100%" }}
+                                                        >
+                                                            <h1>{statCntr.request}</h1>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
                                     <div className="col-xxl-3 col-md-6">
-                                        <div className="card info-card waitapprov-card">
-                                            <div className="card-body">
-                                                <h2 className="card-title">รออนุมัติ | Wait Approve</h2>
+                                        <a className="nav-link collapsed" href="/cbspermit">
+                                            <div className="card info-card waitapprov-card">
+                                                <div className="card-body">
+                                                    <h2 className="card-title">รออนุมัติ | Wait Approve</h2>
 
-                                                <div className="d-flex align-items-center">
-                                                    <div
-                                                        className="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                                                    >
-                                                        <i className="bi bi-journal-text" />
-                                                    </div>
-                                                    <div
-                                                        className="d-flex align-items-end justify-content-end"
-                                                        style={{ "width": "100%" }}
-                                                    >
-                                                        <h1>{statCntr.permitRep}</h1>
+                                                    <div className="d-flex align-items-center">
+                                                        <div
+                                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                                        >
+                                                            <i className="bi bi-journal-text" />
+                                                        </div>
+                                                        <div
+                                                            className="d-flex align-items-end justify-content-end"
+                                                            style={{ "width": "100%" }}
+                                                        >
+                                                            <h1>{statCntr.permitRep}</h1>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
                                     <div className="col-xxl-3 col-md-6">
-                                        <div className="card info-card approv-card">
-                                            <div className="card-body">
-                                                <h2 className="card-title">อนุมัติ | Approve</h2>
+                                        <a className="nav-link collapsed" href="/cbsuserec">
+                                            <div className="card info-card approv-card">
+                                                <div className="card-body">
+                                                    <h2 className="card-title">อนุมัติ | Approve</h2>
 
-                                                <div className="d-flex align-items-center">
-                                                    <div
-                                                        className="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                                                    >
-                                                        <i className="bi bi-journal-check" />
-                                                    </div>
-                                                    <div
-                                                        className="d-flex align-items-end justify-content-end"
-                                                        style={{ "width": "100%" }}
-                                                    >
-                                                        <h1>{statCntr.permit}</h1>
+                                                    <div className="d-flex align-items-center">
+                                                        <div
+                                                            className="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                                                        >
+                                                            <i className="bi bi-journal-check" />
+                                                        </div>
+                                                        <div
+                                                            className="d-flex align-items-end justify-content-end"
+                                                            style={{ "width": "100%" }}
+                                                        >
+                                                            <h1>{statCntr.permit}</h1>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
                                     <div className="col-xxl-3 col-md-6">
                                         <div className="card info-card total-card">

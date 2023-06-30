@@ -134,6 +134,11 @@ const columns = [
     headerName: 'หมายเหตุ',
     width: 180,
   },
+  {
+    field: 'task_device_id',
+    headerName: 'รหัสทรัพย์สิน',
+    width: 150,
+  },
 
 ];
 
@@ -164,13 +169,7 @@ function IIOSUserDashboard() {
     const token = jwtDecode(localStorage.getItem('token'));
 
     for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].level_id === "DMIS_USER" ||
-        token.level_list[i].level_id === "DMIS_IT" ||
-        token.level_list[i].level_id === "DMIS_MT" ||
-        token.level_list[i].level_id === "DMIS_MER" ||
-        token.level_list[i].level_id === "DMIS_ENV" ||
-        token.level_list[i].level_id === "DMIS_HIT" ||
-        token.level_list[i].level_id === "DMIS_ALL") {
+      if (token.level_list[i].mihapp_id === "DMIS") {
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`, { signal })
           .then((response) => response.json())
           .then((data) => {
@@ -415,11 +414,13 @@ function IIOSUserDashboard() {
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         rowsPerPageOptions={[10, 25, 100]}
                         onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
+                        hideFooterSelectedRowCount
                         initialState={{
                           columns: {
                             columnVisibilityModel: {
                               // Hide columns status and traderName, the other columns will remain visible
                               id: false,
+                              task_device_id: false,
                             },
                           },
                         }}

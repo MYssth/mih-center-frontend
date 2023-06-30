@@ -25,7 +25,7 @@ import {
 } from '@mui/material';
 import MainHeader from '../components/MainHeader';
 import IIOSSidebar from './compenents/nav/IIOSSidebar';
-import { IIOSTaskDetail } from './compenents/dialogs/taskdetails';
+import reportPDF from './compenents/report-pdf';
 
 const dateFns = require('date-fns');
 
@@ -69,8 +69,6 @@ const headSname = `${localStorage.getItem('sname')} Center`;
 function IIOSReport() {
 
     const [open, setOpen] = useState(false);
-    const [openTaskDetail, setOpenTaskDetail] = useState(false);
-    const [focusTask, setFocusTask] = useState([]);
 
     const [fromDate, setFromDate] = useState('');
     // const [toDate, setToDate] = useState(dateFns.format(new Date(), 'yyyy-MM-dd'));
@@ -92,10 +90,7 @@ function IIOSReport() {
         const token = jwtDecode(localStorage.getItem('token'));
 
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT" ||
-                token.level_list[i].level_id === "DMIS_USER" || token.level_list[i].level_id === "DMIS_MER" ||
-                token.level_list[i].level_id === "DMIS_ENV" || token.level_list[i].level_id === "DMIS_HIT" ||
-                token.level_list[i].level_id === "DMIS_ALL") {
+            if (token.level_list[i].mihapp_id === "DMIS") {
                 fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}`, { signal })
                     .then((response) => response.json())
                     .then((data) => {
@@ -194,9 +189,9 @@ function IIOSReport() {
             renderCell: (params) => {
                 const onClick = (e) => {
                     e.stopPropagation(); // don't select this row after clicking
-                    // reportPDF(params.row);
-                    setFocusTask(params.row);
-                    setOpenTaskDetail(true);
+                    reportPDF(params.row);
+                    // setFocusTask(params.row);
+                    // setOpenTaskDetail(true);
                 };
 
                 return <Button variant="contained" onClick={onClick}>ปริ้น</Button>;
@@ -237,6 +232,11 @@ function IIOSReport() {
         {
             field: 'issue_department_name',
             headerName: 'แผนกที่แจ้งปัญหา',
+            width: 110,
+        },
+        {
+            field: 'informer_faction_name',
+            headerName: 'ฝ่ายที่แจ้งปัญหา',
             width: 110,
         },
         {
@@ -335,6 +335,7 @@ function IIOSReport() {
             headerName: 'หมวดหมู่งาน',
             width: 100,
         },
+        
     ];
 
     return (
@@ -345,8 +346,6 @@ function IIOSReport() {
 
             <MainHeader onOpenNav={() => setOpen(true)} />
             <IIOSSidebar name="report" openNav={open} onCloseNav={() => setOpen(false)} />
-
-            <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
 
             <main id="main" className="main">
                 <div className="pagetitle">
@@ -454,6 +453,7 @@ function IIOSReport() {
                                                             task_serialnumber: false,
                                                             receiver_firstname: false,
                                                             task_phone_no: false,
+                                                            informer_faction_name: false,
                                                         },
                                                     },
                                                 }}

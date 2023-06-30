@@ -51,6 +51,7 @@ import IIOSInformerTask from './mih_intranet/IIOS/IIOSInformerTask';
 import IIOSAudit from './mih_intranet/IIOS/IIOSAudit';
 import IIOSNewCase from './mih_intranet/IIOS/IIOSNewCase';
 import IIOSReport from './mih_intranet/IIOS/IIOSReportPage';
+import IIOSUsrPermit from './mih_intranet/IIOS/IIOSUsrPermit';
 
 // ----------------------------------------------------------------------
 
@@ -165,6 +166,10 @@ export default function Router() {
     {
       path: '/iiosreport',
       element: <IIOSReport />,
+    },
+    {
+      path: '/iiosusrpermit',
+      element: <IIOSUsrPermit />,
     },
 
     {

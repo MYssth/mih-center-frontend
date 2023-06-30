@@ -867,9 +867,10 @@ export default function UserPage() {
               }}
               id="controllable-states-DMIS-level-views-id"
               options={Object.values(levelViews).map((option) => option.mihapp_id === "DMIS" ? `${option.view_name}` : '').filter(isSkip)}
+              // options={Object.values(PSNLvViews).map((option) =>option.name)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งปัญหาออนไลน์" />}
+              renderInput={(params) => <TextField {...params} label="ระดับการเข้าถึงในระบบแจ้งปัญหาออนไลน์" />}
               sx={{
                 "& .MuiAutocomplete-inputRoot": {
                   "& .MuiOutlinedInput-notchedOutline": {
@@ -967,7 +968,7 @@ export default function UserPage() {
               options={Object.values(PSNLvViews).map((option) =>option.name)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="ระดับการมองเห็นข้อมูลในระบบแจ้งขอใช้รถ" />}
+              renderInput={(params) => <TextField {...params} label="ระดับการเข้าถึงในระบบแจ้งขอใช้รถ" />}
               sx={{
                 "& .MuiAutocomplete-inputRoot": {
                   "& .MuiOutlinedInput-notchedOutline": {

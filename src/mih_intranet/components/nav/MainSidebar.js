@@ -26,21 +26,16 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
     useEffect(() => {
         const token = jwtDecode(localStorage.getItem('token'));
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "PMS_ADMIN") {
+            if (token.level_list[i].mihapp_id === "PMS") {
                 setIsPMS(true);
             }
-            else if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT"
-                || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
-                || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL"
-                || token.level_list[i].level_id === "DMIS_USER") {
+            else if (token.level_list[i].mihapp_id === "DMIS") {
                 setIsIIOS(true);
             }
-            else if (token.level_list[i].level_id === "DSMS_USER" || token.level_list[i].level_id === "DSMS_ADMIN") {
+            else if (token.level_list[i].mihapp_id === "DSMS") {
                 setIsDSMS(true);
             }
-            else if (token.level_list[i].level_id === "CBS_DRV" || token.level_list[i].level_id === "CBS_MGR"
-                || token.level_list[i].level_id === "CBS_USER" || token.level_list[i].level_id === "CBS_RCV"
-                || token.level_list[i].level_id === "CBS_ADMIN") {
+            else if (token.level_list[i].mihapp_id === "CBS") {
                 setIsCBS(true);
             }
         }

@@ -128,7 +128,8 @@ function IIOSPermit() {
             width: 125,
             valueGetter: (params) =>
                 `${params.row.status_id_request === 2 && params.row.category_id === 1 ? "กำลังดำเนินการ (HIMS)" :
-                    params.row.status_id_request === 5 && params.row.category_id === 1 ? "ดำเนินการเสร็จสิ้น (ขอวางโปรแกรม)" : params.row.status_name_request}`,
+                    params.row.status_id_request === 5 && (params.row.category_id === 1 || params.row.category_id === 16) ? "ดำเนินการเสร็จสิ้น (ขอวางโปรแกรม)" :
+                        params.row.status_id_request === 2 && params.row.category_id === 16 ? "กำลังดำเนินการ (HIMS Change)" : params.row.status_name_request}`,
         },
         {
             field: 'informer_firstname',
@@ -147,6 +148,11 @@ function IIOSPermit() {
             headerName: 'ผู้รับผิดชอบ',
             width: 100,
         },
+        {
+            field: 'task_device_id',
+            headerName: 'รหัสทรัพย์สิน',
+            width: 150,
+        },
 
     ];
 
@@ -163,13 +169,7 @@ function IIOSPermit() {
         const token = jwtDecode(localStorage.getItem('token'));
         setPermitId(token.personnel_id);
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "DMIS_USER" ||
-                token.level_list[i].level_id === "DMIS_IT" ||
-                token.level_list[i].level_id === "DMIS_MT" ||
-                token.level_list[i].level_id === "DMIS_MER" ||
-                token.level_list[i].level_id === "DMIS_ENV" ||
-                token.level_list[i].level_id === "DMIS_HIT" ||
-                token.level_list[i].level_id === "DMIS_ALL") {
+            if (token.level_list[i].mihapp_id === "DMIS") {
                 lvId = token.level_list[i].level_id;
                 refreshTable();
                 break;
@@ -255,11 +255,13 @@ function IIOSPermit() {
                                                     setFocusTask(params.row);
                                                     setOpenTaskDetail(true);
                                                 }}
+                                                hideFooterSelectedRowCount
                                                 initialState={{
                                                     columns: {
                                                         columnVisibilityModel: {
                                                             // Hide columns status and traderName, the other columns will remain visible
                                                             id: false,
+                                                            task_device_id: false,
                                                         },
                                                     },
                                                 }}

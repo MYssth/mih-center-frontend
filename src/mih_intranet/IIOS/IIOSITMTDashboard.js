@@ -140,6 +140,11 @@ function IIOSITMTDashboard() {
             valueGetter: (params) =>
                 `${params.row.status_id === 0 ? params.row.status_name : (params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
         },
+        {
+            field: 'task_device_id',
+            headerName: 'รหัสทรัพย์สิน',
+            width: 150,
+        },
     ];
 
     const [open, setOpen] = useState(false);
@@ -175,9 +180,7 @@ function IIOSITMTDashboard() {
         const token = jwtDecode(localStorage.getItem('token'));
 
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "DMIS_IT" || token.level_list[i].level_id === "DMIS_MT"
-                || token.level_list[i].level_id === "DMIS_MER" || token.level_list[i].level_id === "DMIS_ENV"
-                || token.level_list[i].level_id === "DMIS_HIT" || token.level_list[i].level_id === "DMIS_ALL") {
+            if (token.level_list[i].mihapp_id ===  "DMIS") {
 
                 pId = token.personnel_id;
                 lvId = token.level_list[i].level_id;
@@ -541,11 +544,13 @@ function IIOSITMTDashboard() {
                                                 rowsPerPageOptions={[10, 25, 100]}
                                                 onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
                                                 // onCellDoubleClick={(params) => { showDetail(params.row, true) }}
+                                                hideFooterSelectedRowCount
                                                 initialState={{
                                                     columns: {
                                                         columnVisibilityModel: {
                                                             // Hide columns status and traderName, the other columns will remain visible
                                                             id: false,
+                                                            task_device_id: false,
                                                         },
                                                     },
                                                 }}

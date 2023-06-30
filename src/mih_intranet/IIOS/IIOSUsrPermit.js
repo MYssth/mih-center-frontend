@@ -5,17 +5,15 @@ import { Icon } from '@iconify/react';
 // @mui
 import { DataGrid, gridClasses, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import {
-    Typography,
     styled,
     alpha,
     Box,
     Button,
-    Stack,
 } from '@mui/material';
 import MainHeader from '../components/MainHeader';
 import IIOSSidebar from './compenents/nav/IIOSSidebar';
 import { IIOSTaskDetail } from './compenents/dialogs/taskdetails';
-import { IIOSTaskAudt } from './compenents/dialogs/forms';
+import { IIOSTaskUsrPrmt } from './compenents/dialogs/forms';
 
 const ODD_OPACITY = 0.2;
 
@@ -66,124 +64,113 @@ function QuickSearchToolbar() {
     );
 }
 
-let pId = "";
-let viewId = "";
+let tokenData = "";
+let pid = "";
+
 const headSname = `${localStorage.getItem('sname')} Center`;
 
-function IIOSAudit() {
+function IIOSUsrPermit() {
 
     const columns = [
         {
             field: 'action',
             disableExport: true,
             headerName: '',
-            width: 110,
+            minWidth: 120,
+            flex: 1,
             sortable: false,
             renderCell: (params) => {
                 const onClick = () => {
                     setFocusTask(params.row);
-                    setOpenTaskAudt(true);
+                    setOpenTaskPrmt(true);
                     // return alert(`you choose level = ${params.row.level_id}`);
                 };
 
-                return <Button variant="contained" onClick={onClick}>ตรวจรับ</Button>;
+                return <Button variant="contained" onClick={onClick}>ดำเนินการ</Button>;
             },
         },
         {
             field: 'id',
             headerName: 'ลำดับที่',
-            width: 50,
+            minWidth: 50,
+            flex: 1,
         },
         {
             field: 'task_id',
             headerName: 'เลขที่เอกสาร',
+            minWidth: 100,
+            flex: 1,
         },
         {
             field: 'level_id',
             headerName: 'ประเภทงาน',
-            width: 100,
+            minWidth: 100,
+            flex: 1,
             valueGetter: (params) =>
                 `${params.row.level_id === "DMIS_IT" ? "IT" : (params.row.level_id === 'DMIS_MT' ? "ซ่อมบำรุง" : "เครื่องมือแพทย์")}`,
         },
         {
             field: 'task_issue',
             headerName: 'ปัญหา',
-            width: 150,
-        },
-        {
-            field: 'task_solution',
-            headerName: 'การแก้ไข',
-            width: 150,
+            minWidth: 150,
+            flex: 1,
         },
         {
             field: 'task_note',
             headerName: 'หมายเหตุ',
-            width: 150,
-        },
-        {
-            field: 'audit_comment',
-            headerName: 'การตรวจรับ',
-            width: 150,
+            minWidth: 150,
+            flex: 1,
         },
         {
             field: 'issue_department_name',
             headerName: 'แผนก',
-            width: 130,
-        },
-        {
-            field: 'status_name',
-            headerName: 'สถานะ',
-            width: 125,
-            valueGetter: (params) =>
-                `${params.row.status_id === 5 || params.row.status_id === 0 ? params.row.status_name :
-                    params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
+            minWidth: 130,
+            flex: 1,
         },
         {
             field: 'informer_firstname',
             headerName: 'ผู้แจ้ง',
-            width: 100,
+            minWidth: 100,
+            flex: 1,
         },
         {
             field: 'task_date_start',
             headerName: 'วันที่แจ้ง',
-            width: 110,
+            minWidth: 110,
+            flex: 1.1,
             valueGetter: (params) =>
                 `${(params.row.task_date_start).replace("T", " ").replace(".000Z", " น.")}`,
         },
         {
             field: 'operator_firstname',
             headerName: 'ผู้รับผิดชอบ',
-            width: 100,
+            minWidth: 100,
+            flex: 1,
         },
         {
             field: 'task_device_id',
             headerName: 'รหัสทรัพย์สิน',
             width: 150,
         },
+
     ];
 
     const [pageSize, setPageSize] = useState(10);
+    const [permitTaskList, setPermitTaskList] = useState([]);
+    const [focusTask, setFocusTask] = useState('');
+    const [permitId, setPermitId] = useState('');
     const [open, setOpen] = useState(false);
     const [openTaskDetail, setOpenTaskDetail] = useState(false);
-    const [auditTaskList, setAuditTaskList] = useState([]);
-    const [focusTask, setFocusTask] = useState('');
-    const [auditId, setAuditId] = useState('');
-    const [openTaskAudt, setOpenTaskAudt] = useState(false);
+    const [openTaskPrmt, setOpenTaskPrmt] = useState(false);
 
     useEffect(() => {
 
         const token = jwtDecode(localStorage.getItem('token'));
-        pId = token.personnel_id;
-        setAuditId(token.personnel_id);
+        setPermitId(token.personnel_id);
+        pid = token.personnel_id;
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "DMIS_USER" ||
-                token.level_list[i].level_id === "DMIS_IT" ||
-                token.level_list[i].level_id === "DMIS_MT" ||
-                token.level_list[i].level_id === "DMIS_MER" ||
-                token.level_list[i].level_id === "DMIS_ENV" ||
-                token.level_list[i].level_id === "DMIS_HIT" ||
-                token.level_list[i].level_id === "DMIS_ALL") {
-                viewId = token.level_list[i].view_id;
+            if (token.level_list[i].mihapp_id === "DMIS") {
+                tokenData = token.level_list[i];
                 refreshTable();
                 break;
             }
@@ -191,10 +178,10 @@ function IIOSAudit() {
     }, []);
 
     function refreshTable() {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getaudittasklist/${pId}/${viewId}`)
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getusrprmttasklist/${pid}/${tokenData.view_id}`)
             .then((response) => response.json())
             .then((data) => {
-                setAuditTaskList(data);
+                setPermitTaskList(data);
             })
             .catch((error) => {
                 if (error.name === "AbortError") {
@@ -203,7 +190,7 @@ function IIOSAudit() {
                 else {
                     console.error('Error:', error);
                 }
-            })
+            });
     }
 
     return (
@@ -213,23 +200,23 @@ function IIOSAudit() {
             </Helmet>
 
             <MainHeader onOpenNav={() => setOpen(true)} />
-            <IIOSSidebar name="audit" openNav={open} onCloseNav={() => setOpen(false)} />
+            <IIOSSidebar name="usrpermit" openNav={open} onCloseNav={() => setOpen(false)} />
 
             <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
 
-            <IIOSTaskAudt
-                openDialg={openTaskAudt}
+            <IIOSTaskUsrPrmt
+                openDialg={openTaskPrmt}
                 onCloseDialg={() => {
-                    setOpenTaskAudt(false);
+                    setOpenTaskPrmt(false);
                     refreshTable();
                 }}
                 data={focusTask}
-                auditId={auditId}
+                permitId={permitId}
             />
 
             <main id="main" className="main">
                 <div className="pagetitle">
-                    <h1>งานรอตรวจรับ</h1>
+                    <h1>งานรออนุมัติแก้ไขโปรแกรม</h1>
                     <nav>
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item my-2">
@@ -238,7 +225,7 @@ function IIOSAudit() {
                             <li className="breadcrumb-item my-2">
                                 <a href="/iiosuserdashboard">หน้าหลักระบบแจ้งปัญหา</a>
                             </li>
-                            <li className="breadcrumb-item my-2">งานรอตรวจรับ</li>
+                            <li className="breadcrumb-item my-2">งานรออนุมัติแก้ไขโปรแกรม</li>
                         </ol>
                     </nav>
                 </div>
@@ -249,11 +236,6 @@ function IIOSAudit() {
                         <div className="col-lg-12">
                             <div className="card">
                                 <div className="card-body pt-3">
-                                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
-                                        <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
-                                            รายการงานรอตรวจรับ
-                                        </Typography>
-                                    </Stack>
                                     <div style={{ display: 'flex', height: '100%' }}>
                                         <div style={{ flexGrow: 1 }}>
                                             <StripedDataGrid
@@ -265,7 +247,7 @@ function IIOSAudit() {
                                                     },
                                                 }}
                                                 columns={columns}
-                                                rows={auditTaskList}
+                                                rows={permitTaskList}
                                                 pageSize={pageSize}
                                                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                                 rowsPerPageOptions={[10, 25, 100]}
@@ -292,10 +274,10 @@ function IIOSAudit() {
                         </div>
                     </div>
                 </section>
-
             </main>
+
         </>
     )
 }
 
-export default IIOSAudit
+export default IIOSUsrPermit

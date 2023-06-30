@@ -29,6 +29,7 @@ let noSig = "";
 let inforSig = "";
 let recvSig = "";
 let operSig = "";
+let usrPermitSig = "";
 let permitSig = "";
 let endSig = "";
 let endName = "";
@@ -93,6 +94,23 @@ export default async function IIOSReport(data) {
     }
     else {
         operSig = await noSig;
+    }
+
+    if (data.user_permit_id !== "" && data.user_permit_id !== null) {
+        usrPermitSig = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.user_permit_id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== "") {
+                    return data.signature_data;
+                }
+                return noSig;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    else {
+        usrPermitSig = await noSig;
     }
 
     if (data.permit_id !== "" && data.permit_id !== null) {
@@ -170,8 +188,8 @@ export default async function IIOSReport(data) {
                         DMIS-001</td>
                     <td style="text-align:center"><strong>ใบแจ้งซ่อม/แจ้งติดตั้ง/แจ้งปัญหา<br />
                         ${data.level_id === 'DMIS_IT' ? '(งานเทคโนโลยีสารสนเทศ)' : (data.level_id === 'DMIS_MT' ? '(งานซ่อมบำรุงทั่วไป)' : '(งานซ่อมบำรุงเครื่องมือแพทย์)')}</strong></td>
-                    <td>เริ่มใช้วันที่ 23 พ.ค. 2566<br />
-                        ปรับปรุงครั้งที่ 4 เมื่อ 23 พ.ค. 2566</td>
+                    <td>เริ่มใช้วันที่ 30 มิ.ย. 2566<br />
+                        ปรับปรุงครั้งที่ 5 เมื่อ 30 มิ.ย. 2566</td>
                 </tr>
         </table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
             <tr>
@@ -199,27 +217,34 @@ export default async function IIOSReport(data) {
             </tr>
         </table><table data-pdfmake="{'heights':['auto',65],'widths':['*']}">
             <tr>
-                <td><strong>การประเมิณงาน</strong></td>
+                <td><strong>การประเมินงาน</strong></td>
             </tr>
             <tr>
                 <td>การดำเนินงาน: ${data.status_id !== 2 && data.status_id !== 5 ? data.status_name : "ดำเนินการโดยผู้รับผิดชอบ"}<br />
                     หมายเหตุ: ${data.task_note === null || data.task_note === "" ? "-" : data.task_note}</td>
                 </tr>
-        </table><table data-pdfmake="{'layout':'noBorders'}" data-pdfmake="{'widths':['*','*']}">
-            <tr>
-                <td style="text-align:center"><table data-pdfmake="{'widths':['*',110,'*'],'layout':'noBorders'}">
-                    <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${operSig}" width="110" height="30" alt="operSig" /></td><td><div style="text-align:left">ผู้ดำเนินการ</div></td></tr>
-                    </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
-                    <tr><td>(${data.operator_firstname === null || data.operator_firstname === "" ? "........................................" : `${data.operator_firstname} ${data.operator_lastname}`})<br/>
-                    ${`วันที่ ${data.task_date_process === null || data.task_date_process === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_process), 543), 7), 'dd/MM/yyyy')}`}`}</td></td></table></td>
+        </table><table data-pdfmake="{'widths':${data.level_id === 'DMIS_IT' && data.category_id === 16 ? "['*','*','*']" : "['*','*']"}, 'layout':'noBorders'}">
+        <tr style="text-align:center">
+            <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ดำเนินการ</td></tr>
+                <tr><td><img src="${operSig}" width="110" height="30" alt="operSig" /></td></tr>
+                <tr><td>(${data.operator_firstname === null || data.operator_firstname === "" ? "........................................" : `${data.operator_firstname} ${data.operator_lastname}`})</td></tr>
+                <tr><td>${`วันที่ ${data.task_date_process === null || data.task_date_process === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.task_date_process), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+            </table></td>
 
-                <td style="text-align:center"><table data-pdfmake="{'widths':['*',110,'*'],'layout':'noBorders'}">
-                    <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${permitSig}" width="110" height="30" alt="permitSig" /></td><td><div style="text-align:left">ผู้ตรวจสอบ</div></td></tr>
-                    </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
-                    <tr><td>(${data.permit_firstname === null || data.permit_firstname === "" ? "........................................" : `${data.permit_firstname} ${data.permit_lastname}`})<br/>
-                    ${`วันที่ ${data.permit_date === null || data.permit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.permit_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></td></table></td>
-            </tr>
-        </table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
+            ${data.level_id === 'DMIS_IT' && data.category_id === 16 ?
+            `<td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ตรวจสอบ</td></tr>
+            <tr><td><img src="${usrPermitSig}" width="110" height="30" alt="usrPermitSig" /></td></tr>
+            <tr><td>(${data.user_permit_firstname === null || data.user_permit_firstname === "" ? "........................................" : `${data.user_permit_firstname} ${data.user_permit_lastname}`})</td></tr>
+            <tr><td>${`วันที่ ${data.user_permit_date === null || data.user_permit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.user_permit_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+        </table></td>`
+            : ''
+        }
+
+            <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>${data.level_id === 'DMIS_IT' && data.category_id === 16 ? `ผู้อนุมัติแก้ไขโปรแกรม` : `ผู้ตรวจสอบ`}</td></tr>
+                    <tr><td><img src="${permitSig}" width="110" height="30" alt="permitSig" /></td></tr>
+                    <tr><td>(${data.permit_firstname === null || data.permit_firstname === "" ? "........................................" : `${data.permit_firstname} ${data.permit_lastname}`})</td></tr>
+                    <tr><td>${`วันที่${data.permit_date === null || data.permit_date === "" ? "..................................." : ` ${dateFns.format(dateFns.subHours(dateFns.addYears(new Date(data.permit_date), 543), 7), 'dd/MM/yyyy')}`}`}</td></tr>
+                </table></td></tr></table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
             <tr>
                 <td><strong>ผลการดำเนินงาน</strong></td>
             </tr>
@@ -267,7 +292,7 @@ export default async function IIOSReport(data) {
         ],
         defaultStyle: {
             font: 'THSarabunNew',
-            fontSize: 16,
+            fontSize: 14,
         },
         styles: {
             center: {

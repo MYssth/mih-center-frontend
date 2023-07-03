@@ -26,8 +26,7 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
         // setTokenData(token);
 
         setTokenData(token.level_list.find(
-            o => o.level_id === "CBS_DRV" || o.level_id === "CBS_MGR"
-                || o.level_id === "CBS_USER").level_id);
+            o => o.mihapp_id === "CBS").level_id);
 
         if (openNav) {
             onCloseNav();
@@ -170,10 +169,10 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
                             </>
                             :
                             ""}
-                        {useRec}
                     </>
                     :
                     ""}
+                {useRec}
 
                 <li className="nav-item">
                     <a className="nav-link collapsed" href="#">

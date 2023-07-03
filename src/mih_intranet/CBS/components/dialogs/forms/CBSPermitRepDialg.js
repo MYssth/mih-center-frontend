@@ -15,6 +15,7 @@ import {
     Stack,
     TextField,
     Typography,
+    Box,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -29,12 +30,15 @@ import {
 import provinceList from '../../../../utils/ProvinceList';
 
 let token = "";
+let isBypass = false;
 
 function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
     const [openFrmTm, setOpenFrmTm] = useState(false);
     const [openToDt, setOpenToDt] = useState(false);
     const [openToTm, setOpenToTm] = useState(false);
+
+    const [reqName, setReqName] = useState('');
 
     const [id, setId] = useState('');
     const [carType, setCarType] = useState([]);
@@ -72,6 +76,14 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
     useEffect(() => {
 
         token = jwtDecode(localStorage.getItem('token'));
+
+        for (let i = 0; i < token.level_list.length; i += 1) {
+            if (token.level_list[i].mihapp_id === "CBS") {
+                if (token.level_list[i].level_id === "CBS_MGR" || token.level_list[i].level_id === "CBS_ADMIN") {
+                    isBypass = true;
+                }
+            }
+        }
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_himsPort}/api/hims/getalldept`)
             .then((response) => response.json())
@@ -144,6 +156,8 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
             setDeptId(data.dept_id);
             setDeptName(data.dept_name);
 
+            setReqName(data.req_name);
+
         }
 
     }, [openDialg]);
@@ -181,7 +195,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
         await setFilteredCar(Array.isArray(tempCar) ? tempCar.filter(carData => carData.type_id === (typeId ?? data.car_type_id)) : []);
     }
 
-    const handlePermit = () => {
+    const handleReqPermit = (specReq) => {
         const jsonData = {
             id: id,
             from_date: `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(2, '0')}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(fromTime?.getMinutes()).padStart(2, '0')}:00.000Z`,
@@ -192,10 +206,18 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
             tel_no: telNo,
             detail: detail,
             rcv_pid: token.personnel_id,
+            rcv_name: token.personnel_name,
+            permit_pid: token.personnel_id,
+            permit_name: token.personnel_name,
             drv_pid: driverId,
+            drv_name: driverName,
             car_type_id: carTypeId,
+            car_type_name: carTypeName,
             car_id: carId,
+            car_name: carName,
             dept_id: deptId,
+            dept_name: deptName,
+            req_name: reqName,
         }
 
         if (jsonData.from_date === null || jsonData.to_date === null ||
@@ -209,26 +231,51 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
         }
         // console.log(jsonData);
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/reqpermit`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(jsonData)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === 'ok') {
-                    setSubmitComp(true);
-                }
-                else {
-                    setSubmitERR(true);
-                }
+        if (specReq === "bypass") {
+            // console.log("bypass case");
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/bypassbook`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData)
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                setSubmitERR(true);
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === 'ok') {
+                        setSubmitComp(true);
+                    }
+                    else {
+                        setSubmitERR(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    setSubmitERR(true);
+                });
+        }
+        else {
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/reqpermit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData)
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === 'ok') {
+                        setSubmitComp(true);
+                    }
+                    else {
+                        setSubmitERR(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    setSubmitERR(true);
+                });
+        }
     };
 
     return (
@@ -282,7 +329,6 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
                             <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                 <Stack direction="row" spacing={1}>
                                     <DatePicker
-                                        disablePast
                                         onAccept={() => {
                                             setOpenFrmTm(true);
                                             setCarId(0);
@@ -331,7 +377,6 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
                             <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                 <Stack direction="row" spacing={1}>
                                     <DatePicker
-                                        disablePast
                                         open={openToDt}
                                         onOpen={() => setOpenToDt(true)}
                                         onClose={() => setOpenToDt(false)}
@@ -550,7 +595,21 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handlePermit} disabled={duplicate && duplicate !== id} className="btn btn-success">
+
+                    {
+                        isBypass ?
+                            <Box alignItems="flex-start">
+                                <Button variant="contained" onClick={() => handleReqPermit("bypass")} disabled={duplicate && duplicate !== id} className="btn btn-success">
+                                    อนุมัติคำขอใช้รถ
+                                </Button>
+                            </Box>
+                            :
+                            <>
+                            </>
+                    }
+                    <div style={{ flex: '1 0 0' }} />
+
+                    <Button onClick={() => handleReqPermit("")} disabled={duplicate && duplicate !== id} className="btn btn-success">
                         ขออนุมัติคำขอใช้รถ
                     </Button>
                     <Button onClick={onCloseDialg}>ปิด</Button>

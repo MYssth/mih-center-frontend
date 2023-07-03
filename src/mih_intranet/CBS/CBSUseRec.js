@@ -10,6 +10,7 @@ import {
     Box,
     Button,
 } from '@mui/material';
+import jwtDecode from "jwt-decode";
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import { CBSUseRecDialg } from './components/dialogs/forms';
@@ -50,6 +51,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+let levelData = "";
+let token = "";
 
 function CBSUseRec() {
 
@@ -163,24 +166,44 @@ function CBSUseRec() {
 
     useEffect(() => {
 
+        token = jwtDecode(localStorage.getItem('token'));
+        levelData = token.level_list.find(o => o.mihapp_id === "CBS");
+
         refreshTable();
 
     }, []);
 
     function refreshTable() {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdrvsched`)
-            .then((response) => response.json())
-            .then((data) => {
-                setSched(data);
-            })
-            .catch((error) => {
-                if (error.name === "AbortError") {
-                    console.log("cancelled")
-                }
-                else {
-                    console.error('Error:', error);
-                }
-            });
+        if (levelData.level_id === "CBS_USER") {
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getusrdrvsched/${token.personnel_id}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setSched(data);
+                })
+                .catch((error) => {
+                    if (error.name === "AbortError") {
+                        console.log("cancelled")
+                    }
+                    else {
+                        console.error('Error:', error);
+                    }
+                });
+        }
+        else {
+            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdrvsched`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setSched(data);
+                })
+                .catch((error) => {
+                    if (error.name === "AbortError") {
+                        console.log("cancelled")
+                    }
+                    else {
+                        console.error('Error:', error);
+                    }
+                });
+        }
     }
 
     return (
@@ -207,10 +230,10 @@ function CBSUseRec() {
                         <nav>
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item my-2">
-                                    <a href="../mih-intranet.html">หน้าหลัก</a>
+                                    <a href="/intranet">หน้าหลัก</a>
                                 </li>
                                 <li className="breadcrumb-item my-2">
-                                    <a href="car-booking.html">หน้าหลักระบบขอใช้รถ</a>
+                                    <a href="/cbsdashboard">หน้าหลักระบบขอใช้รถ</a>
                                 </li>
                                 <li className="breadcrumb-item my-2">บันทึกการใช้รถ</li>
                             </ol>

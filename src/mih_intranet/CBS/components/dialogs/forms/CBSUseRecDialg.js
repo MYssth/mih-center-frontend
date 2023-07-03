@@ -154,7 +154,6 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
                                 <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                     <DatePicker
                                         fullWidth
-                                        disablePast
                                         onAccept={() => {
                                             setOpenDepTm(true);
                                         }}
@@ -193,7 +192,6 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
                                 <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                     <DatePicker
                                         fullWidth
-                                        disablePast
                                         open={openArrDt}
                                         onOpen={() => setOpenArrDt(true)}
                                         onClose={() => setOpenArrDt(false)}

@@ -334,6 +334,7 @@ function CBSBooking() {
     function handleSubmit() {
         const jsonData = {
             dept_id: deptId,
+            dept_name: deptName,
             from_date: `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(2, '0')}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(fromTime?.getMinutes()).padStart(2, '0')}:00.000Z`,
             to_date: `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(2, '0')}-${String(toDate?.getDate()).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(toTime?.getMinutes()).padStart(2, '0')}:00.000Z`,
             place: place,
@@ -342,9 +343,13 @@ function CBSBooking() {
             tel_no: telNo,
             detail: detail,
             req_pid: token.personnel_id,
+            req_name: token.personnel_name,
             drv_pid: driverId,
+            drv_name: driverName,
             car_type_id: carTypeId,
+            car_type_name: carTypeName,
             car_id: carId,
+            car_name: carName,
         };
 
         if (jsonData.from_date === null || jsonData.to_date === null ||
@@ -488,7 +493,6 @@ function CBSBooking() {
                                                         <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                                             <Stack direction="row" spacing={1}>
                                                                 <DatePicker
-                                                                    disablePast
                                                                     onAccept={() => setOpenFrmTm(true)}
                                                                     maxDate={toDate}
                                                                     label="เลือกวันที่ไป"
@@ -537,7 +541,6 @@ function CBSBooking() {
                                                         <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                                             <Stack direction="row" spacing={1}>
                                                                 <DatePicker
-                                                                    disablePast
                                                                     open={openToDt}
                                                                     onOpen={() => setOpenToDt(true)}
                                                                     onClose={() => setOpenToDt(false)}

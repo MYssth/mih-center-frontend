@@ -36,6 +36,8 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
     const [openToDt, setOpenToDt] = useState(false);
     const [openToTm, setOpenToTm] = useState(false);
 
+    const [reqName, setReqName] = useState('');
+
     const [id, setId] = useState('');
     const [carType, setCarType] = useState([]);
     const [carTypeId, setCarTypeId] = useState('');
@@ -144,6 +146,8 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
             setDeptId(data.dept_id);
             setDeptName(data.dept_name);
 
+            setReqName(data.req_name);
+
         }
 
     }, [openDialg]);
@@ -192,10 +196,16 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
             tel_no: telNo,
             detail: detail,
             permit_pid: token.personnel_id,
+            permit_name: token.personnel_name,
             drv_pid: driverId,
+            drv_name: driverName,
             car_type_id: carTypeId,
+            car_type_name: carTypeName,
             car_id: carId,
+            car_name: carName,
             dept_id: deptId,
+            dept_name: deptName,
+            req_name: reqName,
         }
 
         if (jsonData.from_date === null || jsonData.to_date === null ||
@@ -207,7 +217,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
             setSubmitINC(true);
             return;
         }
-        // console.log(jsonData);
+        console.log(jsonData);
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/permitbook`, {
             method: 'POST',
@@ -282,7 +292,6 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
                             <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                 <Stack direction="row" spacing={1}>
                                     <DatePicker
-                                        disablePast
                                         onAccept={() => {
                                             setOpenFrmTm(true);
                                             setCarId(0);
@@ -331,7 +340,6 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
                             <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
                                 <Stack direction="row" spacing={1}>
                                     <DatePicker
-                                        disablePast
                                         open={openToDt}
                                         onOpen={() => setOpenToDt(true)}
                                         onClose={() => setOpenToDt(false)}

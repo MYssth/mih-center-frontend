@@ -220,7 +220,7 @@ export default async function IIOSReport(data) {
                 <td><strong>การประเมินงาน</strong></td>
             </tr>
             <tr>
-                <td>การดำเนินงาน: ${data.status_id !== 2 && data.status_id !== 5 ? data.status_name : "ดำเนินการโดยผู้รับผิดชอบ"}<br />
+                <td>การดำเนินงาน: ${data.status_id !== 2 && data.status_id !== 5 ? data.status_id === 3 ? "เปลี่ยนอะไหล่" : data.status_name : "ดำเนินการโดยผู้รับผิดชอบ"}<br />
                     หมายเหตุ: ${data.task_note === null || data.task_note === "" ? "-" : data.task_note}</td>
                 </tr>
         </table><table data-pdfmake="{'widths':${data.level_id === 'DMIS_IT' && data.category_id === 16 ? "['*','*','*']" : "['*','*']"}, 'layout':'noBorders'}">

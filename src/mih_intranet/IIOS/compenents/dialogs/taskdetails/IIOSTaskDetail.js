@@ -34,7 +34,8 @@ function ShowDetail({ openDialg, onCloseDialg, data }) {
                                 <Item sx={{ textAlign: 'right' }}>สถานะ:</Item>
                             </Grid>
                             <Grid item xs={8}>
-                                <Item>{data?.status_name}</Item>
+                                {/* <Item>{data?.status_name}</Item> */}
+                                <Item>{`${data?.status_id === 0 ? data?.status_name : (data?.task_iscomplete === null || data?.task_iscomplete === "") ? data?.status_id_request === null || data?.status_id_request === "" ? data?.status_name : `${data?.status_name} (รออนุมัติ - ${data?.status_name_request})` : data?.audit_id === null || data?.audit_id === "" ? data?.status_id === 3 ? `เปลี่ยนอะไหล่ (ยังไม่ตรวจรับ)` : `${data?.status_name} (ยังไม่ตรวจรับ)` : data?.status_id === 5 || data?.status_id === 0 ? data?.status_name : data?.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${data?.status_name})`}`}</Item>
                             </Grid>
                             <Grid item xs={4}>
                                 <Item sx={{ textAlign: 'right' }}>เลขที่เอกสาร:</Item>

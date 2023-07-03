@@ -226,7 +226,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
         // }
 
         if (jsonData.status_id === "" || jsonData.status_id === null ||
-            jsonData.operator_id === "" || jsonData.category_id === "" || jsonData.category_id === null ||
+            jsonData.operator_id === "" || (jsonData.status_id_request !== 0 && (jsonData.category_id === "" || jsonData.category_id === null)) ||
             (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) ||
             (jsonData.status_id_request === 5 && jsonData.task_solution === "" || jsonData.taskCase === "complete" && jsonData.task_solution === "") ||
             jsonData.estimation_id === "" || jsonData.estimation_id === null ||
@@ -423,7 +423,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                             sx={{
                                 "& .MuiAutocomplete-inputRoot": {
                                     "& .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: categoryName ? 'green' : 'red'
+                                        borderColor: statusId === 0 ? '' : (categoryName ? 'green' : 'red')
                                     }
                                 }
                             }}
@@ -466,7 +466,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                             inputProps={{ maxLength: 140 }}
                             sx={{
                                 '& input:valid + fieldset': {
-                                    borderColor: statusId === 3 || statusId === 4 ? (taskNote ? 'green' : 'red') : ''
+                                    borderColor: statusId === 0 || statusId === 3 || statusId === 4 ? (taskNote ? 'green' : 'red') : ''
                                 },
                             }}
                         />

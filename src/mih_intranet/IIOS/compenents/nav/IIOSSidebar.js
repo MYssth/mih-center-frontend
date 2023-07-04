@@ -41,12 +41,6 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
   const mainMenu = (
     <>
       <li className="nav-item">
-        <a className="nav-link collapsed" href="/intranet">
-          <i className="bi bi-house" />
-          <span>หน้าหลัก</span>
-        </a>
-      </li>
-      <li className="nav-item">
         {name === "userdashboard" ?
           <a className="nav-link" href="#">
             <i className="bi bi-tools" />
@@ -159,6 +153,12 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
             <i className="bi bi-files" />
             <span>รายงาน</span>
           </a>}
+      </li>
+      <li className="nav-item">
+        <a className="nav-link collapsed" href="/intranet">
+          <i className="bi bi-arrow-return-left" />
+          <span>กลับไปหน้าเมนูหลัก</span>
+        </a>
       </li>
     </>
   );

@@ -276,7 +276,7 @@ function IIOSUserDashboard() {
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ระบบแจ้งปัญหาออนไลน์ - Issue Inform Online Service(IIOS)</h1>
+          <h1>ระบบแจ้งปัญหาออนไลน์ - Issue Inform Online Service (IIOS) version: {process.env.REACT_APP_IIOS_version ? `v${process.env.REACT_APP_IIOS_version}` : `Unknown`}</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">

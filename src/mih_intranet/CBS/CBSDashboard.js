@@ -154,7 +154,7 @@ export default function CBSDashboard() {
                 {/* <!-- ======= Main ======= --> */}
                 <main id="main" className="main">
                     <div className="pagetitle">
-                        <h1>หน้าหลักระบบขอใช้รถ</h1>
+                        <h1>หน้าหลักระบบขอใช้รถ - Car Booking Service (CBS) version: {process.env.REACT_APP_CBS_version ? `v${process.env.REACT_APP_CBS_version}` : `Unknown`}</h1>
                         <nav>
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item my-2">

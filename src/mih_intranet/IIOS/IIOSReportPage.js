@@ -152,7 +152,10 @@ function IIOSReport() {
     }
 
     const handleOnlyIncomplete = (event) => {
-        const tmpFromDate = dateFns.format(fromDate, 'yyyy-MM-dd')
+        let tmpFromDate;
+        if (fromDate) {
+            tmpFromDate = dateFns.format(fromDate, 'yyyy-MM-dd');
+        }
         if (event.target.checked) {
             setIsincomplete(true);
             if (mode === "byId") {
@@ -335,7 +338,7 @@ function IIOSReport() {
             headerName: 'หมวดหมู่งาน',
             width: 100,
         },
-        
+
     ];
 
     return (

@@ -37,12 +37,6 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
     const mainMenu = (
         <>
             <li className="nav-item">
-                <a className="nav-link collapsed" href="intranet">
-                    <i className="bi bi-house" />
-                    <span>หน้าหลัก</span>
-                </a>
-            </li>
-            <li className="nav-item">
                 {name === "dashboard" ?
                     <a className="nav-link" href="#">
                         <i className="bi bi-car-front" />
@@ -212,6 +206,12 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
                     <a className="nav-link collapsed" href="#">
                         <i className="bi bi-bar-chart" />
                         <span>รายงานการซ่อมบำรุง (Coming soon)</span>
+                    </a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link collapsed" href="/intranet">
+                        <i className="bi bi-arrow-return-left" />
+                        <span>กลับไปหน้าเมนูหลัก</span>
                     </a>
                 </li>
             </ul>

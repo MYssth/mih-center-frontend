@@ -25,8 +25,7 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
         const token = jwtDecode(localStorage.getItem('token'));
         // setTokenData(token);
 
-        setTokenData(token.level_list.find(
-            o => o.mihapp_id === "CBS").level_id);
+        setTokenData(token.level_list.find(o => o.mihapp_id === "CBS").level_id);
 
         if (openNav) {
             onCloseNav();
@@ -151,18 +150,13 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
                 {mainMenu}
                 {tokenData === "CBS_ADMIN" || tokenData === "CBS_MGR" || tokenData === "CBS_RCV" || tokenData === "CBS_DRV" ?
                     <>
-                        {tokenData === "CBS_ADMIN" || tokenData === "CBS_MGR" || tokenData === "CBS_RCV" ?
+                        {permitReq}
+                        {tokenData === "CBS_ADMIN" || tokenData === "CBS_MGR" ?
                             <>
-                                {permitReq}
-                                {tokenData === "CBS_ADMIN" || tokenData === "CBS_MGR" ?
-                                    <>
-                                        {permit}
-                                    </>
-                                    : ""
-                                }
+                                {permit}
                             </>
-                            :
-                            ""}
+                            : ""
+                        }
                     </>
                     :
                     ""}

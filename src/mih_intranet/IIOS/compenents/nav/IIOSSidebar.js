@@ -52,6 +52,19 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
             <span>หน้าหลักระบบแจ้งปัญหา</span>
           </a>}
       </li>
+      <li className="nav-item">
+        {name === "newcase" ?
+          <a className="nav-link" href="#">
+            <i className="bi bi-file-earmark-arrow-up" />
+            <span>แจ้งปัญหาออนไลน์</span>
+          </a>
+          :
+          <a className="nav-link collapsed" href="/iiosnewcase">
+            <i className="bi bi-file-earmark-arrow-up" />
+            <span>แจ้งปัญหาออนไลน์</span>
+          </a>}
+
+      </li>
     </>
   );
 
@@ -126,20 +139,6 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
             <i className="bi bi-person-check" />
             <span>งานรอตรวจรับ</span>
           </a>}
-      </li>
-
-      <li className="nav-item">
-        {name === "newcase" ?
-          <a className="nav-link" href="#">
-            <i className="bi bi-file-earmark-arrow-up" />
-            <span>แจ้งปัญหาออนไลน์</span>
-          </a>
-          :
-          <a className="nav-link collapsed" href="/iiosnewcase">
-            <i className="bi bi-file-earmark-arrow-up" />
-            <span>แจ้งปัญหาออนไลน์</span>
-          </a>}
-
       </li>
 
       <li className="nav-item">

@@ -71,7 +71,6 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             setDialogStatus(data.status_id)
 
             if (data.operator_id !== '' && data.operator_id !== null) {
-                console.log(operList);
                 setOperatorName(`${operList.find(o => o.personnel_id === data.operator_id).personnel_firstname} ${operList.find(o => o.personnel_id === data.operator_id).personnel_lastname}`);
                 setOperatorId(data.operator_id);
             }
@@ -113,6 +112,10 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
         }
     }, [categoryId]);
 
+    useEffect(() => {
+        console.log(`s = ${isStatusChange}`);
+    }, [isStatusChange]);
+
     function clearData() {
         setLevelId("");
         setOperatorId("");
@@ -134,11 +137,6 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
     }
 
     const handleProcessTask = (taskCase) => {
-
-        // if (isProgramChange === null && statusId === 5 && categoryId === 1) {
-        //     alert("กรุณาเลือกการวางโปรแกรม");
-        //     return;
-        // }
 
         if (categoryId === 1) {
             if (permitId === "" || permitId === null) {
@@ -185,45 +183,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             taskCase: taskCase,
         }
 
-        console.log(jsonData);
-
-        // if (1) {
-        //     if (jsonData.status_id === "" || jsonData.status_id === null) {
-        //         alert("กรุณาระบุสถานะของงาน");
-        //     }
-
-        //     if (jsonData.operator_id === "") {
-        //         alert("กรุณาเลือกผู้รับผิดชอบงาน");
-        //         return;
-        //     }
-
-        //     if (jsonData.category_id === "" || jsonData.category_id === null) {
-        //         alert("กรุณาเลือกหมวดหมู่งาน");
-        //         return;
-        //     }
-
-        //     if (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) {
-        //         alert("กรุณาใส่รหัสทรัพย์สินให้ถูกต้อง");
-        //         return;
-        //     }
-
-        //     if (jsonData.status_id_request === 5 && jsonData.task_solution === "" || jsonData.taskCase === "complete" && jsonData.task_solution === "") {
-        //         alert("กรุณาระบุรายละเอียดการแก้ปัญหา ");
-        //         return;
-        //     }
-
-        //     if (jsonData.status_id === 3 || jsonData.status_id === 4) {
-        //         if (jsonData.task_note === "" || jsonData.task_note === null) {
-        //             alert("กรุณาระบุข้อมูลในหมายเหตุ");
-        //             return;
-        //         }
-        //     }
-
-        //     if (jsonData.estimation_id === "" || jsonData.estimation_id === null) {
-        //         alert("กรุณาระบุการประมาณวันดำเนินงาน");
-        //         return;
-        //     }
-        // }
+        // console.log(jsonData);
 
         if (jsonData.status_id === "" || jsonData.status_id === null ||
             jsonData.operator_id === "" || (jsonData.status_id_request !== 0 && (jsonData.category_id === "" || jsonData.category_id === null)) ||
@@ -481,7 +441,11 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                         <></>
                     )}
                     <div style={{ flex: '1 0 0' }} />
-                    <Button onClick={onCloseDialg}>ยกเลิก</Button>
+                    <Button onClick={() => {
+                        clearData();
+                        onCloseDialg();
+                    }}
+                    >ยกเลิก</Button>
                     {/* <Button variant="contained" onClick={() => { handleProcessTask(dialogStatus === 2 && isStatusChange ? "request" : "edit") }}>ดำเนินการ</Button> */}
                     <Button
                         variant="contained"

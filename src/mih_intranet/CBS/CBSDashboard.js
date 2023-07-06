@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
+import jwtDecode from "jwt-decode";
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import 'moment/locale/th'
@@ -110,7 +111,15 @@ export default function CBSDashboard() {
     const [sched, setSched] = useState([]);
     const [statCntr, setStatCntr] = useState({});
 
+    const [USRLv, setUSRLv] = useState('');
+    const [version, setVersion] = useState('');
+
     useEffect(() => {
+
+        const token = jwtDecode(localStorage.getItem('token'));
+        // setTokenData(token);
+
+        setUSRLv(token.level_list.find(o => o.mihapp_id === "CBS").level_id);
 
         fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getallschedtoday`)
             .then((response) => response.json())
@@ -140,6 +149,20 @@ export default function CBSDashboard() {
                 }
             });
 
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getversion`)
+            .then((response) => response.json())
+            .then((data) => {
+                setVersion(data);
+            })
+            .catch((error) => {
+                if (error.name === "AbortError") {
+                    console.log("cancelled")
+                }
+                else {
+                    console.error('Error:', error);
+                }
+            });
+
     }, []);
 
     return (
@@ -154,7 +177,7 @@ export default function CBSDashboard() {
                 {/* <!-- ======= Main ======= --> */}
                 <main id="main" className="main">
                     <div className="pagetitle">
-                        <h1>หน้าหลักระบบขอใช้รถ - Car Booking Service (CBS) version: {process.env.REACT_APP_CBS_version ? `v${process.env.REACT_APP_CBS_version}` : `Unknown`}</h1>
+                        <h1>หน้าหลักระบบขอใช้รถ - Car Booking Service (CBS) version: {version}</h1>
                         <nav>
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item my-2">
@@ -170,7 +193,7 @@ export default function CBSDashboard() {
                             <div className="col-lg-12">
                                 <div className="row">
                                     <div className="col-xxl-3 col-md-6">
-                                        <a className="nav-link collapsed" href="/cbspermitreq">
+                                        <a className="nav-link collapsed" href={USRLv === "CBS_ADMIN" || USRLv === "CBS_MGR" || USRLv === "CBS_RCV" || USRLv === "CBS_DRV" ? "/cbspermitreq" : "#"}>
                                             <div className="card info-card request-card">
                                                 <div className="card-body">
                                                     <h2 className="card-title">ขอใช้รถ | Request</h2>
@@ -193,7 +216,7 @@ export default function CBSDashboard() {
                                         </a>
                                     </div>
                                     <div className="col-xxl-3 col-md-6">
-                                        <a className="nav-link collapsed" href="/cbspermit">
+                                        <a className="nav-link collapsed" href={USRLv === "CBS_ADMIN" || USRLv === "CBS_MGR" ? "/cbspermit" : "#"} >
                                             <div className="card info-card waitapprov-card">
                                                 <div className="card-body">
                                                     <h2 className="card-title">รออนุมัติ | Wait Approve</h2>

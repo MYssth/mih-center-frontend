@@ -50,7 +50,7 @@ export default function MainHeader({ onOpenNav }) {
 
                     <ul className="d-flex align-items-center">
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            version: {process.env.REACT_APP_version ? `v${process.env.REACT_APP_version}` : `Unknown`}
+                            version: {process.env.REACT_APP_version ? `${process.env.REACT_APP_version}` : `Unknown`}
                         </Typography>
                         <li className="nav-item dropdown pe-3">
 

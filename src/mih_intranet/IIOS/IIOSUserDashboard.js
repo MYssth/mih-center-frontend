@@ -160,6 +160,7 @@ function IIOSUserDashboard() {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
 
   const [headStatus, setHeadStatus] = useState('งานที่ยังไม่เสร็จสิ้นทั้งหมด');
+  const [version, setVersion] = useState('');
 
   useEffect(() => {
 
@@ -219,6 +220,20 @@ function IIOSUserDashboard() {
 
           )
 
+        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getversion`, { signal })
+          .then((response) => response.json())
+          .then((data) => {
+            setVersion(data);
+          })
+          .catch((error) => {
+            if (error.name === "AbortError") {
+              console.log("cancelled")
+            }
+            else {
+              console.error('Error:', error);
+            }
+          })
+
         break;
       }
     }
@@ -276,7 +291,7 @@ function IIOSUserDashboard() {
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ระบบแจ้งปัญหาออนไลน์ - Issue Inform Online Service (IIOS) version: {process.env.REACT_APP_IIOS_version ? `v${process.env.REACT_APP_IIOS_version}` : `Unknown`}</h1>
+          <h1>ระบบแจ้งปัญหาออนไลน์ - Issue Inform Online Service (IIOS) version: {version}</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">

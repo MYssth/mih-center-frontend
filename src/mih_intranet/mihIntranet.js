@@ -11,7 +11,7 @@ export default function MIHIntranet() {
     return (
         <>
             <Helmet>
-                <title> หน้าระบบภายในใหม่ | {headSname} </title>
+                <title> Main | {headSname} </title>
             </Helmet>
 
             <div>

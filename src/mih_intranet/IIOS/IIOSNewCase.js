@@ -142,7 +142,7 @@ function IIOSNewCase() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === 'ok') {
-                    navigate('/dmis', { replace: true });
+                    navigate('/iiosuserdashboard', { replace: true });
                 }
                 else {
                     // alert('ไม่สามารถทำการแจ้งปัญหาได้');

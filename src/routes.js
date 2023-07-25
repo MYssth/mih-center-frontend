@@ -30,7 +30,7 @@ import DSMSManageBook from './pages/DSMS/DSMSManageBook';
 import DSMSSetting from './pages/DSMS/DSMSSetting';
 
 //
-import MIHIntranet from './mih_intranet/MIHIntranet';
+import MIHIntranet from './mih_intranet/mihIntranet';
 
 // PMS
 import PMSUserMgr from './mih_intranet/PMS/PMSUserMgr';
@@ -42,6 +42,7 @@ import CBSPermitRep from './mih_intranet/CBS/CBSPermitRep';
 import CBSPermit from './mih_intranet/CBS/CBSPermit';
 import CBSUseRec from './mih_intranet/CBS/CBSUseRec';
 import CBSBookRprt from './mih_intranet/CBS/CBSBookRprt';
+import CBSMergeBook from './mih_intranet/CBS/CBSMergeBook';
 
 // IIOS
 import IIOSUserDashboard from './mih_intranet/IIOS/IIOSUserDashboard';
@@ -136,6 +137,10 @@ export default function Router() {
     {
       path: '/cbsbookrprt',
       element: <CBSBookRprt />,
+    },
+    {
+      path: '/cbsmergebook',
+      element: <CBSMergeBook />,
     },
 
     // IIOS

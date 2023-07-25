@@ -72,9 +72,8 @@ function CBSBookRprt() {
         const token = jwtDecode(localStorage.getItem('token'));
 
         for (let i = 0; i < token.level_list.length; i += 1) {
-            if (token.level_list[i].level_id === "CBS_ADMIN" || token.level_list[i].level_id === "CBS_DRV" ||
-                token.level_list[i].level_id === "CBS_MGR" || token.level_list[i].level_id === "CBS_RCV" ||
-                token.level_list[i].level_id === "CBS_USER") {
+            if (token.level_list[i].mihapp_id === "CBS") {
+                console.log(token.level_list[i].view_id);
                 // to be change to hims database
                 fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedbydeptid/${token.level_list[i].view_id}/${token.personnel_id}`, { signal })
                     .then((response) => response.json())

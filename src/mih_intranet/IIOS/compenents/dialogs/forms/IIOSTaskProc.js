@@ -164,6 +164,10 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             taskCase = statusId === 5 ? "complete" : "request";
         }
 
+        if(dialogStatus === 4 && taskCase === "complete"){
+            taskCase = "osRequest";
+        }
+
         const jsonData = {
             task_id: data.task_id,
             level_id: levelId,
@@ -176,47 +180,47 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
             operator_id: operatorId,
             category_id: categoryId,
             task_phone_no: phoneNo,
-            task_note: (taskCase === "complete" || taskCase === "pRequest") && taskNote === tempNote ? "" : taskNote,
+            task_note: (taskCase === "complete" || taskCase === "pRequest" || taskCase === "osRequest") && taskNote === tempNote ? "" : taskNote,
             estimation_id: estimationId,
             is_program_change: isProgramChange,
             // eslint-disable-next-line object-shorthand
             taskCase: taskCase,
         }
 
-        // console.log(jsonData);
+        console.log(jsonData);
 
-        if (jsonData.status_id === "" || jsonData.status_id === null ||
+        if (jsonData.status_id_request === "" || jsonData.status_id_request === null ||
             jsonData.operator_id === "" || (jsonData.status_id_request !== 0 && (jsonData.category_id === "" || jsonData.category_id === null)) ||
             (jsonData.task_device_id !== "" && jsonData.task_device_id.length !== 18) ||
             (jsonData.status_id_request === 5 && jsonData.task_solution === "" || jsonData.taskCase === "complete" && jsonData.task_solution === "") ||
             jsonData.estimation_id === "" || jsonData.estimation_id === null ||
-            ((jsonData.status_id === 3 || jsonData.status_id === 4) && (jsonData.task_note === "" || jsonData.task_note === null))) {
+            ((jsonData.status_id_request === 3 || jsonData.status_id_request === 4) && (jsonData.task_note === "" || jsonData.task_note === null))) {
 
             setSubmitINC(true)
 
         }
 
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(jsonData)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === 'ok') {
-                    clearData();
-                    onCloseDialg();
-                }
-                else {
-                    setSubmitERR(true);
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setSubmitERR(true);
-            });
+        // fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(jsonData)
+        // })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         if (data.status === 'ok') {
+        //             clearData();
+        //             onCloseDialg();
+        //         }
+        //         else {
+        //             setSubmitERR(true);
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //         setSubmitERR(true);
+        //     });
 
     };
 

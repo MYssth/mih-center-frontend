@@ -10,6 +10,7 @@ import { Helmet } from 'react-helmet-async';
 import { Stack, Typography, TextField, Button, alpha, styled, Box, } from '@mui/material';
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
+import reportPDF from './components/pdf';
 
 const dateFns = require('date-fns');
 
@@ -109,6 +110,24 @@ function CBSBookRprt() {
     }
 
     const columns = [
+        {
+            field: 'action',
+            disableExport: true,
+            headerName: '',
+            minWidth: 90,
+            flex: 1,
+            sortable: false,
+            renderCell: (params) => {
+                const onClick = (e) => {
+                    e.stopPropagation(); // don't select this row after clicking
+                    reportPDF(params.row);
+                    // setFocusTask(params.row);
+                    // setOpenTaskDetail(true);
+                };
+
+                return <Button variant="contained" onClick={onClick}>ปริ้น</Button>;
+            },
+        },
         {
             field: 'id',
             headerName: 'เลขที่',

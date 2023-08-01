@@ -37,12 +37,16 @@ let endSig = '';
 let endName = '';
 let pconfirmSig = '';
 let pconfirmName = '';
+let osconfirmSig = '';
+let osconfirmName = '';
 let auditSig = '';
 let header = {};
 
 export default async function IIOSReport(data) {
   noSig = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/nosignature.png`)}`;
   cmBox = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/CMBox.png`)}`;
+
+  // console.log(data);
 
   header = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/getsitesetting`)
     .then((response) => response.json())
@@ -173,6 +177,26 @@ export default async function IIOSReport(data) {
       });
   } else {
     pconfirmSig = await noSig;
+  }
+
+  if (data.osconfirm_id !== '' && data.osconfirm_id !== null) {
+    osconfirmName = `${data.osconfirm_firstname} ${data.osconfirm_lastname}`;
+
+    osconfirmSig = await fetch(
+      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.osconfirm_id}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
+          return data.signature_data;
+        }
+        return noSig;
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  } else {
+    osconfirmSig = await noSig;
   }
 
   if (data.operator_id !== '' && data.operator_id !== null && data.task_date_end) {
@@ -353,7 +377,10 @@ export default async function IIOSReport(data) {
             ? ''
             : `<table data-pdfmake="{'layout':'noBorders'}"><tr><td><img src="${cmBox}" width="20" alt="cmBox" /></td><td>โปรแกรมได้รับการทดสอบ UAT แล้ว ขอนุมัติวางโปรแกรม</td></tr></table>`
         }<table data-pdfmake="{'widths':${
-      data.level_id === 'DMIS_IT' ? "['*','*','*']" : "['*','*']"
+      data.level_id === 'DMIS_IT' ||
+      ((data.level_id === 'DMIS_MT' || data.level_id === 'DMIS_MER') && data.status_id === 4)
+        ? "['*','*','*']"
+        : "['*','*']"
     }, 'layout':'noBorders'}">
             <tr style="text-align:center">
                 <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ดำเนินการ</td></tr>
@@ -389,6 +416,23 @@ export default async function IIOSReport(data) {
                   )}`
             }`}</td></tr>
         </table></td>`
+                    : (data.level_id === 'DMIS_MT' || data.level_id === 'DMIS_MER') && data.status_id === 4
+                    ? `<td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ตรวจสอบ</td></tr>
+                    <tr><td><img src="${osconfirmSig}" width="110" height="30" alt="osconfirmSig" /></td></tr>
+                    <tr><td>(${
+                      osconfirmName === null || osconfirmName === ''
+                        ? '........................................'
+                        : `${osconfirmName}`
+                    })</td></tr>
+                    <tr><td>${`วันที่ ${
+                      data.osconfirm_date === null || data.osconfirm_date === ''
+                        ? '...................................'
+                        : ` ${dateFns.format(
+                            dateFns.subHours(dateFns.addYears(new Date(data.osconfirm_date), 543), 7),
+                            'dd/MM/yyyy'
+                          )}`
+                    }`}</td></tr>
+                </table></td>`
                     : ''
                 }
                 <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้รับทราบผลดำเนินงาน</td></tr>

@@ -497,7 +497,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
                 }}
                 sx={{
                   '& input:valid + fieldset': {
-                    borderColor: paxAmt ? 'green' : 'red',
+                    borderColor: paxAmt || paxAmt === 0 ? 'green' : 'red',
                   },
                 }}
               />

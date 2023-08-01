@@ -19,6 +19,7 @@ import CBSSidebar from './components/nav/CBSSidebar';
 import { SubmtComp, SubmtERR, SubmtINC } from '../components/dialogs/response';
 import provinceList from '../utils/ProvinceList';
 import { CBSDenyDialg } from './components/dialogs/forms';
+import { CBSTaskDetail } from './components/dialogs/taskdetails';
 
 let token = '';
 
@@ -219,6 +220,9 @@ function CBSBooking() {
 
   const [denyDialg, setDenyDialg] = useState(false);
   const [denyData, setDenyData] = useState([]);
+
+  const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [focusTask, setFocusTask] = useState('');
 
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
@@ -427,6 +431,8 @@ function CBSBooking() {
         <title> ระบบขอใช้รถ | {headSname} </title>
       </Helmet>
       <div>
+        <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+
         <CBSDenyDialg
           openDialg={denyDialg}
           onCloseDialg={() => {
@@ -817,6 +823,10 @@ function CBSBooking() {
                           hideFooterSelectedRowCount
                           // onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
                           // onCellDoubleClick={(params) => { showDetail(params.row, true) }}
+                          onCellDoubleClick={(params) => {
+                            setFocusTask(params.row);
+                            setOpenTaskDetail(true);
+                          }}
                           initialState={{
                             columns: {
                               columnVisibilityModel: {

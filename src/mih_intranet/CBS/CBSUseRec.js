@@ -8,6 +8,7 @@ import jwtDecode from 'jwt-decode';
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import { CBSUseRecDialg } from './components/dialogs/forms';
+import { CBSTaskDetail } from './components/dialogs/taskdetails';
 
 const ODD_OPACITY = 0.2;
 
@@ -47,6 +48,9 @@ function CBSUseRec() {
 
   const [useRecDialg, setUseRecDialg] = useState(false);
   const [useRecData, setUseRecData] = useState([]);
+
+  const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [focusTask, setFocusTask] = useState('');
 
   const columns = [
     {
@@ -205,6 +209,8 @@ function CBSUseRec() {
       </Helmet>
 
       <div>
+        <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+
         <CBSUseRecDialg
           openDialg={useRecDialg}
           onCloseDialg={() => {
@@ -255,6 +261,11 @@ function CBSUseRec() {
                       hideFooterSelectedRowCount
                       // onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
                       // onCellDoubleClick={(params) => { showDetail(params.row, true) }}
+                      onCellDoubleClick={(params) => {
+                        console.log(params.row);
+                        setFocusTask(params.row);
+                        setOpenTaskDetail(true);
+                      }}
                       initialState={{
                         columns: {
                           columnVisibilityModel: {

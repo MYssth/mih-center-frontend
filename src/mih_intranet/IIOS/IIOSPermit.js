@@ -129,7 +129,8 @@ function IIOSPermit() {
             valueGetter: (params) =>
                 `${params.row.status_id_request === 2 && params.row.category_id === 1 ? "กำลังดำเนินการ (HIMS)" :
                     params.row.status_id_request === 5 && (params.row.category_id === 1 || params.row.category_id === 16) ? "ดำเนินการเสร็จสิ้น (ขอวางโปรแกรม)" :
-                        params.row.status_id_request === 2 && params.row.category_id === 16 ? "กำลังดำเนินการ (HIMS Change)" : params.row.status_name_request}`,
+                        params.row.status_id_request === 2 && params.row.category_id === 16 ? "กำลังดำเนินการ (HIMS Change)" :
+                        params.row.status_id_request=== 5 && params.row.status_id === 4 ? "ส่งซ่อมภายนอก (ปิดงาน)": params.row.status_name_request }`,
         },
         {
             field: 'informer_firstname',

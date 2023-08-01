@@ -7,6 +7,7 @@ import { Stack, styled, alpha, Box } from '@mui/material';
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import { CBSDenyDialg, CBSPermitDialg } from './components/dialogs/forms';
+import { CBSTaskDetail } from './components/dialogs/taskdetails';
 
 const ODD_OPACITY = 0.2;
 
@@ -169,6 +170,8 @@ function CBSPermit() {
   const [permitDialg, setPermitDialg] = useState(false);
   const [denyDialg, setDenyDialg] = useState(false);
   const [permitData, setPermitData] = useState([]);
+  const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [focusTask, setFocusTask] = useState('');
 
   useEffect(() => {
     refreshTable();
@@ -196,6 +199,8 @@ function CBSPermit() {
       </Helmet>
 
       <div>
+        <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+
         <CBSDenyDialg
           openDialg={denyDialg}
           onCloseDialg={() => {
@@ -256,6 +261,11 @@ function CBSPermit() {
                       hideFooterSelectedRowCount
                       // onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
                       // onCellDoubleClick={(params) => { showDetail(params.row, true) }}
+                      onCellDoubleClick={(params) => {
+                        console.log(params.row);
+                        setFocusTask(params.row);
+                        setOpenTaskDetail(true);
+                      }}
                       initialState={{
                         columns: {
                           columnVisibilityModel: {

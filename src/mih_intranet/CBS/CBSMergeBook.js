@@ -743,6 +743,7 @@ function CBSMergeBook() {
 
   function handleMergeBookAdd() {
     const jsonData = {
+      rcv_pid: pid,
       req_name: pname,
       id_list: selBookAdd,
       sched_grp: schedGrp.find((o) => o.id === selGrpAdd),

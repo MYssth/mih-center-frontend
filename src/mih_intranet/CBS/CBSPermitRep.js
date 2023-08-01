@@ -7,6 +7,7 @@ import { Stack, styled, alpha, Box } from '@mui/material';
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import { CBSDenyDialg, CBSPermitRepDialg } from './components/dialogs/forms';
+import { CBSTaskDetail } from './components/dialogs/taskdetails';
 
 const ODD_OPACITY = 0.2;
 
@@ -38,7 +39,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 const headSname = `${localStorage.getItem('sname')} Center`;
 
 function CBSReqPermit() {
-
   const columns = [
     {
       field: 'action',
@@ -164,6 +164,8 @@ function CBSReqPermit() {
   const [permitRepDialg, setPermitRepDialg] = useState(false);
   const [denyDialg, setDenyDialg] = useState(false);
   const [permitRepData, setPermitRepData] = useState([]);
+  const [openTaskDetail, setOpenTaskDetail] = useState(false);
+  const [focusTask, setFocusTask] = useState('');
 
   useEffect(() => {
     refreshTable();
@@ -191,6 +193,8 @@ function CBSReqPermit() {
       </Helmet>
 
       <div>
+        <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+
         <CBSDenyDialg
           openDialg={denyDialg}
           onCloseDialg={() => {
@@ -251,6 +255,10 @@ function CBSReqPermit() {
                       hideFooterSelectedRowCount
                       // onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
                       // onCellDoubleClick={(params) => { showDetail(params.row, true) }}
+                      onCellDoubleClick={(params) => {
+                        setFocusTask(params.row);
+                        setOpenTaskDetail(true);
+                      }}
                       initialState={{
                         columns: {
                           columnVisibilityModel: {

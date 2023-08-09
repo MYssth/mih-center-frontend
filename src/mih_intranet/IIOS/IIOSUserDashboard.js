@@ -1,23 +1,12 @@
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
 import { useEffect, useState } from 'react';
-import jwtDecode from "jwt-decode";
+import jwtDecode from 'jwt-decode';
 import { Helmet } from 'react-helmet-async';
 import { DataGrid, gridClasses, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Icon } from '@iconify/react';
 // @mui
-import {
-  Container,
-  Typography,
-  Card,
-  CardActionArea,
-  CardMedia,
-  Grid,
-  styled,
-  alpha,
-  Button,
-  Box,
-} from '@mui/material';
+import { Typography, Card, CardActionArea, CardMedia, Grid, styled, alpha, Button, Box } from '@mui/material';
 
 import MainHeader from '../components/MainHeader';
 import IIOSSidebar from './compenents/nav/IIOSSidebar';
@@ -35,23 +24,15 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       },
     },
     '&.Mui-selected': {
-      backgroundColor: alpha(
-        theme.palette.primary.main,
-        ODD_OPACITY + theme.palette.action.selectedOpacity,
-      ),
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
       '&:hover, &.Mui-hovered': {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-          theme.palette.action.selectedOpacity +
-          theme.palette.action.hoverOpacity,
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         '@media (hover: none)': {
-          backgroundColor: alpha(
-            theme.palette.primary.main,
-            ODD_OPACITY + theme.palette.action.selectedOpacity,
-          ),
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
         },
       },
     },
@@ -67,13 +48,21 @@ function QuickSearchToolbar() {
       }}
     >
       <GridToolbarQuickFilter />
-      <Button variant="outlined" sx={{ ml: 1 }} startIcon={<Icon icon="ic:baseline-refresh" width="24" height="24" />} onClick={() => { window.location.reload(false); }} >แสดงทั้งหมด</Button>
+      <Button
+        variant="outlined"
+        sx={{ ml: 1 }}
+        startIcon={<Icon icon="ic:baseline-refresh" width="24" height="24" />}
+        onClick={() => {
+          window.location.reload(false);
+        }}
+      >
+        แสดงทั้งหมด
+      </Button>
     </Box>
   );
 }
 
 const columns = [
-
   {
     field: 'id',
     headerName: 'ลำดับที่',
@@ -88,7 +77,9 @@ const columns = [
     headerName: 'ประเภทงาน',
     width: 100,
     valueGetter: (params) =>
-      `${params.row.level_id === "DMIS_IT" ? "IT" : (params.row.level_id === 'DMIS_MT' ? "ซ่อมบำรุง" : "เครื่องมือแพทย์")}`,
+      `${
+        params.row.level_id === 'DMIS_IT' ? 'IT' : params.row.level_id === 'DMIS_MT' ? 'ซ่อมบำรุง' : 'เครื่องมือแพทย์'
+      }`,
   },
   {
     field: 'task_issue',
@@ -109,8 +100,7 @@ const columns = [
     field: 'task_date_start',
     headerName: 'วันที่แจ้ง',
     width: 110,
-    valueGetter: (params) =>
-      `${(params.row.task_date_start).replace("T", " ").replace(".000Z", " น.")}`,
+    valueGetter: (params) => `${params.row.task_date_start.replace('T', ' ').replace('.000Z', ' น.')}`,
   },
   {
     field: 'operator_firstname',
@@ -127,7 +117,21 @@ const columns = [
     headerName: 'สถานะ',
     width: 130,
     valueGetter: (params) =>
-      `${params.row.status_id === 0 ? params.row.status_name : (params.row.task_iscomplete === null || params.row.task_iscomplete === "") ? params.row.status_id_request === null || params.row.status_id_request === "" ? params.row.status_name : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})` : params.row.audit_id === null || params.row.audit_id === "" ? `${params.row.status_name} (ยังไม่ตรวจรับ)` : params.row.status_id === 5 ? params.row.status_name : params.row.status_id === 3 ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)` : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`}`,
+      `${
+        params.row.status_id === 0
+          ? params.row.status_name
+          : params.row.task_iscomplete === null || params.row.task_iscomplete === ''
+          ? params.row.status_id_request === null || params.row.status_id_request === ''
+            ? params.row.status_name
+            : `${params.row.status_name} (รออนุมัติ - ${params.row.status_name_request})`
+          : params.row.audit_id === null || params.row.audit_id === ''
+          ? `${params.row.status_name} (ยังไม่ตรวจรับ)`
+          : params.row.status_id === 5
+          ? params.row.status_name
+          : params.row.status_id === 3
+          ? `ดำเนินการเสร็จสิ้น (เปลี่ยนอะไหล่)`
+          : `ดำเนินการเสร็จสิ้น (${params.row.status_name})`
+      }`,
   },
   {
     field: 'task_note',
@@ -139,13 +143,12 @@ const columns = [
     headerName: 'รหัสทรัพย์สิน',
     width: 150,
   },
-
 ];
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+const rToken = localStorage.getItem('token');
 
 function IIOSUserDashboard() {
-
   const [taskList, setTaskList] = useState([]);
   const [completeTaskList, setCompleteTaskList] = useState([]);
   const [filterTaskList, setFilterTaskList] = useState([]);
@@ -163,76 +166,104 @@ function IIOSUserDashboard() {
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-
     const controller = new AbortController();
-    // eslint-disable-next-line prefer-destructuring
-    const signal = controller.signal;
     const token = jwtDecode(localStorage.getItem('token'));
 
     for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === "DMIS") {
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`, { signal })
+      if (token.level_list[i].mihapp_id === 'DMIS') {
+        fetch(
+          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.personnel_id}/${
+            token.level_list[i].level_id
+          }/${token.level_list[i].view_id}/${true}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${rToken}`,
+            },
+          }
+        )
           .then((response) => response.json())
           .then((data) => {
             setTaskList(data);
             setFilterTaskList(data);
           })
           .catch((error) => {
-            if (error.name === "AbortError") {
-              console.log("cancelled")
-            }
-            else {
+            if (error.name === 'AbortError') {
+              console.log('cancelled');
+            } else {
               console.error('Error:', error);
             }
-          }
-
-          ).then(
-
-            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/counttask/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`, { signal })
+          })
+          .then(
+            fetch(
+              `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/counttask/${token.personnel_id}/${
+                token.level_list[i].level_id
+              }/${token.level_list[i].view_id}/${true}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${rToken}`,
+                },
+              }
+            )
               .then((response) => response.json())
               .then((data) => {
                 setTaskCount(data);
               })
               .catch((error) => {
-                if (error.name === "AbortError") {
-                  console.log("cancelled")
-                }
-                else {
+                if (error.name === 'AbortError') {
+                  console.log('cancelled');
+                } else {
                   console.error('Error:', error);
                 }
               })
-
-          ).then(
-
-            fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcompletetasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`, { signal })
+          )
+          .then(
+            fetch(
+              `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getcompletetasklist/${
+                token.personnel_id
+              }/${token.level_list[i].level_id}/${token.level_list[i].view_id}/${true}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${rToken}`,
+                },
+              }
+            )
               .then((response) => response.json())
               .then((data) => {
                 setCompleteTaskList(data);
               })
               .catch((error) => {
-                if (error.name === "AbortError") {
-                  console.log("cancelled")
-                }
-                else {
+                if (error.name === 'AbortError') {
+                  console.log('cancelled');
+                } else {
                   console.error('Error:', error);
                 }
               })
+          );
 
-          )
-
-        fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getversion`, { signal })
+        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getversion`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        })
           .then((response) => response.json())
           .then((data) => {
             setVersion(data);
           })
           .catch((error) => {
-            if (error.name === "AbortError") {
-              console.log("cancelled")
-            }
-            else {
+            if (error.name === 'AbortError') {
+              console.log('cancelled');
+            } else {
               console.error('Error:', error);
             }
-          })
+          });
 
         break;
       }
@@ -240,33 +271,26 @@ function IIOSUserDashboard() {
 
     return () => {
       controller.abort();
-    }
-
+    };
   }, []);
 
   useEffect(() => {
-
     if (filterStatusId === 1) {
-      setHeadStatus("งานรอรับเรื่อง");
-    }
-    else if (filterStatusId === 2) {
-      setHeadStatus("งานกำลังดำเนินการ");
-    }
-    else if (filterStatusId === 3) {
-      setHeadStatus("งานรออะไหล่");
-    }
-    else if (filterStatusId === 4) {
-      setHeadStatus("งานส่งซ่อมภายนอก");
-    }
-    else if (filterStatusId === 5) {
-      setHeadStatus("งานดำเนินการเสร็จสิ้น");
+      setHeadStatus('งานรอรับเรื่อง');
+    } else if (filterStatusId === 2) {
+      setHeadStatus('งานกำลังดำเนินการ');
+    } else if (filterStatusId === 3) {
+      setHeadStatus('งานรออะไหล่');
+    } else if (filterStatusId === 4) {
+      setHeadStatus('งานส่งซ่อมภายนอก');
+    } else if (filterStatusId === 5) {
+      setHeadStatus('งานดำเนินการเสร็จสิ้น');
       setFilterTaskList(completeTaskList);
-    }
-    else if (filterStatusId === 6) {
-      setHeadStatus("งานซื้อใหม่ทดแทน");
+    } else if (filterStatusId === 6) {
+      setHeadStatus('งานซื้อใหม่ทดแทน');
     }
     if (filterStatusId !== 5) {
-      setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter(dt => dt.status_id === filterStatusId));
+      setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter((dt) => dt.status_id === filterStatusId));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -275,8 +299,7 @@ function IIOSUserDashboard() {
   const handleOpenFocusTaskDialog = (task) => {
     setFocusTask(task);
     setOpenTaskDetail(true);
-
-  }
+  };
 
   return (
     <>
@@ -308,67 +331,91 @@ function IIOSUserDashboard() {
             <div className="col-lg-12">
               <div className="card">
                 <div className="card-body pt-3">
-                  <Grid container columns={{ xs: 4, sm: 8, md: 12 }} justifyContent='center'>
+                  <Grid container columns={{ xs: 4, sm: 8, md: 12 }} justifyContent="center">
                     <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'error.main' }}>
                       <CardActionArea onClick={() => setFilterStatusId(1)}>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: 'relative' }}>
                           <CardMedia
                             component="img"
                             image={`${process.env.PUBLIC_URL}/DMIS/DMIS_checkin.jpg`}
                             alt="checkin"
                           />
-                          <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
-                            <Typography variant="h4">
-                              {taskCount.inform}
-                            </Typography>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              color: 'white',
+                              top: '45%',
+                              left: '65%',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <Typography variant="h4">{taskCount.inform}</Typography>
                           </div>
                         </div>
                       </CardActionArea>
                     </Card>
                     <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
                       <CardActionArea onClick={() => setFilterStatusId(2)}>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: 'relative' }}>
                           <CardMedia
                             component="img"
                             image={`${process.env.PUBLIC_URL}/DMIS/DMIS_working.jpg`}
                             alt="checkin"
                           />
-                          <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
-                            <Typography variant="h4">
-                              {taskCount.accept}
-                            </Typography>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              color: 'white',
+                              top: '45%',
+                              left: '65%',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <Typography variant="h4">{taskCount.accept}</Typography>
                           </div>
                         </div>
                       </CardActionArea>
                     </Card>
                     <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
                       <CardActionArea onClick={() => setFilterStatusId(3)}>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: 'relative' }}>
                           <CardMedia
                             component="img"
                             image={`${process.env.PUBLIC_URL}/DMIS/DMIS_spare.jpg`}
                             alt="checkin"
                           />
-                          <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
-                            <Typography variant="h4">
-                              {taskCount.wait}
-                            </Typography>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              color: 'white',
+                              top: '45%',
+                              left: '65%',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <Typography variant="h4">{taskCount.wait}</Typography>
                           </div>
                         </div>
                       </CardActionArea>
                     </Card>
                     <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
                       <CardActionArea onClick={() => setFilterStatusId(4)}>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: 'relative' }}>
                           <CardMedia
                             component="img"
                             image={`${process.env.PUBLIC_URL}/DMIS/DMIS_outsource.jpg`}
                             alt="checkin"
                           />
-                          <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
-                            <Typography variant="h4">
-                              {taskCount.outside}
-                            </Typography>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              color: 'white',
+                              top: '45%',
+                              left: '65%',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <Typography variant="h4">{taskCount.outside}</Typography>
                           </div>
                         </div>
                       </CardActionArea>
@@ -376,16 +423,22 @@ function IIOSUserDashboard() {
 
                     <Card sx={{ width: 200, mr: 1, mb: 1, backgroundColor: 'warning.main' }}>
                       <CardActionArea onClick={() => setFilterStatusId(6)}>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: 'relative' }}>
                           <CardMedia
                             component="img"
                             image={`${process.env.PUBLIC_URL}/DMIS/DMIS_replace.jpg`}
                             alt="checkin"
                           />
-                          <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
-                            <Typography variant="h4">
-                              {taskCount.replace}
-                            </Typography>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              color: 'white',
+                              top: '45%',
+                              left: '65%',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <Typography variant="h4">{taskCount.replace}</Typography>
                           </div>
                         </div>
                       </CardActionArea>
@@ -393,23 +446,29 @@ function IIOSUserDashboard() {
 
                     <Card sx={{ width: 200, mb: 1, backgroundColor: 'success.main' }}>
                       <CardActionArea onClick={() => setFilterStatusId(5)}>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: 'relative' }}>
                           <CardMedia
                             component="img"
                             image={`${process.env.PUBLIC_URL}/DMIS/DMIS_complete.jpg`}
                             alt="checkin"
                           />
-                          <div style={{ position: "absolute", color: "white", top: "45%", left: "65%", transform: "translateX(-50%)", }}>
-                            <Typography variant="h4">
-                              {taskCount.complete}
-                            </Typography>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              color: 'white',
+                              top: '45%',
+                              left: '65%',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <Typography variant="h4">{taskCount.complete}</Typography>
                           </div>
                         </div>
                       </CardActionArea>
                     </Card>
                   </Grid>
 
-                  <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div" >
+                  <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
                     รายการงานแจ้งปัญหาออนไลน์ - {headStatus}
                   </Typography>
 
@@ -428,7 +487,9 @@ function IIOSUserDashboard() {
                         pageSize={pageSize}
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         rowsPerPageOptions={[10, 25, 100]}
-                        onCellDoubleClick={(params) => { handleOpenFocusTaskDialog(params.row) }}
+                        onCellDoubleClick={(params) => {
+                          handleOpenFocusTaskDialog(params.row);
+                        }}
                         hideFooterSelectedRowCount
                         initialState={{
                           columns: {
@@ -450,7 +511,7 @@ function IIOSUserDashboard() {
         </section>
       </main>
     </>
-  )
+  );
 }
 
-export default IIOSUserDashboard
+export default IIOSUserDashboard;

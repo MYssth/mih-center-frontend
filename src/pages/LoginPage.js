@@ -49,7 +49,6 @@ export default function LoginPage() {
       </Helmet>
 
       <StyledRoot>
-        
         {mdUp && (
           <StyledSection>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>

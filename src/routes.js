@@ -58,7 +58,6 @@ import IIOSUsrPermit from './mih_intranet/IIOS/IIOSUsrPermit';
 
 export default function Router() {
   const routes = useRoutes([
-
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -69,7 +68,7 @@ export default function Router() {
         { path: 'newuser', element: <UserPageNewUser /> },
         { path: 'profilesetting', element: <ProfileSetting /> },
         { path: 'rolemgr', element: <RoleMgrPage /> },
-        { path: 'sitesetting', element: <SiteSetting /> }
+        { path: 'sitesetting', element: <SiteSetting /> },
       ],
     },
     {
@@ -98,13 +97,13 @@ export default function Router() {
         { path: 'app', element: <DSMSDashboard /> },
         { path: 'dsmsbookshift', element: <DSMSBookShift /> },
         { path: 'dsmsmanagebook', element: <DSMSManageBook /> },
-        { path: 'dsmssetting', element: <DSMSSetting /> }
+        { path: 'dsmssetting', element: <DSMSSetting /> },
       ],
     },
     {
       path: '/intranet',
       element: <MIHIntranet />,
-      index: true
+      index: true,
     },
 
     // PMS

@@ -1,11 +1,12 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import { styled, alpha, Stack } from '@mui/material';
+import { styled, alpha } from '@mui/material';
 import MainHeader from './components/MainHeader';
 import MainSidebar from './components/nav/MainSidebar';
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+const rToken = localStorage.getItem('token');
 
 const ODD_OPACITY = 0.2;
 
@@ -93,7 +94,13 @@ export default function MIHIntranet() {
   const [sched, setSched] = useState([]);
 
   useEffect(() => {
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedbydate/0`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydate/0`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setSched(data);

@@ -22,6 +22,7 @@ import { CBSDenyDialg } from './components/dialogs/forms';
 import { CBSTaskDetail } from './components/dialogs/taskdetails';
 
 let token = '';
+const rToken = localStorage.getItem('token');
 
 const ODD_OPACITY = 0.2;
 
@@ -227,9 +228,13 @@ function CBSBooking() {
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
 
-    fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_himsPort}/api/hims/getpsndatabyid/${token.personnel_id}`
-    )
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getpsndatabyid/${token.personnel_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDeptId(data.dept_id);
@@ -243,7 +248,13 @@ function CBSBooking() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_himsPort}/api/hims/getalldept`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDept(data);
@@ -256,7 +267,13 @@ function CBSBooking() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcartype`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCarType(data);
@@ -269,7 +286,13 @@ function CBSBooking() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdriver`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDriver(data);
@@ -282,7 +305,13 @@ function CBSBooking() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcar`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcar`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCar(data);
@@ -299,9 +328,13 @@ function CBSBooking() {
   }, []);
 
   function refreshTable() {
-    fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedbyreqid/${token.personnel_id}`
-    )
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbyreqid/${token.personnel_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setSched(data);
@@ -336,9 +369,13 @@ function CBSBooking() {
   }, [fromDate, fromTime, toDate, toTime]);
 
   async function fetchCarData(fDate, tDate) {
-    fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getfilteredcar/${fDate}/${tDate}/0`
-    )
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getfilteredcar/${fDate}/${tDate}/0`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCar(data);
@@ -404,10 +441,11 @@ function CBSBooking() {
 
     // console.log(jsonData);
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/carbook`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/carbook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })

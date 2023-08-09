@@ -1,3 +1,5 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
@@ -39,6 +41,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+const rToken = localStorage.getItem('token');
 let selBookNew = [];
 let selBookAdd = [];
 
@@ -55,9 +58,7 @@ function CBSMergeBook() {
           if (e.target.checked) {
             selBookNew.push(params.row);
           } else {
-            const index = selBookNew.findIndex((o) => {
-              return o.id === params.row.id;
-            });
+            const index = selBookNew.findIndex((o) => o.id === params.row.id);
             if (index > -1) {
               selBookNew.splice(index, 1);
             }
@@ -255,9 +256,7 @@ function CBSMergeBook() {
           if (e.target.checked) {
             selBookAdd.push(params.row);
           } else {
-            const index = selBookAdd.findIndex((o) => {
-              return o.id === params.row.id;
-            });
+            const index = selBookAdd.findIndex((o) => o.id === params.row.id);
             if (index > -1) {
               selBookAdd.splice(index, 1);
             }
@@ -586,7 +585,13 @@ function CBSMergeBook() {
     pid = jwtDecode(localStorage.getItem('token')).personnel_id;
     pname = jwtDecode(localStorage.getItem('token')).personnel_name;
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcartype`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCarType(data);
@@ -599,7 +604,13 @@ function CBSMergeBook() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdriver`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDriver(data);
@@ -612,7 +623,13 @@ function CBSMergeBook() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcar`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcar`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCar(data);
@@ -637,7 +654,13 @@ function CBSMergeBook() {
   }, [selGrpDel]);
 
   function refreshTable() {
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getallschednongrp`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getallschednongrp`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setSched(data);
@@ -650,7 +673,13 @@ function CBSMergeBook() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedgrp`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedgrp`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setSchedGrp(data);
@@ -663,7 +692,13 @@ function CBSMergeBook() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getallsched`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getallsched`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDelSched(data);
@@ -677,7 +712,13 @@ function CBSMergeBook() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getgrpplacelist`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getgrpplacelist`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setPlaceList(data);
@@ -720,10 +761,11 @@ function CBSMergeBook() {
 
     // console.log(jsonData);
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/mergebook`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/mergebook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })
@@ -751,10 +793,11 @@ function CBSMergeBook() {
 
     // console.log(jsonData);
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/mergebookadd`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/mergebookadd`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })

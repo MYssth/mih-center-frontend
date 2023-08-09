@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import jwtDecode from "jwt-decode";
+import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,6 @@ IIOSSidebar.propTypes = {
 const NAV_WIDTH = 280;
 
 function IIOSSidebar({ name, openNav, onCloseNav }) {
-
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
@@ -25,12 +24,11 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
   const [tokenViewData, setTokenViewData] = useState([]);
 
   useEffect(() => {
-
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
-    setTokenData(token.level_list.find(o => o.mihapp_id === "DMIS").level_id);
-    setTokenViewData(token.level_list.find(o => o.mihapp_id === "DMIS").view_id);
+    setTokenData(token.level_list.find((o) => o.mihapp_id === 'DMIS').level_id);
+    setTokenViewData(token.level_list.find((o) => o.mihapp_id === 'DMIS').view_id);
 
     if (openNav) {
       onCloseNav();
@@ -41,117 +39,124 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
   const mainMenu = (
     <>
       <li className="nav-item">
-        {name === "userdashboard" ?
+        {name === 'userdashboard' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-tools" />
             <span>หน้าหลักระบบแจ้งปัญหา</span>
           </a>
-          :
+        ) : (
           <a className="nav-link collapsed" href="/iiosuserdashboard">
             <i className="bi bi-tools" />
             <span>หน้าหลักระบบแจ้งปัญหา</span>
-          </a>}
+          </a>
+        )}
       </li>
       <li className="nav-item">
-        {name === "newcase" ?
+        {name === 'newcase' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-file-earmark-arrow-up" />
             <span>แจ้งปัญหาออนไลน์</span>
           </a>
-          :
+        ) : (
           <a className="nav-link collapsed" href="/iiosnewcase">
             <i className="bi bi-file-earmark-arrow-up" />
             <span>แจ้งปัญหาออนไลน์</span>
-          </a>}
-
+          </a>
+        )}
       </li>
     </>
   );
 
   const ITMTDashboard = (
     <li className="nav-item">
-      {name === "itmtdashboard" ?
+      {name === 'itmtdashboard' ? (
         <a className="nav-link" href="#">
           <i className="bi bi-wrench-adjustable-circle" />
           <span>งานที่ได้รับ</span>
         </a>
-        :
+      ) : (
         <a className="nav-link collapsed" href="/iiositmtdashboard">
           <i className="bi bi-wrench-adjustable-circle" />
           <span>งานที่ได้รับ</span>
-        </a>}
+        </a>
+      )}
     </li>
   );
 
   const permitDashboard = (
     <li className="nav-item">
-      {name === "permit" ?
+      {name === 'permit' ? (
         <a className="nav-link" href="#">
           <i className="bi bi-list-check" />
           <span>งานรอตรวจสอบ</span>
         </a>
-        :
+      ) : (
         <a className="nav-link collapsed" href="/iiospermit">
           <i className="bi bi-list-check" />
           <span>งานรอตรวจสอบ</span>
-        </a>}
+        </a>
+      )}
     </li>
   );
 
   const usrPermitDashboard = (
     <li className="nav-item">
-      {name === "usrpermit" ?
+      {name === 'usrpermit' ? (
         <a className="nav-link" href="#">
           <i className="bi bi-clipboard-check" />
           <span>งานรออนุมัติแก้ไขโปรแกรม</span>
         </a>
-        :
+      ) : (
         <a className="nav-link collapsed" href="/iiosusrpermit">
           <i className="bi bi-clipboard-check" />
           <span>งานรออนุมัติแก้ไขโปรแกรม</span>
-        </a>}
+        </a>
+      )}
     </li>
   );
 
   const defaultMenu = (
     <>
       <li className="nav-item">
-        {name === "informertask" ?
+        {name === 'informertask' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-person-exclamation" />
             <span>งานที่ต้องดำเนินการเอง</span>
           </a>
-          :
+        ) : (
           <a className="nav-link collapsed" href="/iiosinformertask">
             <i className="bi bi-person-exclamation" />
             <span>งานที่ต้องดำเนินการเอง</span>
-          </a>}
+          </a>
+        )}
       </li>
 
       <li className="nav-item">
-        {name === "audit" ?
+        {name === 'audit' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-person-check" />
             <span>งานรอตรวจรับ</span>
           </a>
-          :
+        ) : (
           <a className="nav-link collapsed" href="/iiosaudit">
             <i className="bi bi-person-check" />
             <span>งานรอตรวจรับ</span>
-          </a>}
+          </a>
+        )}
       </li>
 
       <li className="nav-item">
-        {name === "report" ?
+        {name === 'report' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-files" />
             <span>รายงาน</span>
           </a>
-          :
+        ) : (
           <a className="nav-link collapsed" href="/iiosreport">
             <i className="bi bi-files" />
             <span>รายงาน</span>
-          </a>}
+          </a>
+        )}
       </li>
       <li className="nav-item">
         <a className="nav-link collapsed" href="/intranet">
@@ -164,56 +169,57 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
 
   const renderContent = (
     <>
-      {isDesktop ?
-        ""
-        :
+      {isDesktop ? (
+        ''
+      ) : (
         <div className="d-flex align-items-center justify-content-between">
           <a href="/intranet" className="logo d-flex align-items-center">
             <img src="assets/img/logo_sticky.png" alt="" />
           </a>
         </div>
-      }
+      )}
 
       {/* <!-- ======= Sidebar ======= --> */}
       <ul className="sidebar-nav" id="sidebar-nav">
-
         {mainMenu}
-        {tokenData === "DMIS_IT" || tokenData === "DMIS_MT" || tokenData === "DMIS_MER" ||
-          tokenData === "DMIS_ENV" || tokenData === "DMIS_HIT" || tokenData === "DMIS_ALL" ?
+        {tokenData === 'DMIS_IT' ||
+        tokenData === 'DMIS_MT' ||
+        tokenData === 'DMIS_MER' ||
+        tokenData === 'DMIS_ENV' ||
+        tokenData === 'DMIS_HIT' ||
+        tokenData === 'DMIS_ALL' ? (
           <>
             {ITMTDashboard}
-            {tokenData === "DMIS_ENV" || tokenData === "DMIS_HIT" || tokenData === "DMIS_ALL" ?
+            {tokenData === 'DMIS_ENV' || tokenData === 'DMIS_HIT' || tokenData === 'DMIS_ALL' ? (
               <>{permitDashboard}</>
-              :
-              ""}
+            ) : (
+              ''
+            )}
           </>
-          :
-          ""
-        }
-        {tokenViewData === "VDMIS_DPMH" || tokenViewData === "VDMIS_FAC" || tokenViewData === "VDMIS_FLD" || tokenViewData === "VDMIS_ALL" ?
-          <>
-            {usrPermitDashboard}
-          </>
-          :
-          ""
-        }
+        ) : (
+          ''
+        )}
+        {tokenViewData === 'VDMIS_DPMH' ||
+        tokenViewData === 'VDMIS_FAC' ||
+        tokenViewData === 'VDMIS_FLD' ||
+        tokenViewData === 'VDMIS_ALL' ? (
+          <>{usrPermitDashboard}</>
+        ) : (
+          ''
+        )}
         {defaultMenu}
       </ul>
-
     </>
   );
 
   return (
     <>
       {isDesktop ? (
-        <Drawer
-          open
-          variant="permanent"
-        >
+        <Drawer open variant="permanent">
           <aside id="sidebar" className="sidebar">
             {renderContent}
           </aside>
-        </Drawer >
+        </Drawer>
       ) : (
         <Drawer
           open={openNav}
@@ -224,10 +230,9 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
         >
           {renderContent}
         </Drawer>
-      )
-      }
+      )}
     </>
-  )
+  );
 }
 
-export default IIOSSidebar
+export default IIOSSidebar;

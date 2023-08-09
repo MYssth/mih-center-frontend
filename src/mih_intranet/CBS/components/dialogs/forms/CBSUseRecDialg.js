@@ -26,6 +26,7 @@ import { SubmtComp, SubmtERR, SubmtINC } from '../../../../components/dialogs/re
 import CBSDenyDialg from './CBSDenyDialg';
 
 let token = '';
+let rToken = '';
 
 function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
   const [submitINC, setSubmitINC] = useState(false);
@@ -65,8 +66,15 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
 
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
+    rToken = localStorage.getItem('token');
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcartype`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCarType(data);
@@ -79,7 +87,13 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdriver`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDriver(data);
@@ -92,7 +106,13 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcar`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcar`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCar(data);
@@ -127,9 +147,13 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
   }, [depDate, depTm, arrDate, arrTm]);
 
   async function fetchCarData(fDate, tDate) {
-    fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getfilteredcar/${fDate}/${tDate}/0`
-    )
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getfilteredcar/${fDate}/${tDate}/0`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCar(data);
@@ -158,9 +182,13 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
     async function fetchGroupData() {
       if (data.grp_id) {
         console.log('group!!');
-        await fetch(
-          `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedgrpbyid/${data.grp_id}`
-        )
+        await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedgrpbyid/${data.grp_id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        })
           .then((response) => response.json())
           .then((resultData) => {
             console.log(resultData);
@@ -283,10 +311,11 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
 
     // console.log(jsonData);
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/userecbook`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/userecbook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })

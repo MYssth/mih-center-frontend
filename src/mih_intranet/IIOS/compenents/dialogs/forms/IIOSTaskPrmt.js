@@ -30,6 +30,8 @@ function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
 
   const isSkip = (value) => value !== '';
 
+  const rToken = localStorage.getItem('token');
+
   function clearData() {
     setLevelId('');
     setStatusIdRequest('');
@@ -53,9 +55,13 @@ function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
       setCategoryId(data.category_id);
       setCategoryName(data.category_name);
 
-      fetch(
-        `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcategories/${data.level_id}`
-      )
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getcategories/${data.level_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           setCategories(data);
@@ -88,10 +94,11 @@ function IIOSTaskPrmt({ openDialg, onCloseDialg, data, permitId }) {
 
     // console.log(jsonData);
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/processtask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })

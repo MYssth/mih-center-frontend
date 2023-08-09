@@ -15,24 +15,23 @@ export default function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/getsitesetting`)
-            .then((response) => response.json())
-            .then((data) => {
-                    localStorage.setItem('logo', data.logo);
-                    localStorage.setItem('sname', data.sname);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+    // fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/getsitesetting`)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     localStorage.setItem('logo', data.logo);
+    //     localStorage.setItem('sname', data.sname);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error:', error);
+    //   });
 
     const token = localStorage.getItem('token');
     if (token !== null) {
-      fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_loginPort}/api/authen`, {
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_loginPort}/authen`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((response) => response.json())
@@ -40,12 +39,10 @@ export default function App() {
           if (data.status === 'ok') {
             // alert('complete');
             // navigate('/intranet', { replace: true });
-          }
-          else {
+          } else {
             alert('กรุณาเข้าสู่ระบบ');
             localStorage.removeItem('token');
             navigate('/login', { replace: true });
-
           }
         })
         .catch((error) => {
@@ -53,8 +50,7 @@ export default function App() {
           alert('authen failed');
           navigate('/login', { replace: true });
         });
-    }
-    else {
+    } else {
       navigate('/login', { replace: true });
     }
 

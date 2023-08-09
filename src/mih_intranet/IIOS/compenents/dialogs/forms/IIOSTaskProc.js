@@ -59,6 +59,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
 
   const isSkip = (value) => value !== '';
 
+  const rToken = localStorage.getItem('token');
+
   useEffect(() => {
     if (openDialg) {
       setLevelId(data.level_id);
@@ -89,9 +91,13 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
 
       setTempNote(data.task_note);
 
-      fetch(
-        `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/getcategories/${data.level_id}`
-      )
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getcategories/${data.level_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           setCategories(data);
@@ -210,10 +216,11 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
       return;
     }
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_dmisPort}/api/dmis/processtask`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/processtask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })

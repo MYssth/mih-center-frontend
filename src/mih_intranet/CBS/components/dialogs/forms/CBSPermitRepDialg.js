@@ -27,6 +27,7 @@ import provinceList from '../../../../utils/ProvinceList';
 
 let token = '';
 let isBypass = false;
+let rToken = '';
 
 function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const [openFrmTm, setOpenFrmTm] = useState(false);
@@ -70,6 +71,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
+    rToken = localStorage.getItem('token');
 
     for (let i = 0; i < token.level_list.length; i += 1) {
       if (token.level_list[i].mihapp_id === 'CBS') {
@@ -79,7 +81,13 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       }
     }
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_himsPort}/api/hims/getalldept`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDept(data);
@@ -92,7 +100,13 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcartype`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setCarType(data);
@@ -105,7 +119,13 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdriver`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setDriver(data);
@@ -181,9 +201,13 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   }, [fromDate, fromTime, toDate, toTime]);
 
   async function fetchCarData(fDate, tDate, typeId) {
-    fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getfilteredcar/${fDate}/${tDate}/${data.id}`
-    )
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getfilteredcar/${fDate}/${tDate}/${data.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((result) => {
         setCar(result);
@@ -260,10 +284,11 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
     if (specReq === 'bypass') {
       // console.log("bypass case");
-      fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/bypassbook`, {
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/bypassbook`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
         },
         body: JSON.stringify(jsonData),
       })
@@ -280,10 +305,11 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
           setSubmitERR(true);
         });
     } else {
-      fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/reqpermit`, {
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/reqpermit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
         },
         body: JSON.stringify(jsonData),
       })
@@ -348,10 +374,11 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       return;
     }
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/savchgsched`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/savchgsched`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
       },
       body: JSON.stringify(jsonData),
     })

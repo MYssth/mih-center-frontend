@@ -41,6 +41,7 @@ let osconfirmSig = '';
 let osconfirmName = '';
 let auditSig = '';
 let header = {};
+const rToken = localStorage.getItem('token');
 
 export default async function IIOSReport(data) {
   noSig = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/nosignature.png`)}`;
@@ -48,7 +49,13 @@ export default async function IIOSReport(data) {
 
   // console.log(data);
 
-  header = await fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/api/getsitesetting`)
+  header = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_roleCrudPort}/getsitesetting`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${rToken}`,
+    },
+  })
     .then((response) => response.json())
     .then((data) => data)
     .catch((error) => {
@@ -56,7 +63,14 @@ export default async function IIOSReport(data) {
     });
 
   inforSig = await fetch(
-    `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.informer_id}`
+    `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.informer_id}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    }
   )
     .then((response) => response.json())
     .then((data) => {
@@ -71,7 +85,14 @@ export default async function IIOSReport(data) {
 
   if (data.receiver_id !== '' && data.receiver_id !== null) {
     recvSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.receiver_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.receiver_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -89,7 +110,14 @@ export default async function IIOSReport(data) {
 
   if (data.operator_id !== '' && data.operator_id !== null) {
     operSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.operator_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.operator_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -107,7 +135,14 @@ export default async function IIOSReport(data) {
 
   if (data.user_permit_id !== '' && data.user_permit_id !== null) {
     usrPermitSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.user_permit_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.user_permit_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -125,7 +160,14 @@ export default async function IIOSReport(data) {
 
   if (data.permit_id !== '' && data.permit_id !== null) {
     permitSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.permit_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.permit_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -143,7 +185,14 @@ export default async function IIOSReport(data) {
 
   if (data.audit_id !== '' && data.audit_id !== null) {
     auditSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.audit_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.audit_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -163,7 +212,14 @@ export default async function IIOSReport(data) {
     pconfirmName = `${data.pconfirm_firstname} ${data.pconfirm_lastname}`;
 
     pconfirmSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.pconfirm_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.pconfirm_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -183,7 +239,14 @@ export default async function IIOSReport(data) {
     osconfirmName = `${data.osconfirm_firstname} ${data.osconfirm_lastname}`;
 
     osconfirmSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.osconfirm_id}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.osconfirm_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {

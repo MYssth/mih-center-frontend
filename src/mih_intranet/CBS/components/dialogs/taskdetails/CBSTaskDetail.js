@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, styled, Box } from '@mui/material';
 import reportPDF from '../../pdf';

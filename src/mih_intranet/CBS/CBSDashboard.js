@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable object-shorthand */
 /* eslint-disable import/extensions */
@@ -5,7 +7,7 @@ import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { styled, alpha, Stack, Grid, ButtonGroup, Button, Typography } from '@mui/material';
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import jwtDecode from 'jwt-decode';
 import MainHeader from '../components/MainHeader';
@@ -42,6 +44,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+const rToken = localStorage.getItem('token');
 
 export default function CBSDashboard() {
   const columns = [
@@ -108,9 +111,7 @@ export default function CBSDashboard() {
   const [USRLv, setUSRLv] = useState('');
   const [version, setVersion] = useState('');
 
-  const [allSched, setAllSched] = useState([]);
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
 
   const [showDate, setShowDate] = useState('Today');
 
@@ -122,7 +123,13 @@ export default function CBSDashboard() {
 
     fetchSched(0);
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getstatcntr`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getstatcntr`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setStatCntr(data);
@@ -135,7 +142,13 @@ export default function CBSDashboard() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getversion`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getversion`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setVersion(data);
@@ -148,10 +161,15 @@ export default function CBSDashboard() {
         }
       });
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getcalendarcntr`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcalendarcntr`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
-        setAllSched(data);
         const result = [];
         for (let i = 0; i < data.length; i += 1) {
           result.push({
@@ -179,7 +197,13 @@ export default function CBSDashboard() {
   }, []);
 
   function fetchSched(date) {
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedbydate/${date}`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydate/${date}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setSched(data);
@@ -273,23 +297,29 @@ export default function CBSDashboard() {
       return (
         <Grid container sx={{ mb: 1 }}>
           <Grid item xs={12} sm={4} sx={{ mb: 1 }}>
-            <ButtonGroup variant="outlined" aria-label="outlined button group" >
-              <Button onClick={goToBack} sx={{ borderColor: 'gray', color: 'black' }}>Back</Button>
-              <Button onClick={goToCurrent} sx={{ borderColor: 'gray', color: 'black' }}>Today</Button>
-              <Button onClick={goToNext} sx={{ borderColor: 'gray', color: 'black' }}>Next</Button>
+            <ButtonGroup variant="outlined" aria-label="outlined button group">
+              <Button onClick={goToBack} sx={{ borderColor: 'gray', color: 'black' }}>
+                Back
+              </Button>
+              <Button onClick={goToCurrent} sx={{ borderColor: 'gray', color: 'black' }}>
+                Today
+              </Button>
+              <Button onClick={goToNext} sx={{ borderColor: 'gray', color: 'black' }}>
+                Next
+              </Button>
             </ButtonGroup>
           </Grid>
           <Grid item xs={12} sm={4} className="center" sx={{ mb: 1 }}>
-            <Typography variant='h5'>{date()}</Typography>
+            <Typography variant="h5">{date()}</Typography>
           </Grid>
           <Grid item xs={12} sm={4} className="right">
-            <Stack direction={'row'} sx={{ mb: 0.5, display:{xs:'none', sm:'flex'} }}>
+            <Stack direction={'row'} sx={{ mb: 0.5, display: { xs: 'none', sm: 'flex' } }}>
               <div className="circle" style={{ background: 'red' }} />
               &nbsp;ขอใช้รถ&nbsp;
               <div className="circle" style={{ background: 'orange' }} />
               &nbsp;รออนุมัติ
             </Stack>
-            <Stack direction={'row'} sx={{ display:{xs:'none', sm:'flex'} }}>
+            <Stack direction={'row'} sx={{ display: { xs: 'none', sm: 'flex' } }}>
               <div className="circle" style={{ background: 'green' }} />
               &nbsp;อนุมัติ&nbsp;
               <div className="circle" style={{ background: '#4154f1' }} />

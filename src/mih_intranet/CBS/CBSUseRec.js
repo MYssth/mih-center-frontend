@@ -38,6 +38,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+const rToken = localStorage.getItem('token');
 let levelData = '';
 let token = '';
 
@@ -172,9 +173,13 @@ function CBSUseRec() {
 
   function refreshTable() {
     if (levelData.level_id === 'CBS_USER') {
-      fetch(
-        `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getusrdrvsched/${token.personnel_id}`
-      )
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getusrdrvsched/${token.personnel_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           setSched(data);
@@ -187,7 +192,13 @@ function CBSUseRec() {
           }
         });
     } else {
-      fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getdrvsched`)
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdrvsched`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           setSched(data);

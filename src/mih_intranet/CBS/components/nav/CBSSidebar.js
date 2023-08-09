@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';

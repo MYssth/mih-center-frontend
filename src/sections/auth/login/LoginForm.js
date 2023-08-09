@@ -14,13 +14,12 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = () => {
-
     const jsonData = {
-      personnel_id: document.getElementById("username").value,
-      personnel_secret: document.getElementById("password").value,
+      personnel_id: document.getElementById('username').value,
+      personnel_secret: document.getElementById('password').value,
     };
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_loginPort}/api/login`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_loginPort}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,9 +40,9 @@ export default function LoginForm() {
       });
   };
 
-  const handleKeypress = e => {
+  const handleKeypress = (e) => {
     // it triggers by pressing the enter key
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleSubmit();
     }
   };
@@ -51,7 +50,6 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
-
         <TextField id="username" name="username" label="รหัสพนักงาน" onKeyPress={handleKeypress} />
 
         <TextField
@@ -73,11 +71,17 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 3 }}>
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleSubmit} onKeyPress={handleKeypress}>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          onClick={handleSubmit}
+          onKeyPress={handleKeypress}
+        >
           Login
         </LoadingButton>
       </Stack>
-
     </>
   );
 }

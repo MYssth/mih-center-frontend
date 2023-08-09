@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 /* eslint-disable object-shorthand */
 import { useEffect, useState } from 'react';
 import jwtDecode from 'jwt-decode';
@@ -5,16 +7,16 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography }
 import { SubmtERR } from '../../../../components/dialogs/response';
 
 let pname = '';
+let token = '';
 
 function CBSDelGrpSchedSubm({ openDialg, onCloseDialg, data }) {
   const [id, setId] = useState('');
   const [grpId, setGrpId] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setTodate] = useState('');
   const [submitERR, setSubmitERR] = useState(false);
 
   useEffect(() => {
     pname = jwtDecode(localStorage.getItem('token')).personnel_name;
+    token = localStorage.getItem('token');
   }, []);
 
   useEffect(() => {
@@ -31,10 +33,11 @@ function CBSDelGrpSchedSubm({ openDialg, onCloseDialg, data }) {
       req_name: pname,
     };
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/delgrpsched`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/delgrpsched`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(jsonData),
     })

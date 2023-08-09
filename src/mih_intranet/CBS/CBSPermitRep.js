@@ -37,6 +37,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const headSname = `${localStorage.getItem('sname')} Center`;
+const rToken = localStorage.getItem('token');
 
 function CBSReqPermit() {
   const columns = [
@@ -172,7 +173,13 @@ function CBSReqPermit() {
   }, []);
 
   function refreshTable() {
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getpermitreqsched`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getpermitreqsched`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setSched(data);

@@ -35,6 +35,8 @@ let recSig = '';
 // let header = {};
 let grpList = '';
 
+const rToken = localStorage.getItem('token');
+
 export default async function CBSReqDoc(data) {
   noSig = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/nosignature.png`)}`;
   logo = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/logo.png`)}`;
@@ -47,7 +49,14 @@ export default async function CBSReqDoc(data) {
   //     });
 
   grpList = await fetch(
-    `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_cbsPort}/api/cbs/getschedidingrpid/${data.grp_id}`
+    `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedidingrpid/${data.grp_id}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    }
   )
     .then((response) => response.json())
     .then((data) => {
@@ -61,7 +70,14 @@ export default async function CBSReqDoc(data) {
     });
 
   reqSig = await fetch(
-    `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.req_pid}`
+    `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.req_pid}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${rToken}`,
+      },
+    }
   )
     .then((response) => response.json())
     .then((data) => {
@@ -76,7 +92,14 @@ export default async function CBSReqDoc(data) {
 
   if (data.rcv_pid !== '' && data.rcv_pid !== null) {
     rcvSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.rcv_pid}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.rcv_pid}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -94,7 +117,14 @@ export default async function CBSReqDoc(data) {
 
   if (data.permit_pid !== '' && data.permit_pid !== null) {
     permitSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.permit_pid}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.permit_pid}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
@@ -112,7 +142,14 @@ export default async function CBSReqDoc(data) {
 
   if (data.rec_pid !== '' && data.rec_pid !== null) {
     recSig = await fetch(
-      `http://${process.env.REACT_APP_host}:${process.env.REACT_APP_psnDataDistPort}/api/getsignature/${data.rec_pid}`
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.rec_pid}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {

@@ -26,14 +26,14 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
 
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === 'PMS') {
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'PMS') {
         setIsPMS(true);
-      } else if (token.level_list[i].mihapp_id === 'DMIS') {
+      } else if (token.lv_list[i].mihapp_id === 'DMIS') {
         setIsIIOS(true);
-      } else if (token.level_list[i].mihapp_id === 'DSMS') {
+      } else if (token.lv_list[i].mihapp_id === 'DSMS') {
         setIsDSMS(true);
-      } else if (token.level_list[i].mihapp_id === 'CBS') {
+      } else if (token.lv_list[i].mihapp_id === 'CBS') {
         setIsCBS(true);
       }
     }
@@ -118,14 +118,13 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
                 <span>จัดการผู้ใช้</span>
               </a>
             ) : (
-              // <a className="nav-link collapsed" href="/pmsusermgr">
-              <a className="nav-link collapsed" href="/dashboard/user">
+              <a className="nav-link collapsed" href="/pmsusermgr">
                 <i className="bi bi-person-gear" />
                 <span>จัดการผู้ใช้</span>
               </a>
             )}
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a className="nav-link collapsed" href="/dashboard/rolemgr">
               <i className="bi bi-building-gear" />
               <span>จัดการโครงสร้างองค์กร</span>
@@ -136,7 +135,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
               <i className="bi bi-gear" />
               <span>ตั้งค่า</span>
             </a>
-          </li>
+          </li> */}
         </>
       ) : (
         ''

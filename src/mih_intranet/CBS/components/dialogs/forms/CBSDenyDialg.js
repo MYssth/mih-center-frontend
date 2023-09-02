@@ -48,7 +48,7 @@ function CBSDenyDialg({ openDialg, onCloseDialg, data }) {
   const handleDeny = () => {
     const jsonData = {
       id: id,
-      permit_pid: token.personnel_id,
+      permit_pid: token.psn_id,
       note: document.getElementById('note').value,
     };
 

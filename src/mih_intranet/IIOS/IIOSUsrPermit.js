@@ -165,11 +165,11 @@ function IIOSUsrPermit() {
 
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
-    setPermitId(token.personnel_id);
-    pid = token.personnel_id;
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === 'DMIS') {
-        tokenData = token.level_list[i];
+    setPermitId(token.psn_id);
+    pid = token.psn_id;
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'DMIS') {
+        tokenData = token.lv_list[i];
         refreshTable();
         break;
       }

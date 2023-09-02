@@ -13,7 +13,9 @@ export default function MainHeader({ onOpenNav }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setTokenData(jwtDecode(token));
+    if (token !== null) {
+      setTokenData(jwtDecode(token));
+    }
   }, []);
 
   const handleLogout = () => {
@@ -50,11 +52,11 @@ export default function MainHeader({ onOpenNav }) {
             <li className="nav-item dropdown pe-3">
               <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img className="rounded-circle" src="assets/img/user profile.webp" alt="User Profile" />
-                <span className="d-none d-md-block dropdown-toggle ps-2">{tokenData.personnel_name}</span>
+                <span className="d-none d-md-block dropdown-toggle ps-2">{tokenData.psn_name}</span>
               </a>
               <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li className="dropdown-header">
-                  <h6>{tokenData.personnel_name}</h6>
+                  <h6>{tokenData.psn_name}</h6>
                   <span>Coming soon.</span>
                   {/* <span>Information Technology Dep.</span> */}
                 </li>

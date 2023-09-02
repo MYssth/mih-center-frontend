@@ -174,10 +174,10 @@ function IIOSPermit() {
 
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
-    setPermitId(token.personnel_id);
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === 'DMIS') {
-        lvId = token.level_list[i].level_id;
+    setPermitId(token.psn_id);
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'DMIS') {
+        lvId = token.lv_list[i].lv_id;
         refreshTable();
         break;
       }
@@ -194,6 +194,7 @@ function IIOSPermit() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setPermitTaskList(data);
       })
       .catch((error) => {

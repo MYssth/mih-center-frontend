@@ -94,24 +94,26 @@ export default function MIHIntranet() {
   const [sched, setSched] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydate/0`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setSched(data);
+    if (rToken !== null) {
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydate/0`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setSched(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+    }
   }, []);
 
   return (
@@ -121,8 +123,14 @@ export default function MIHIntranet() {
       </Helmet>
 
       <div>
-        <MainHeader onOpenNav={() => setOpen(true)} />
-        <MainSidebar name={'main'} openNav={open} onCloseNav={() => setOpen(false)} />
+        {localStorage.getItem('token') !== null ? (
+          <>
+            <MainHeader onOpenNav={() => setOpen(true)} />
+            <MainSidebar name={'main'} openNav={open} onCloseNav={() => setOpen(false)} />
+          </>
+        ) : (
+          ''
+        )}
         {/* <!-- ======= Main ======= --> */}
         <main id="main" className="main">
           <section className="section dashboard">

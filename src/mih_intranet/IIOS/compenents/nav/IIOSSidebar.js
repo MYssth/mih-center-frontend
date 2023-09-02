@@ -27,8 +27,8 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
-    setTokenData(token.level_list.find((o) => o.mihapp_id === 'DMIS').level_id);
-    setTokenViewData(token.level_list.find((o) => o.mihapp_id === 'DMIS').view_id);
+    setTokenData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id);
+    setTokenViewData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id);
 
     if (openNav) {
       onCloseNav();
@@ -199,10 +199,10 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
         ) : (
           ''
         )}
-        {tokenViewData === 'VDMIS_DPMH' ||
-        tokenViewData === 'VDMIS_FAC' ||
-        tokenViewData === 'VDMIS_FLD' ||
-        tokenViewData === 'VDMIS_ALL' ? (
+        {tokenViewData === 'HEMP' ||
+        tokenViewData === 'MGR' ||
+        tokenViewData === 'HMGR' ||
+        tokenViewData === 'ALL' ? (
           <>{usrPermitDashboard}</>
         ) : (
           ''

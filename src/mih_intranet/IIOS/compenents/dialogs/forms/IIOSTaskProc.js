@@ -65,8 +65,11 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
     if (openDialg) {
       setLevelId(data.level_id);
       setDialogStatus(data.status_id);
-
-      if (data.operator_id !== '' && data.operator_id !== null) {
+      if (
+        data.operator_id !== '' &&
+        data.operator_id !== null &&
+        operList.find((o) => o.personnel_id === data.operator_id)?.personnel_firstname !== undefined
+      ) {
         setOperatorName(
           `${operList.find((o) => o.personnel_id === data.operator_id).personnel_firstname} ${
             operList.find((o) => o.personnel_id === data.operator_id).personnel_lastname
@@ -120,9 +123,9 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
     }
   }, [categoryId]);
 
-  useEffect(() => {
-    console.log(`s = ${isStatusChange}`);
-  }, [isStatusChange]);
+  // useEffect(() => {
+  //   console.log(`s = ${isStatusChange}`);
+  // }, [isStatusChange]);
 
   function clearData() {
     setLevelId('');

@@ -37,7 +37,7 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const headSname = `${localStorage.getItem('sname')} Center`;
+// const headSname = `${localStorage.getItem('sname')} Center`;
 
 export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
@@ -45,7 +45,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> เข้าสู่ระบบ | {headSname} </title>
+        <title> เข้าสู่ระบบ | MIH Center </title>
       </Helmet>
 
       <StyledRoot>
@@ -61,7 +61,7 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              เข้าสู่ระบบ {headSname}
+              เข้าสู่ระบบ MIH Center
             </Typography>
 
             <LoginForm />

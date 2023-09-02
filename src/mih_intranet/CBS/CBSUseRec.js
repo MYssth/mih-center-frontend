@@ -166,14 +166,14 @@ function CBSUseRec() {
 
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
-    levelData = token.level_list.find((o) => o.mihapp_id === 'CBS');
+    levelData = token.lv_list.find((o) => o.mihapp_id === 'CBS');
 
     refreshTable();
   }, []);
 
   function refreshTable() {
-    if (levelData.level_id === 'CBS_USER') {
-      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getusrdrvsched/${token.personnel_id}`, {
+    if (levelData.lv_id === 'CBS_USER') {
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getusrdrvsched/${token.psn_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

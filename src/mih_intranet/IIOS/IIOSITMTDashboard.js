@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-unresolved */
 import { useEffect, useState } from 'react';
 import jwtDecode from 'jwt-decode';
@@ -181,22 +182,19 @@ function IIOSITMTDashboard() {
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
 
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === 'DMIS') {
-        pId = token.personnel_id;
-        lvId = token.level_list[i].level_id;
-        vId = token.level_list[i].view_id;
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'DMIS') {
+        pId = token.psn_id;
+        lvId = token.lv_list[i].lv_id;
+        vId = token.lv_list[i].view_id;
 
-        fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getoperator/${token.level_list[i].level_id}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${rToken}`,
-            },
-          }
-        )
+        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getoperator/${token.lv_list[i].lv_id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        })
           .then((response) => response.json())
           .then((data) => {
             setOperatorList(data);
@@ -249,17 +247,20 @@ function IIOSITMTDashboard() {
         console.error('Error:', error);
       });
 
-    setRecvId(token.personnel_id);
+    setRecvId(token.psn_id);
   }, []);
 
-  function refreshTable() {
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${pId}/${lvId}/${vId}/${false}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
+  async function refreshTable() {
+    await fetch(
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${pId}/${lvId}/${vId}/${false}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setTaskList(data);
@@ -322,7 +323,7 @@ function IIOSITMTDashboard() {
       );
   }
 
-  useEffect(() => {
+  function filterTaskStatus() {
     setDisableProcessTaskButton(false);
     setDisIsHide(false);
     if (isHide) {
@@ -334,6 +335,14 @@ function IIOSITMTDashboard() {
     } else {
       setFilterTaskList(filterStatusId === 'all' ? taskList : taskList.filter((dt) => dt.status_id === filterStatusId));
     }
+  }
+
+  useEffect(() => {
+    filterTaskStatus();
+  }, [taskList]);
+
+  useEffect(() => {
+    filterTaskStatus();
 
     if (filterStatusId === 1) {
       setHeadStatus('งานรอรับเรื่อง');

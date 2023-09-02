@@ -25,7 +25,7 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
-    setTokenData(token.level_list.find((o) => o.mihapp_id === 'CBS').level_id);
+    setTokenData(token.lv_list.find((o) => o.mihapp_id === 'CBS').lv_id);
 
     if (openNav) {
       onCloseNav();

@@ -176,19 +176,11 @@ function IIOSAudit() {
 
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
-    pId = token.personnel_id;
-    setAuditId(token.personnel_id);
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (
-        token.level_list[i].level_id === 'DMIS_USER' ||
-        token.level_list[i].level_id === 'DMIS_IT' ||
-        token.level_list[i].level_id === 'DMIS_MT' ||
-        token.level_list[i].level_id === 'DMIS_MER' ||
-        token.level_list[i].level_id === 'DMIS_ENV' ||
-        token.level_list[i].level_id === 'DMIS_HIT' ||
-        token.level_list[i].level_id === 'DMIS_ALL'
-      ) {
-        viewId = token.level_list[i].view_id;
+    pId = token.psn_id;
+    setAuditId(token.psn_id);
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'DMIS') {
+        viewId = token.lv_list[i].view_id;
         refreshTable();
         break;
       }

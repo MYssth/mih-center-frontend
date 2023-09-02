@@ -62,12 +62,12 @@ function CBSBookRprt() {
     // eslint-disable-next-line prefer-destructuring
     const token = jwtDecode(localStorage.getItem('token'));
 
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === 'CBS') {
-        console.log(token.level_list[i].view_id);
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'CBS') {
+        console.log(token.lv_list[i].view_id);
         // to be change to hims database
         fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydeptid/${token.level_list[i].view_id}/${token.personnel_id}`,
+          `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydeptid/${token.lv_list[i].view_id}/${token.psn_id}`,
           {
             method: 'GET',
             headers: {

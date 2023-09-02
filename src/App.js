@@ -36,18 +36,15 @@ export default function App() {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data.status === 'ok') {
-            // alert('complete');
-            // navigate('/intranet', { replace: true });
-          } else {
-            alert('กรุณาเข้าสู่ระบบ');
+          if (data.status !== 'ok') {
+            // alert('กรุณาเข้าสู่ระบบ');
             localStorage.removeItem('token');
             navigate('/login', { replace: true });
           }
         })
         .catch((error) => {
           console.error('Error:', error);
-          alert('authen failed');
+          alert(`authen failed : ${error}`);
           navigate('/login', { replace: true });
         });
     } else {

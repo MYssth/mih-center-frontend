@@ -119,7 +119,7 @@ export default function CBSDashboard() {
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
-    setUSRLv(token.level_list.find((o) => o.mihapp_id === 'CBS').level_id);
+    setUSRLv(token.lv_list.find((o) => o.mihapp_id === 'CBS').lv_id);
 
     fetchSched(0);
 

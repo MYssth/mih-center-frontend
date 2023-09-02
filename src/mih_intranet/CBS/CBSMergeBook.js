@@ -582,8 +582,8 @@ function CBSMergeBook() {
   // *******************************************
 
   useEffect(() => {
-    pid = jwtDecode(localStorage.getItem('token')).personnel_id;
-    pname = jwtDecode(localStorage.getItem('token')).personnel_name;
+    pid = jwtDecode(localStorage.getItem('token')).psn_id;
+    pname = jwtDecode(localStorage.getItem('token')).psn_name;
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
       method: 'GET',

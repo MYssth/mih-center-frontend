@@ -26,6 +26,7 @@ pdfMake.fonts = {
   },
 };
 
+let logo = '';
 let cmBox = '';
 let noSig = '';
 let inforSig = '';
@@ -40,27 +41,28 @@ let pconfirmName = '';
 let osconfirmSig = '';
 let osconfirmName = '';
 let auditSig = '';
-let header = {};
 const rToken = localStorage.getItem('token');
 
+function clearData() {
+  inforSig = '';
+  recvSig = '';
+  operSig = '';
+  usrPermitSig = '';
+  permitSig = '';
+  endSig = '';
+  endName = '';
+  pconfirmSig = '';
+  pconfirmName = '';
+  osconfirmSig = '';
+  osconfirmName = '';
+  auditSig = '';
+}
+
 export default async function IIOSReport(data) {
+  await clearData();
   noSig = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/nosignature.png`)}`;
   cmBox = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/CMBox.png`)}`;
-
-  // console.log(data);
-
-  header = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_roleCrudPort}/getsitesetting`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${rToken}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+  logo = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/logo.png`)}`;
 
   inforSig = await fetch(
     `${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getsignature/${data.informer_id}`,
@@ -74,8 +76,8 @@ export default async function IIOSReport(data) {
   )
     .then((response) => response.json())
     .then((data) => {
-      if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-        return data.signature_data;
+      if (data.data !== null && data.data !== undefined && data.data !== '') {
+        return data.data;
       }
       return noSig;
     })
@@ -96,8 +98,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -121,8 +123,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -146,8 +148,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -171,8 +173,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -196,8 +198,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -223,8 +225,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -250,8 +252,8 @@ export default async function IIOSReport(data) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+        if (data.data !== null && data.data !== undefined && data.data !== '') {
+          return data.data;
         }
         return noSig;
       })
@@ -274,8 +276,7 @@ export default async function IIOSReport(data) {
     `
         <table data-pdfmake="{'layout':'noBorders'}">
             <tr>
-                <td><img src="${header.logo}" width="50" alt="logo" /></td>
-                <td><h2>โรงพยาบาลมุกดาหารอินเตอร์เนชั่นแนล</h2></td>
+              <td><img src="${logo}" width="200" alt="logo" /></td>  
             </tr>
         </table><table class="marbot" data-pdfmake="{'widths':['auto','*','auto']}">
                 <tr>
@@ -330,12 +331,12 @@ export default async function IIOSReport(data) {
                     <tr><td class="center"><div style="text-align:right">ลงชื่อ</div></td><td><img src="${recvSig}" width="110" height="30" alt="recvSig" /></td><td><div style="text-align:left">ผู้รับเรื่อง</div></td></tr>
                     </table><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}">
                     <tr><td>(${
-                      data.receiver_firstname === null || data.receiver_firstname === ''
+                      !data.receiver_firstname || data.receiver_firstname === undefined
                         ? '........................................'
                         : `${data.receiver_firstname} ${data.receiver_lastname}`
                     })<br/>
                     ${`วันที่${
-                      data.task_date_accept === null || data.task_date_accept === ''
+                      !data.task_date_accept || data.task_date_accept === undefined
                         ? '...................................'
                         : ` ${dateFns.format(
                             dateFns.subHours(dateFns.addYears(new Date(data.task_date_accept), 543), 7),
@@ -364,12 +365,12 @@ export default async function IIOSReport(data) {
             <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ดำเนินการ</td></tr>
                 <tr><td><img src="${operSig}" width="110" height="30" alt="operSig" /></td></tr>
                 <tr><td>(${
-                  data.operator_firstname === null || data.operator_firstname === ''
+                  !data.operator_firstname || data.operator_firstname === undefined || !data.operator_id
                     ? '........................................'
                     : `${data.operator_firstname} ${data.operator_lastname}`
                 })</td></tr>
                 <tr><td>${`วันที่ ${
-                  data.task_date_process === null || data.task_date_process === ''
+                  !data.task_date_process || data.task_date_process === undefined
                     ? '...................................'
                     : ` ${dateFns.format(
                         dateFns.subHours(dateFns.addYears(new Date(data.task_date_process), 543), 7),
@@ -383,12 +384,12 @@ export default async function IIOSReport(data) {
                 ? `<td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ตรวจสอบ</td></tr>
             <tr><td><img src="${usrPermitSig}" width="110" height="30" alt="usrPermitSig" /></td></tr>
             <tr><td>(${
-              data.user_permit_firstname === null || data.user_permit_firstname === ''
+              !data.user_permit_firstname || data.user_permit_firstname === undefined
                 ? '........................................'
                 : `${data.user_permit_firstname} ${data.user_permit_lastname}`
             })</td></tr>
             <tr><td>${`วันที่ ${
-              data.user_permit_date === null || data.user_permit_date === ''
+              !data.user_permit_date || data.user_permit_date === undefined
                 ? '...................................'
                 : ` ${dateFns.format(
                     dateFns.subHours(dateFns.addYears(new Date(data.user_permit_date), 543), 7),
@@ -404,12 +405,12 @@ export default async function IIOSReport(data) {
             }</td></tr>
                     <tr><td><img src="${permitSig}" width="110" height="30" alt="permitSig" /></td></tr>
                     <tr><td>(${
-                      data.permit_firstname === null || data.permit_firstname === ''
+                      !data.permit_firstname || data.permit_firstname === undefined
                         ? '........................................'
                         : `${data.permit_firstname} ${data.permit_lastname}`
                     })</td></tr>
                     <tr><td>${`วันที่${
-                      data.permit_date === null || data.permit_date === ''
+                      !data.permit_date || data.permit_date === undefined
                         ? '...................................'
                         : ` ${dateFns.format(
                             dateFns.subHours(dateFns.addYears(new Date(data.permit_date), 543), 7),
@@ -421,11 +422,11 @@ export default async function IIOSReport(data) {
                 <td><strong>ผลการดำเนินงาน</strong></td>
             </tr>
             <tr>
-                <td>งบประมาณที่ใช้: ${data.task_cost === null || data.task_cost === '' ? '0' : data.task_cost}<br/>
+                <td>งบประมาณที่ใช้: ${!data.task_cost || data.task_cost === undefined ? '0' : data.task_cost}<br/>
                 รายละเอียดการแก้ไขปัญหา: ${
                   data.status_name === 'ยกเลิก'
                     ? 'ยกเลิกใบงาน'
-                    : data.task_date_end === null || data.task_date_end === ''
+                    : !data.task_date_end || data.task_date_end === undefined
                     ? '-<br/>'
                     : data.task_solution
                 }<br/>
@@ -449,10 +450,10 @@ export default async function IIOSReport(data) {
                 <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ดำเนินการ</td></tr>
                     <tr><td><img src="${endSig}" width="110" height="30" alt="endSig" /></td></tr>
                     <tr><td>(${
-                      endName === null || endName === '' ? '........................................' : `${endName}`
+                      !endName || endName === undefined ? '........................................' : `${endName}`
                     })</td></tr>
                     <tr><td>${`วันที่ ${
-                      data.task_date_end === null || data.task_date_end === ''
+                      !data.task_date_end || data.task_date_end === undefined
                         ? '...................................'
                         : ` ${dateFns.format(
                             dateFns.subHours(dateFns.addYears(new Date(data.task_date_end), 543), 7),
@@ -466,12 +467,12 @@ export default async function IIOSReport(data) {
                     ? `<td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้อนุมัติวางโปรแกรม (ถ้ามี)</td></tr>
             <tr><td><img src="${pconfirmSig}" width="110" height="30" alt="pconfirmSig" /></td></tr>
             <tr><td>(${
-              pconfirmName === null || pconfirmName === ''
+              !pconfirmName || pconfirmName === undefined
                 ? '........................................'
                 : `${pconfirmName}`
             })</td></tr>
             <tr><td>${`วันที่ ${
-              data.pconfirm_date === null || data.pconfirm_date === ''
+              !data.pconfirm_date || data.pconfirm_date === undefined
                 ? '...................................'
                 : ` ${dateFns.format(
                     dateFns.subHours(dateFns.addYears(new Date(data.pconfirm_date), 543), 7),
@@ -483,12 +484,12 @@ export default async function IIOSReport(data) {
                     ? `<td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้ตรวจสอบ</td></tr>
                     <tr><td><img src="${osconfirmSig}" width="110" height="30" alt="osconfirmSig" /></td></tr>
                     <tr><td>(${
-                      osconfirmName === null || osconfirmName === ''
+                      !osconfirmName || osconfirmName === undefined
                         ? '........................................'
                         : `${osconfirmName}`
                     })</td></tr>
                     <tr><td>${`วันที่ ${
-                      data.osconfirm_date === null || data.osconfirm_date === ''
+                      !data.osconfirm_date || data.osconfirm_date === undefined
                         ? '...................................'
                         : ` ${dateFns.format(
                             dateFns.subHours(dateFns.addYears(new Date(data.osconfirm_date), 543), 7),
@@ -501,12 +502,12 @@ export default async function IIOSReport(data) {
                 <td><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้รับทราบผลดำเนินงาน</td></tr>
                     <tr><td><img src="${auditSig}" width="110" height="30" alt="auditSig" /></td></tr>
                     <tr><td>(${
-                      data.audit_firstname === null || data.audit_firstname === ''
+                      !data.audit_firstname || data.audit_firstname === undefined
                         ? '........................................'
                         : `${data.audit_firstname} ${data.audit_lastname}`
                     })</td></tr>
                     <tr><td>${`วันที่${
-                      data.audit_date === null || data.audit_date === ''
+                      !data.audit_date || data.audit_date === undefined
                         ? '...................................'
                         : ` ${dateFns.format(
                             dateFns.subHours(dateFns.addYears(new Date(data.audit_date), 543), 7),

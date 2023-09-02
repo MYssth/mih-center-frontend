@@ -63,10 +63,10 @@ function IIOSReport() {
     const controller = new AbortController();
     const token = jwtDecode(localStorage.getItem('token'));
 
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].mihapp_id === 'DMIS') {
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === 'DMIS') {
         fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getalltasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}`,
+          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getalltasklist/${token.psn_id}/${token.lv_list[i].lv_id}/${token.lv_list[i].view_id}`,
           {
             method: 'GET',
             headers: {
@@ -89,7 +89,7 @@ function IIOSReport() {
           });
 
         fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.personnel_id}/${token.level_list[i].level_id}/${token.level_list[i].view_id}/report`,
+          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.psn_id}/${token.lv_list[i].lv_id}/${token.lv_list[i].view_id}/report`,
           {
             method: 'GET',
             headers: {

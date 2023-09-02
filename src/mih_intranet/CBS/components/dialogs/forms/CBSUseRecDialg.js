@@ -284,7 +284,7 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
     const jsonData = {
       id: id,
       grp_id: grpId,
-      rec_pid: token.personnel_id,
+      rec_pid: token.psn_id,
       dep_date: `${depDate?.getFullYear()}-${String(parseInt(depDate?.getMonth(), 10) + 1).padStart(2, '0')}-${String(
         depDate?.getDate()
       ).padStart(2, '0')}T${String(depDate?.getHours()).padStart(2, '0')}:${String(depDate?.getMinutes()).padStart(

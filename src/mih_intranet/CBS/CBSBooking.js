@@ -228,7 +228,7 @@ function CBSBooking() {
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getpsndatabyid/${token.personnel_id}`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getpsndatabyid/${token.psn_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -328,7 +328,7 @@ function CBSBooking() {
   }, []);
 
   function refreshTable() {
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbyreqid/${token.personnel_id}`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbyreqid/${token.psn_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -416,8 +416,8 @@ function CBSBooking() {
       pax_amt: paxAmt && paxAmt !== '-' ? paxAmt : 0,
       tel_no: telNo,
       detail: detail,
-      req_pid: token.personnel_id,
-      req_name: token.personnel_name,
+      req_pid: token.psn_id,
+      req_name: token.psn_name,
       drv_pid: driverId,
       drv_name: driverName,
       car_type_id: carTypeId,

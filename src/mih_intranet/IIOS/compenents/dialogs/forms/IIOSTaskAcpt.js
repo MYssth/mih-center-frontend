@@ -67,7 +67,16 @@ function IIOSTaskAcpt({ openDialg, onCloseDialg, data, operList, estList, recvId
     <>
       <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
       <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
-      <Dialog fullWidth maxWidth="md" open={openDialg} onClose={onCloseDialg}>
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={openDialg}
+        onClose={() => {
+          setOperatorId('');
+          setOperatorName('');
+          onCloseDialg();
+        }}
+      >
         <DialogTitle>รับเรื่อง</DialogTitle>
         <DialogContent>
           <DialogContentText>กรุณาระบุผู้รับผิดชอบงาน</DialogContentText>

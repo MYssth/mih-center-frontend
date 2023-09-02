@@ -43,7 +43,7 @@ function IIOSNewCase() {
     // eslint-disable-next-line prefer-destructuring
     const token = jwtDecode(localStorage.getItem('token'));
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getpersonnel/${token.personnel_id}`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getpersonnel/${token.psn_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -52,10 +52,10 @@ function IIOSNewCase() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setInformerId(data.personnel_id);
-        setInformerName(`${data.personnel_firstname} ${data.personnel_lastname}`);
-        setDepartmentId(data.department_id);
-        setDepartmentName(data.department_name);
+        setInformerId(data.psn_id);
+        setInformerName(`${data.fname} ${data.lname}`);
+        setDepartmentId(data.dept_id);
+        setDepartmentName(data.dept_name);
       })
       .catch((error) => {
         if (error.name === 'AbortError') {
@@ -75,7 +75,7 @@ function IIOSNewCase() {
         })
           .then((response) => response.json())
           .then((data) => {
-            setDepartments(data.filter((dt) => dt.department_isactive));
+            setDepartments(data);
           })
           .catch((error) => {
             if (error.name === 'AbortError') {
@@ -104,7 +104,7 @@ function IIOSNewCase() {
       phoneNumber: document.getElementById('phoneNumber').value,
     };
 
-    console.log(jsonData);
+    // console.log(jsonData);
 
     // if (1) {
     //     if (caseTypeName === "" ||
@@ -259,13 +259,13 @@ function IIOSNewCase() {
                       onChange={(event, newValue) => {
                         setDepartmentName(newValue);
                         if (newValue !== null) {
-                          setDepartmentId(departments.find((o) => o.department_name === newValue).department_id);
+                          setDepartmentId(departments.find((o) => o.dept_name === newValue).dept_id);
                         } else {
                           setDepartmentId('');
                         }
                       }}
                       id="controllable-states-departments-id"
-                      options={Object.values(departments).map((option) => option.department_name)}
+                      options={Object.values(departments).map((option) => option.dept_name)}
                       fullWidth
                       required
                       renderInput={(params) => <TextField required {...params} label="แผนกที่พบปัญหา" />}

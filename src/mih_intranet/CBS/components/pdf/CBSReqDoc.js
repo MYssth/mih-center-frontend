@@ -38,6 +38,7 @@ let grpList = '';
 const rToken = localStorage.getItem('token');
 
 export default async function CBSReqDoc(data) {
+  console.log(data.req_pid);
   noSig = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/DMIS/nosignature.png`)}`;
   logo = await `data:image/jpeg;base64,${await imageToBase64(`${process.env.PUBLIC_URL}/logo.png`)}`;
 
@@ -80,9 +81,9 @@ export default async function CBSReqDoc(data) {
     }
   )
     .then((response) => response.json())
-    .then((data) => {
-      if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-        return data.signature_data;
+    .then((result) => {
+      if (result.data !== null && result.data !== undefined && result.data !== '') {
+        return result.data;
       }
       return noSig;
     })
@@ -102,9 +103,9 @@ export default async function CBSReqDoc(data) {
       }
     )
       .then((response) => response.json())
-      .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+      .then((result) => {
+        if (result.data !== null && result.data !== undefined && result.data !== '') {
+          return result.data;
         }
         return noSig;
       })
@@ -127,9 +128,9 @@ export default async function CBSReqDoc(data) {
       }
     )
       .then((response) => response.json())
-      .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+      .then((result) => {
+        if (result.data !== null && result.data !== undefined && result.data !== '') {
+          return result.data;
         }
         return noSig;
       })
@@ -152,9 +153,9 @@ export default async function CBSReqDoc(data) {
       }
     )
       .then((response) => response.json())
-      .then((data) => {
-        if (data.signature_data !== null && data.signature_data !== undefined && data.signature_data !== '') {
-          return data.signature_data;
+      .then((result) => {
+        if (result.data !== null && result.data !== undefined && result.data !== '') {
+          return result.data;
         }
         return noSig;
       })
@@ -278,7 +279,7 @@ export default async function CBSReqDoc(data) {
                   ? dateFns.formatDistance(new Date(data.dep_date), new Date(data.arr_date), { locale: th })
                   : '-'
               }</br>
-              รวมระยะทาง: ${data?.arrmi && data?.dep_mi ? data.arr_mi - data.dep_mi : '-'}</br>
+              รวมระยะทาง: ${data?.arr_mi && data?.dep_mi ? data.arr_mi - data.dep_mi : '-'}</br>
             </td>
             <td></td>
             <td style="text-align:center"><table data-pdfmake="{'widths':['*'],'layout':'noBorders'}"><tr><td>ผู้บันทึก</td></tr>

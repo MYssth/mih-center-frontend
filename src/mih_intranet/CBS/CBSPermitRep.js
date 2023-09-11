@@ -196,7 +196,7 @@ function CBSReqPermit() {
   return (
     <>
       <Helmet>
-        <title> ระบบขอใช้รถ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
       </Helmet>
 
       <div>
@@ -233,7 +233,7 @@ function CBSReqPermit() {
                   <a href="/intranet">หน้าหลัก</a>
                 </li>
                 <li className="breadcrumb-item my-2">
-                  <a href="/cbsdashboard">หน้าหลักระบบขอใช้รถ</a>
+                  <a href="/cbsdashboard">หน้าหลักระบบบริหารจัดการยานพาหนะ</a>
                 </li>
                 <li className="breadcrumb-item my-2">จัดการคำขอใช้รถ</li>
               </ol>

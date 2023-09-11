@@ -174,6 +174,8 @@ function IIOSInformerTask() {
   const [filterStatusId, setFilterStatusId] = useState('all');
   const [taskCount, setTaskCount] = useState([]);
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
     pId = token.psn_id;
@@ -244,15 +246,23 @@ function IIOSInformerTask() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="informertask" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar name="informertask" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
-      <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+      <IIOSTaskDetail
+        openDialg={openTaskDetail}
+        onCloseDialg={() => {
+          setOpenTaskDetail(false);
+          setNoti(!noti);
+        }}
+        data={focusTask}
+      />
 
       <IIOSTaskInfr
         openDialg={openTaskInfr}
         onCloseDialg={() => {
           setOpenTaskInfr(false);
           refreshTable();
+          setNoti(!noti);
         }}
         data={focusTask}
         auditId={auditId}

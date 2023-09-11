@@ -172,6 +172,8 @@ function IIOSPermit() {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [openTaskPrmt, setOpenTaskPrmt] = useState(false);
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
     setPermitId(token.psn_id);
@@ -194,7 +196,6 @@ function IIOSPermit() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setPermitTaskList(data);
       })
       .catch((error) => {
@@ -213,15 +214,23 @@ function IIOSPermit() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
-      <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+      <IIOSTaskDetail
+        openDialg={openTaskDetail}
+        onCloseDialg={() => {
+          setOpenTaskDetail(false);
+          setNoti(!noti);
+        }}
+        data={focusTask}
+      />
 
       <IIOSTaskPrmt
         openDialg={openTaskPrmt}
         onCloseDialg={() => {
           setOpenTaskPrmt(false);
           refreshTable();
+          setNoti(!noti);
         }}
         data={focusTask}
         permitId={permitId}

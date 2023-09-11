@@ -39,12 +39,12 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
         {name === 'dashboard' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-car-front" />
-            <span>หน้าหลักระบบขอใช้รถ</span>
+            <span>หน้าหลักระบบบริหารจัดการยานพาหนะ</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/cbsdashboard">
             <i className="bi bi-car-front" />
-            <span>หน้าหลักระบบขอใช้รถ</span>
+            <span>หน้าหลักระบบบริหารจัดการยานพาหนะ</span>
           </a>
         )}
       </li>

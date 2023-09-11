@@ -83,7 +83,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
         <li className="nav-item">
           <a className="nav-link collapsed" href="/cbsdashboard">
             <i className="bi bi-car-front" />
-            <span>ระบบขอใช้รถ</span>
+            <span>ระบบบริหารจัดการยานพาหนะ</span>
           </a>
         </li>
       ) : (
@@ -96,7 +96,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
     <>
       {isDSMS ? (
         <li className="nav-item">
-          <a className="nav-link collapsed" href="/dsms">
+          <a className="nav-link collapsed" href="/dsmsdashboard">
             <i className="bi bi-calendar3" />
             <span>ระบบตารางการทำงานแพทย์</span>
           </a>

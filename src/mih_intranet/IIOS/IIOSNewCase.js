@@ -38,6 +38,8 @@ function IIOSNewCase() {
   const [submitERR, setSubmitERR] = useState(false);
   const [submitINC, setSubmitINC] = useState(false);
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const controller = new AbortController();
     // eslint-disable-next-line prefer-destructuring
@@ -159,6 +161,7 @@ function IIOSNewCase() {
         // alert('เกิดข้อผิดพลาดในการแจ้งปัญหา');
         setSubmitERR(true);
       });
+    setNoti(!noti);
   };
 
   return (
@@ -168,7 +171,7 @@ function IIOSNewCase() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="newcase" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar name="newcase" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
       <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
       <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
 

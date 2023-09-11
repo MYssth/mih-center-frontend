@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
@@ -6,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Drawer } from '@mui/material';
 
 import useResponsive from '../../../../hooks/useResponsive';
+import '../../css/index.css';
 
 IIOSSidebar.propTypes = {
   openNav: PropTypes.bool,
@@ -14,7 +16,10 @@ IIOSSidebar.propTypes = {
 
 const NAV_WIDTH = 280;
 
-function IIOSSidebar({ name, openNav, onCloseNav }) {
+function IIOSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
+  // let noti;
+  const [noti, setNoti] = useState('');
+
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
@@ -27,6 +32,9 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
+    notiTrigger = '';
+    refreshNoti();
+
     setTokenData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id);
     setTokenViewData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id);
 
@@ -35,6 +43,38 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  useEffect(() => {
+    refreshNoti();
+  }, [notiTrigger]);
+
+  function refreshNoti() {
+    const token = jwtDecode(localStorage.getItem('token'));
+    fetch(
+      `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getnoti/${token.psn_id}/${
+        token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id
+      }/${token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // noti = data;
+        setNoti(data);
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') {
+          console.log('cancelled');
+        } else {
+          console.error('Error:', error);
+        }
+      });
+  }
 
   const mainMenu = (
     <>
@@ -89,11 +129,27 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
         <a className="nav-link" href="#">
           <i className="bi bi-list-check" />
           <span>งานรอตรวจสอบ</span>
+          &nbsp;
+          {noti?.permit ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.permit}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       ) : (
         <a className="nav-link collapsed" href="/iiospermit">
           <i className="bi bi-list-check" />
           <span>งานรอตรวจสอบ</span>
+          &nbsp;
+          {noti?.permit ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.permit}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       )}
     </li>
@@ -105,11 +161,27 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
         <a className="nav-link" href="#">
           <i className="bi bi-clipboard-check" />
           <span>งานรออนุมัติแก้ไขโปรแกรม</span>
+          &nbsp;
+          {noti?.usrPermit ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.usrPermit}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       ) : (
         <a className="nav-link collapsed" href="/iiosusrpermit">
           <i className="bi bi-clipboard-check" />
           <span>งานรออนุมัติแก้ไขโปรแกรม</span>
+          &nbsp;
+          {noti?.usrPermit ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.usrPermit}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       )}
     </li>
@@ -122,11 +194,27 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
           <a className="nav-link" href="#">
             <i className="bi bi-person-exclamation" />
             <span>งานที่ต้องดำเนินการเอง</span>
+            &nbsp;
+            {noti?.informerTask ? (
+              <div className="circle" style={{ background: 'red', color: 'white' }}>
+                {noti.informerTask}
+              </div>
+            ) : (
+              ''
+            )}
           </a>
         ) : (
           <a className="nav-link collapsed" href="/iiosinformertask">
             <i className="bi bi-person-exclamation" />
             <span>งานที่ต้องดำเนินการเอง</span>
+            &nbsp;
+            {noti?.informerTask ? (
+              <div className="circle" style={{ background: 'red', color: 'white' }}>
+                {noti.informerTask}
+              </div>
+            ) : (
+              ''
+            )}
           </a>
         )}
       </li>
@@ -136,11 +224,27 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
           <a className="nav-link" href="#">
             <i className="bi bi-person-check" />
             <span>งานรอตรวจรับ</span>
+            &nbsp;
+            {noti?.audit ? (
+              <div className="circle" style={{ background: 'red', color: 'white' }}>
+                {noti.audit}
+              </div>
+            ) : (
+              ''
+            )}
           </a>
         ) : (
           <a className="nav-link collapsed" href="/iiosaudit">
             <i className="bi bi-person-check" />
             <span>งานรอตรวจรับ</span>
+            &nbsp;
+            {noti?.audit ? (
+              <div className="circle" style={{ background: 'red', color: 'white' }}>
+                {noti.audit}
+              </div>
+            ) : (
+              ''
+            )}
           </a>
         )}
       </li>
@@ -199,10 +303,7 @@ function IIOSSidebar({ name, openNav, onCloseNav }) {
         ) : (
           ''
         )}
-        {tokenViewData === 'HEMP' ||
-        tokenViewData === 'MGR' ||
-        tokenViewData === 'HMGR' ||
-        tokenViewData === 'ALL' ? (
+        {tokenViewData === 'HEMP' || tokenViewData === 'MGR' || tokenViewData === 'HMGR' || tokenViewData === 'ALL' ? (
           <>{usrPermitDashboard}</>
         ) : (
           ''

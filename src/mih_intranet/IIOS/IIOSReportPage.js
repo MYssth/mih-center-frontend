@@ -59,6 +59,8 @@ function IIOSReport() {
 
   const [pageSize, setPageSize] = useState(25);
 
+  // const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const controller = new AbortController();
     const token = jwtDecode(localStorage.getItem('token'));

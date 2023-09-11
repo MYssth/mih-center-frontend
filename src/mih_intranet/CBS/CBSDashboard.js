@@ -368,7 +368,7 @@ export default function CBSDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบขอใช้รถ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
       </Helmet>
 
       <div>
@@ -377,13 +377,13 @@ export default function CBSDashboard() {
         {/* <!-- ======= Main ======= --> */}
         <main id="main" className="main">
           <div className="pagetitle">
-            <h1>หน้าหลักระบบขอใช้รถ - Car Booking Service (CBS) version: {version}</h1>
+            <h1>หน้าหลักระบบบริหารจัดการยานพาหนะ - Car Booking Service (CBS) version: {version}</h1>
             <nav>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item my-2">
                   <a href="../mih-intranet.html">หน้าหลัก</a>
                 </li>
-                <li className="breadcrumb-item my-2">หน้าหลักระบบขอใช้รถ</li>
+                <li className="breadcrumb-item my-2">หน้าหลักระบบบริหารจัดการยานพาหนะ</li>
               </ol>
             </nav>
           </div>

@@ -179,15 +179,15 @@ export default function LoginForm() {
                 name="newPwd"
                 label="รหัสผ่านใหม่"
                 type={showChgPwd ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowChgPwd(!showChgPwd)} edge="end">
-                        <Iconify icon={showChgPwd ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+                // InputProps={{
+                //   endAdornment: (
+                //     <InputAdornment position="end">
+                //       <IconButton onClick={() => setShowChgPwd(!showChgPwd)} edge="end">
+                //         <Iconify icon={showChgPwd ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                //       </IconButton>
+                //     </InputAdornment>
+                //   ),
+                // }}
               />
               <TextField
                 fullWidth

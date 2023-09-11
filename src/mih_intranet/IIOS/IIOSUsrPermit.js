@@ -163,6 +163,8 @@ function IIOSUsrPermit() {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [openTaskPrmt, setOpenTaskPrmt] = useState(false);
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
     setPermitId(token.psn_id);
@@ -207,15 +209,23 @@ function IIOSUsrPermit() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="usrpermit" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar name="usrpermit" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
-      <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+      <IIOSTaskDetail
+        openDialg={openTaskDetail}
+        onCloseDialg={() => {
+          setOpenTaskDetail(false);
+          setNoti(!noti);
+        }}
+        data={focusTask}
+      />
 
       <IIOSTaskUsrPrmt
         openDialg={openTaskPrmt}
         onCloseDialg={() => {
           setOpenTaskPrmt(false);
           refreshTable();
+          setNoti(!noti);
         }}
         data={focusTask}
         permitId={permitId}

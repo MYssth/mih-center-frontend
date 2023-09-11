@@ -128,7 +128,8 @@ AEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC" />
 
   return (
     <Link to="/" component={RouterLink} sx={{ display: 'contents' }}>
-      {logo}
+      <img src="assets/img/logo_sticky.png" alt="" />
+      {/* {logo} */}
     </Link>
   );
 });

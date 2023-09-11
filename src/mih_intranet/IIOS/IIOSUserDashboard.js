@@ -165,6 +165,8 @@ function IIOSUserDashboard() {
   const [headStatus, setHeadStatus] = useState('งานที่ยังไม่เสร็จสิ้นทั้งหมด');
   const [version, setVersion] = useState('');
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const controller = new AbortController();
     const token = jwtDecode(localStorage.getItem('token'));
@@ -308,9 +310,16 @@ function IIOSUserDashboard() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="userdashboard" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar name="userdashboard" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
-      <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+      <IIOSTaskDetail
+        openDialg={openTaskDetail}
+        onCloseDialg={() => {
+          setOpenTaskDetail(false);
+          setNoti(!noti);
+        }}
+        data={focusTask}
+      />
 
       <main id="main" className="main">
         <div className="pagetitle">

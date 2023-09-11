@@ -818,7 +818,7 @@ function CBSMergeBook() {
   return (
     <>
       <Helmet>
-        <title> ระบบขอใช้รถ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
       </Helmet>
       <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
       <SubmtComp
@@ -851,7 +851,7 @@ function CBSMergeBook() {
                   <a href="/intranet">หน้าหลัก</a>
                 </li>
                 <li className="breadcrumb-item my-2">
-                  <a href="/cbsdashboard">หน้าหลักระบบขอใช้รถ</a>
+                  <a href="/cbsdashboard">หน้าหลักระบบบริหารจัดการยานพาหนะ</a>
                 </li>
                 <li className="breadcrumb-item my-2">รวมคำขอใช้รถ</li>
               </ol>

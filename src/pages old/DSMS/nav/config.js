@@ -18,8 +18,8 @@ try {
 
   const token = jwtDecode(localStorage.getItem('token'));
   if (token !== null) {
-    for (let i = 0; i < token.level_list.length; i += 1) {
-      if (token.level_list[i].level_id === "DSMS_USER" || token.level_list[i].level_id === "DSMS_ADMIN") {
+    for (let i = 0; i < token.lv_list.length; i += 1) {
+      if (token.lv_list[i].mihapp_id === "DSMS") {
 
           navConfig.push(
             {
@@ -38,7 +38,7 @@ try {
             //   icon: <Icon icon="material-symbols:change-circle-outline-rounded" width="30" height="30" />,
             // },
           );
-          if (token.level_list[i].level_id === "DSMS_ADMIN") {
+          if (token.lv_list[i].lv_id === "DSMS_ADMIN") {
             navConfig.push(
               {
                 title: `จัดการสถานะการจองเวร`,

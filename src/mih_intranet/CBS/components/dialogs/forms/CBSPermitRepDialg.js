@@ -141,6 +141,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
   useEffect(() => {
     if (openDialg) {
+      console.log(data);
       fetchCarData(data.from_date, data.to_date, data.car_type_id);
 
       const tmpFrDate = new Date(
@@ -201,6 +202,9 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   }, [fromDate, fromTime, toDate, toTime]);
 
   async function fetchCarData(fDate, tDate, typeId) {
+    console.log(fDate);
+    console.log(tDate);
+    console.log(data.id);
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getfilteredcar/${fDate}/${tDate}/${data.id}`, {
       method: 'GET',
       headers: {
@@ -212,7 +216,8 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       .then((result) => {
         setCar(result);
         carFilter(result, typeId);
-        setDuplicate(result.find((o) => o.type_id === data.car_type_id).duplicate);
+        // setDuplicate(result.find((o) => o.type_id === data.car_type_id).duplicate);
+        setDuplicate(result.find((o) => o.id === data.car_id).duplicate);
         setDupDept(result.find((o) => o.type_id === data.car_type_id).dept_name);
       })
       .catch((error) => {

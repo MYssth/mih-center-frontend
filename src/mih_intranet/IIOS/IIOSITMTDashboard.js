@@ -179,6 +179,8 @@ function IIOSITMTDashboard() {
   const [isHide, setIsHide] = useState(false);
   const [disIsHide, setDisIsHide] = useState(false);
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
 
@@ -436,15 +438,23 @@ function IIOSITMTDashboard() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="itmtdashboard" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar name="itmtdashboard" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
-      <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+      <IIOSTaskDetail
+        openDialg={openTaskDetail}
+        onCloseDialg={() => {
+          setOpenTaskDetail(false);
+          setNoti(!noti);
+        }}
+        data={focusTask}
+      />
 
       <IIOSTaskAcpt
         openDialg={openTaskAcpt}
         onCloseDialg={() => {
           setOpenTaskAcpt(false);
           refreshTable();
+          setNoti(!noti);
         }}
         data={focusTask}
         recvId={recvId}
@@ -458,6 +468,7 @@ function IIOSITMTDashboard() {
           setOpenTaskProc(false);
           setIsHide(false);
           refreshTable();
+          setNoti(!noti);
         }}
         data={focusTask}
         statList={status}

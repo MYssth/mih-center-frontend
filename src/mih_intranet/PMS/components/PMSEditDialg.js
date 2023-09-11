@@ -213,21 +213,42 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
 
     if (isCBS) {
       if (CBSLevelId === '') {
-        alert('กรุณาใส่หน้าที่ของระบบขอใช้รถ');
+        alert('กรุณาใส่หน้าที่ของระบบบริหารจัดการยานพาหนะ');
         return;
       }
       if (!CBSLevelViewId || CBSLevelViewId === 'undefined') {
-        alert('กรุณาเลือกระดับการมองเห็นของระบบขอใช้รถ');
+        alert('กรุณาเลือกระดับการมองเห็นของระบบบริหารจัดการยานพาหนะ');
         return;
       }
       levelList.push({ lv_id: CBSLevelId, view_id: CBSLevelViewId });
     }
 
-    if (personnelInputSecret && personnelInputSecret !== personnelInputSecretConfirm) {
-      alert('กรุณากรอกรหัสผ่านให้ตรงกัน');
-      return;
-    }
+    if (personnelInputSecret) {
+      if (personnelInputSecret !== personnelInputSecretConfirm) {
+        alert('กรุณากรอกรหัสผ่านให้ตรงกัน');
+        return;
+      }
 
+      if (String(personnelInputSecret).length < 8) {
+        alert('รหัสผ่านใหม่ต้องมี 8 ตัวขึ้นไป');
+        return;
+      }
+
+      if (!/[A-Z]/.test(personnelInputSecret)) {
+        alert('รหัสผ่านใหม่ต้องมีภาษาอังกฤษตัวพิมพ์ใหญ่');
+        return;
+      }
+
+      if (!/[a-z]/.test(personnelInputSecret)) {
+        alert('รหัสผ่านใหม่ต้องมีภาษาอังกฤษตัวพิมพ์เล็ก');
+        return;
+      }
+
+      if (!/[0-9]/.test(personnelInputSecret)) {
+        alert('รหัสผ่านใหม่ต้องมีตัวเลข');
+        return;
+      }
+    }
     const jsonData = {
       psn_id: data?.psn_id,
       secret: personnelInputSecret,
@@ -235,7 +256,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
       sig_data: selectedImage !== undefined && selectedImage !== null && selectedImage !== '' ? imageUrl : null,
     };
 
-    // console.log(jsonData);
+    console.log(jsonData);
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/updatepersonnel`, {
       method: 'POST',
@@ -426,9 +447,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
                 if (newValue !== null) {
                   setPMSLevelId(levels.find((o) => o.name === newValue && o.mihapp_id === 'PMS').id);
                   setPMSLevelDescription(
-                    `รายละเอียด: ${
-                      levels.find((o) => o.name === newValue && o.mihapp_id === 'PMS').descr
-                    }`
+                    `รายละเอียด: ${levels.find((o) => o.name === newValue && o.mihapp_id === 'PMS').descr}`
                   );
                 } else {
                   setPMSLevelId('');
@@ -534,9 +553,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
                 if (newValue !== null) {
                   setDSMSLevelId(levels.find((o) => o.name === newValue && o.mihapp_id === 'DSMS').id);
                   setDSMSLevelDescription(
-                    `รายละเอียด: ${
-                      levels.find((o) => o.name === newValue && o.mihapp_id === 'DSMS').descr
-                    }`
+                    `รายละเอียด: ${levels.find((o) => o.name === newValue && o.mihapp_id === 'DSMS').descr}`
                   );
                 } else {
                   setDSMSLevelId('');
@@ -564,7 +581,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
             {/* ==== END OF DSMS ==== */}
             {/* ==== CBS ==== */}
             <Checkbox checked={isCBS} onChange={handleChangeCBS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />
-            ระบบขอใช้รถ
+            ระบบบริหารจัดการยานพาหนะ
             {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
             <Autocomplete
               disabled={!isCBS}
@@ -574,9 +591,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
                 if (newValue !== null) {
                   setCBSLevelId(levels.find((o) => o.name === newValue && o.mihapp_id === 'CBS').id);
                   setCBSLevelDescription(
-                    `รายละเอียด: ${
-                      levels.find((o) => o.name === newValue && o.mihapp_id === 'CBS').descr
-                    }`
+                    `รายละเอียด: ${levels.find((o) => o.name === newValue && o.mihapp_id === 'CBS').descr}`
                   );
                 } else {
                   setCBSLevelId('');
@@ -590,7 +605,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
                 .filter(isSkip)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="ระบบขอใช้รถ" />}
+              renderInput={(params) => <TextField {...params} label="ระบบบริหารจัดการยานพาหนะ" />}
               sx={{
                 '& .MuiAutocomplete-inputRoot': {
                   '& .MuiOutlinedInput-notchedOutline': {
@@ -619,7 +634,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
               options={Object.values(levelViews).map((option) => option.name)}
               fullWidth
               required
-              renderInput={(params) => <TextField {...params} label="ระดับการเข้าถึงในระบบแจ้งขอใช้รถ" />}
+              renderInput={(params) => <TextField {...params} label="ระดับการเข้าถึงในระบบบริหารจัดการยานพาหนะ" />}
               sx={{
                 '& .MuiAutocomplete-inputRoot': {
                   '& .MuiOutlinedInput-notchedOutline': {

@@ -404,7 +404,7 @@ function CBSBookRprt() {
   return (
     <>
       <Helmet>
-        <title> ระบบขอใช้รถ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
       </Helmet>
 
       <div>
@@ -421,7 +421,7 @@ function CBSBookRprt() {
                   <a href="../mih-intranet.html">หน้าหลัก</a>
                 </li>
                 <li className="breadcrumb-item my-2">
-                  <a href="car-booking.html">หน้าหลักระบบขอใช้รถ</a>
+                  <a href="car-booking.html">หน้าหลักระบบบริหารจัดการยานพาหนะ</a>
                 </li>
                 <li className="breadcrumb-item my-2">รายงานการใช้รถ</li>
               </ol>

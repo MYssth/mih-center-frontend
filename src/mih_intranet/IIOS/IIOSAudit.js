@@ -174,6 +174,8 @@ function IIOSAudit() {
   const [auditId, setAuditId] = useState('');
   const [openTaskAudt, setOpenTaskAudt] = useState(false);
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
     pId = token.psn_id;
@@ -215,15 +217,31 @@ function IIOSAudit() {
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <IIOSSidebar name="audit" openNav={open} onCloseNav={() => setOpen(false)} />
+      <IIOSSidebar
+        name="audit"
+        openNav={open}
+        onCloseNav={() => {
+          setOpen(false);
+          setNoti(!noti);
+        }}
+        notiTrigger={noti}
+      />
 
-      <IIOSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+      <IIOSTaskDetail
+        openDialg={openTaskDetail}
+        onCloseDialg={() => {
+          setOpenTaskDetail(false);
+          setNoti(!noti);
+        }}
+        data={focusTask}
+      />
 
       <IIOSTaskAudt
         openDialg={openTaskAudt}
         onCloseDialg={() => {
           setOpenTaskAudt(false);
           refreshTable();
+          setNoti(!noti);
         }}
         data={focusTask}
         auditId={auditId}

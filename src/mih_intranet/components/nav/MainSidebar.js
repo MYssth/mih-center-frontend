@@ -124,22 +124,21 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
               </a>
             )}
           </li>
-          {/* <li className="nav-item">
-            <a className="nav-link collapsed" href="/dashboard/rolemgr">
-              <i className="bi bi-building-gear" />
-              <span>จัดการโครงสร้างองค์กร</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link collapsed" href="/dashboard/sitesetting">
-              <i className="bi bi-gear" />
-              <span>ตั้งค่า</span>
-            </a>
-          </li> */}
         </>
       ) : (
         ''
       )}
+    </>
+  );
+
+  const TRS = (
+    <>
+      <li className="nav-item">
+        <a className="nav-link collapsed" href="/trsdashboard">
+          <i className="bi bi-calendar3" />
+          <span>ระบบลงชื่ออบรม</span>
+        </a>
+      </li>
     </>
   );
 
@@ -186,7 +185,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
 
         {DSMS}
         {PMS}
-
+        {TRS}
         <li className="nav-heading">เอกสารเผยแพร่</li>
         <li className="nav-item">
           {/* <a className="nav-link collapsed" href="mihdocuments/announce.html"> */}

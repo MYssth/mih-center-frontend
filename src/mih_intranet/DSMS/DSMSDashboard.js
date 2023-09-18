@@ -10,7 +10,6 @@ import 'moment/locale/th';
 import MainHeader from '../components/MainHeader';
 import DSMSSidebar from './components/nav/DSMSSidebar';
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 const today = new Date();
@@ -29,7 +28,7 @@ function DSMSDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setTokenData(jwtDecode(token));
+    setTokenData(token ? jwtDecode(token) : '');
 
     const fetchData = async () => {
       let response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getevent`, {
@@ -216,7 +215,7 @@ function DSMSDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบจองเวรแพทย์ | {headSname} </title>
+        <title> ระบบจองเวรแพทย์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

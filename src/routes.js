@@ -1,38 +1,14 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
-import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
-//
-// import UserPage from './pages/UserPage';
 import LoginPage from './mih_intranet/LoginPage';
 import Page404 from './mih_intranet/Page404';
-// import DashboardAppPage from './pages/DashboardAppPage';
-// import UserPageNewUser from './pages/UserPageNewUser';
-// import ProfileSetting from './pages/ProfileSetting';
-// import RoleMgrPage from './pages/RoleMgrPage';
-// import SiteSetting from './pages/SiteSetting';
-
-// DMIS
-// import DMISDashboardLayout from './pages/DMIS/DMISDashboardLayout';
-// import ITMTDashboard from './pages/DMIS/ITMTDashboard';
-// import UserDashboard from './pages/DMIS/UserDashboard';
-// import DMISNewCase from './pages/DMIS/DMISNewCase';
-// import DMISReport from './pages/DMIS/DMISReport';
-// import AuditDashboard from './pages/DMIS/AuditDashboard';
-// import PermitDashboard from './pages/DMIS/PermitDashboard';
-// import InformerTask from './pages/DMIS/InformerTask';
 
 // DSMS
 import DSMSDashboard from './mih_intranet/DSMS/DSMSDashboard';
 import DSMSBookShift from './mih_intranet/DSMS/DSMSBookShift';
 import DSMSShiftSetting from './mih_intranet/DSMS/DSMSShiftSetting';
 import DSMSShiftEdit from './mih_intranet/DSMS/DSMSShiftEdit';
-
-// import DSMSDashboardLayout from './pages/DSMS/DSMSDashboardLayout';
-// import DSMSDashboard from './pages/DSMS/DSMSDashboard';
-// import DSMSBookShift from './pages/DSMS/DSMSBookShift';
-// import DSMSManageBook from './pages/DSMS/DSMSManageBook';
-// import DSMSSetting from './pages/DSMS/DSMSSetting';
 
 //
 import MIHIntranet from './mih_intranet/mihIntranet';
@@ -59,52 +35,18 @@ import IIOSNewCase from './mih_intranet/IIOS/IIOSNewCase';
 import IIOSReport from './mih_intranet/IIOS/IIOSReportPage';
 import IIOSUsrPermit from './mih_intranet/IIOS/IIOSUsrPermit';
 
+// TRS
+import TRSDashboard from './mih_intranet/TRS/TRSDashboard';
+import TRSTopicRes from './mih_intranet/TRS/TRSTopicRes';
+import TRSAttdMgr from './mih_intranet/TRS/TRSAttdMgr';
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
-    // {
-    //   path: '/dashboard',
-    //   element: <DashboardLayout />,
-    //   children: [
-    //     { element: <Navigate to="/dashboard/app" />, index: true },
-    //     { path: 'app', element: <DashboardAppPage /> },
-    //     { path: 'user', element: <UserPage /> },
-    //     { path: 'newuser', element: <UserPageNewUser /> },
-    //     { path: 'profilesetting', element: <ProfileSetting /> },
-    //     { path: 'rolemgr', element: <RoleMgrPage /> },
-    //     { path: 'sitesetting', element: <SiteSetting /> },
-    //   ],
-    // },
     {
       path: '/login',
       element: <LoginPage />,
     },
-    // {
-    //   path: '/dmis',
-    //   element: <DMISDashboardLayout />,
-    //   children: [
-    //     { element: <Navigate to="/dmis/app" />, index: true },
-    //     { path: 'app', element: <UserDashboard /> },
-    //     { path: 'itmtdashboard', element: <ITMTDashboard /> },
-    //     { path: 'dmisnewcase', element: <DMISNewCase /> },
-    //     { path: 'dmisreport', element: <DMISReport /> },
-    //     { path: 'auditdashboard', element: <AuditDashboard /> },
-    //     { path: 'informertask', element: <InformerTask /> },
-    //     { path: 'permitdashboard', element: <PermitDashboard /> },
-    //   ],
-    // },
-    // {
-    //   path: '/dsms',
-    //   element: <DSMSDashboardLayout />,
-    //   children: [
-    //     { element: <Navigate to="/dsms/app" />, index: true },
-    //     { path: 'app', element: <DSMSDashboard /> },
-    //     { path: 'dsmsbookshift', element: <DSMSBookShift /> },
-    //     { path: 'dsmsmanagebook', element: <DSMSManageBook /> },
-    //     { path: 'dsmssetting', element: <DSMSSetting /> },
-    //   ],
-    // },
     {
       path: '/intranet',
       element: <MIHIntranet />,
@@ -197,6 +139,20 @@ export default function Router() {
     {
       path: '/iiosusrpermit',
       element: <IIOSUsrPermit />,
+    },
+
+    // TRS
+    {
+      path: '/trsdashboard',
+      element: <TRSDashboard />,
+    },
+    {
+      path: '/trstopicres',
+      element: <TRSTopicRes />,
+    },
+    {
+      path: '/trsattdmgr',
+      element: <TRSAttdMgr />,
     },
 
     {

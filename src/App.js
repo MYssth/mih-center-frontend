@@ -5,8 +5,8 @@ import Router from './routes';
 // theme
 import ThemeProvider from './theme';
 // components
-import ScrollToTop from './components/scroll-to-top';
-import { StyledChart } from './components/chart';
+// import ScrollToTop from './components/scroll-to-top';
+// import { StyledChart } from './components/chart';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 // ----------------------------------------------------------------------
@@ -15,16 +15,6 @@ export default function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_roleCrudPort}/getsitesetting`)
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     localStorage.setItem('logo', data.logo);
-    //     localStorage.setItem('sname', data.sname);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error:', error);
-    //   });
-
     const token = localStorage.getItem('token');
     if (token !== null) {
       fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_loginPort}/authen`, {
@@ -56,8 +46,8 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <ScrollToTop />
-      <StyledChart />
+      {/* <ScrollToTop />
+      <StyledChart /> */}
       <Router />
     </ThemeProvider>
   );

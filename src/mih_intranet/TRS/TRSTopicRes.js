@@ -2,7 +2,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { Stack, Button, Typography, styled, alpha, Radio } from '@mui/material';
+import { Button, Typography, styled, alpha, Radio } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import MainHeader from '../components/MainHeader';
 import TRSSidebar from './components/nav/TRSSidebar';
@@ -36,8 +36,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const headSname = `MIH Center`;
 let psnId;
+let disBtn = true;
 
 function TRSTopicRes() {
   const [open, setOpen] = useState(false);
@@ -127,12 +127,18 @@ function TRSTopicRes() {
     refreshTable();
   }, []);
 
+  useEffect(() => {
+    disBtn = false;
+  }, [selSubTopicRes]);
+
   const refreshTable = () => {
     setSelTopicRes('');
     setSelTopicName('');
     setSelSubTopicRes('');
     setSubTopicFilter([]);
     setIsAttd('');
+
+    disBtn = true;
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/gettopiclist`, {
       method: 'GET',
@@ -183,7 +189,7 @@ function TRSTopicRes() {
   return (
     <>
       <Helmet>
-        <title> ลงชื่ออบรม | {headSname} </title>
+        <title> ลงชื่ออบรม | MIH Center </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
       <TRSSidebar name="trstopicres" openNav={open} onCloseNav={() => setOpen(false)} />
@@ -235,6 +241,7 @@ function TRSTopicRes() {
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         selectionModel={selTopicRes}
                         onSelectionModelChange={(newSelectionModel) => {
+                          disBtn = true;
                           setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
                           setSelTopicRes(newSelectionModel[0]);
                           setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
@@ -267,10 +274,8 @@ function TRSTopicRes() {
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         selectionModel={selTopicRes}
                         onSelectionModelChange={(newSelectionModel) => {
-                          if (!isAttd) {
+                          if (!isAttd && selTopicName !== '' && selTopicName !== undefined) {
                             setSelSubTopicRes(newSelectionModel[0]);
-                            console.log(selTopicRes);
-                            console.log(selSubTopicRes);
                           }
                         }}
                         hideFooterSelectedRowCount
@@ -286,7 +291,7 @@ function TRSTopicRes() {
                   <Button
                     variant="contained"
                     fullWidth
-                    disabled={isAttd || (selTopicRes !== '' && selSubTopicRes !== '')}
+                    disabled={disBtn}
                     onClick={() => {
                       setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
                       setOpenAttd(true);

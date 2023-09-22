@@ -5,7 +5,6 @@ import { styled, alpha } from '@mui/material';
 import MainHeader from './components/MainHeader';
 import MainSidebar from './components/nav/MainSidebar';
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 const ODD_OPACITY = 0.2;
@@ -119,7 +118,7 @@ export default function MIHIntranet() {
   return (
     <>
       <Helmet>
-        <title> Main | {headSname} </title>
+        <title> Main | MIH Center </title>
       </Helmet>
 
       <div>

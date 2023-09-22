@@ -57,14 +57,14 @@ function TRSAttdSubmtDialg({ openDialg, onCloseDialg, topic, psnId, rToken }) {
           onCloseDialg();
         }}
       >
-        <DialogTitle>ลงชื่ออบรม</DialogTitle>
+        <DialogTitle>ลงทะเบียนร่วมกิจกรรม</DialogTitle>
         <DialogContent>
-          <DialogContentText>คุณต้องการลงชื่ออบรม {topic?.topic_name} {topic?.name} หรือไม่</DialogContentText>
+          <DialogContentText>คุณต้องการลงทะเบียนร่วมกิจกรรม {topic?.topic_name} {topic?.name} หรือไม่</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={onCloseDialg}>ยกเลิก</Button>
           <Button variant="contained" onClick={handleTopicAttd}>
-            ยืนยันการลงชื่อ
+            ยืนยันการลงทะเบียน
           </Button>
         </DialogActions>
       </Dialog>

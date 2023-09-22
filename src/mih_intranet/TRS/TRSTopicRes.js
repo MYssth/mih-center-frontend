@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import { Button, Typography, styled, alpha, Radio } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { format } from 'date-fns';
 import MainHeader from '../components/MainHeader';
 import TRSSidebar from './components/nav/TRSSidebar';
 import TRSAttdSubmtDialg from './components/dialg/TRSAttdSubmtDialg';
@@ -107,6 +108,36 @@ function TRSTopicRes() {
       flex: 1,
     },
     {
+      field: 'date',
+      headerName: 'วันที่',
+      maxWidth: 100,
+      minWidth: 100,
+      flex: 1,
+      valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
+    },
+    {
+      field: 'start_time',
+      headerName: 'จากเวลา',
+      maxWidth: 70,
+      minWidth: 70,
+      flex: 1,
+      valueGetter: (params) =>
+        `${String(new Date(params.row.start_date).getUTCHours()).padStart(2, '0')}:${String(
+          new Date(params.row.start_date).getUTCMinutes()
+        ).padStart(2, '0')}`,
+    },
+    {
+      field: 'end_time',
+      headerName: 'ถึงเวลา',
+      maxWidth: 70,
+      minWidth: 70,
+      flex: 1,
+      valueGetter: (params) =>
+        `${String(new Date(params.row.end_date).getUTCHours()).padStart(2, '0')}:${String(
+          new Date(params.row.end_date).getUTCMinutes()
+        ).padStart(2, '0')}`,
+    },
+    {
       field: 'name',
       headerName: 'ชื่อเรื่อง',
       minWidth: 200,
@@ -114,7 +145,7 @@ function TRSTopicRes() {
     },
     {
       field: 'attd',
-      headerName: 'จำนวนผู้เข้าอบรม',
+      headerName: 'จำนวนผู้ร่วมกิจกรรม',
       minWidth: 150,
       maxWidth: 150,
       flex: 1,
@@ -189,7 +220,7 @@ function TRSTopicRes() {
   return (
     <>
       <Helmet>
-        <title> ลงชื่ออบรม | MIH Center </title>
+        <title> ลงทะเบียนร่วมกิจกรรม | MIH Center </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
       <TRSSidebar name="trstopicres" openNav={open} onCloseNav={() => setOpen(false)} />
@@ -206,16 +237,16 @@ function TRSTopicRes() {
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ลงชื่ออบรม</h1>
+          <h1>ลงทะเบียนร่วมกิจกรรม</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">
                 <a href="/intranet">หน้าหลัก</a>
               </li>
               <li className="breadcrumb-item my-2">
-                <a href="/trsdashboard">หน้าหลักระบบลงชื่ออบรม</a>
+                <a href="/trsdashboard">หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</a>
               </li>
-              <li className="breadcrumb-item my-2">ลงชื่ออบรม</li>
+              <li className="breadcrumb-item my-2">ลงทะเบียนร่วมกิจกรรม</li>
             </ol>
           </nav>
         </div>
@@ -227,7 +258,7 @@ function TRSTopicRes() {
               <div className="card">
                 <div className="card-body pt-3">
                   <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
-                    เลือกหัวข้ออบรม
+                    เลือกหัวข้อกิจกรรม
                   </Typography>
                   <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>
@@ -242,10 +273,35 @@ function TRSTopicRes() {
                         selectionModel={selTopicRes}
                         onSelectionModelChange={(newSelectionModel) => {
                           disBtn = true;
-                          setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
+                          // setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
                           setSelTopicRes(newSelectionModel[0]);
-                          setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
-                          setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
+                          // setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
+                          // setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
+
+                          // =====temp=====
+                          const minDate = attd?.find((data) => data.topic_id === 'TRS000002');
+                          if (newSelectionModel[0] === 'TRS000003') {
+                            const isPreReq = attd.find((data) => data.topic_id === 'TRS000002');
+                            if (isPreReq) {
+                              setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
+                              setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
+                              setSubTopicFilter(
+                                subTopicList.filter(
+                                  (data) =>
+                                    data.topic_id === newSelectionModel[0] && data.start_date >= minDate.start_date
+                                )
+                              );
+                            } else {
+                              setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
+                              setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
+                              setSubTopicFilter('');
+                            }
+                          } else {
+                            setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
+                            setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
+                            setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
+                          }
+                          // =====end of temp=====
                         }}
                         hideFooterSelectedRowCount
                         componentsProps={{
@@ -259,9 +315,9 @@ function TRSTopicRes() {
                   </div>
 
                   <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
-                    เลือกรุ่นของหัวข้ออบรม {selTopicName}
+                    เลือกรุ่นของหัวข้อกิจกรรม {selTopicName}
                   </Typography>
-                  <div className="attd">{isAttd ? `คุณได้ลงชื่ออบรมที่ ${isAttd?.name} แล้ว` : ''}</div>
+                  <div className="attd">{isAttd ? `คุณได้ลงชื่อกิจกรรมที่ ${isAttd?.name} แล้ว` : ''}</div>
                   <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>
                       <StripedDataGrid
@@ -297,7 +353,7 @@ function TRSTopicRes() {
                       setOpenAttd(true);
                     }}
                   >
-                    ลงชื่ออบรม
+                    ลงทะเบียนร่วมกิจกรรม
                   </Button>
                 </div>
               </div>

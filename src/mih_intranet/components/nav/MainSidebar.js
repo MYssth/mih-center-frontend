@@ -136,7 +136,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
       <li className="nav-item">
         <a className="nav-link collapsed" href="/trsdashboard">
           <i className="bi bi-calendar3" />
-          <span>ระบบลงชื่ออบรม</span>
+          <span>ระบบลงทะเบียนร่วมกิจกรรม</span>
         </a>
       </li>
     </>

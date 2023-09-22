@@ -39,12 +39,12 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
         {name === 'trsdashboard' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-calendar3" />
-            <span>หน้าหลักระบบลงชื่ออบรม</span>
+            <span>หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/trsdashboard">
             <i className="bi bi-calendar3" />
-            <span>หน้าหลักระบบลงชื่ออบรม</span>
+            <span>หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</span>
           </a>
         )}
       </li>
@@ -52,12 +52,12 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
         {name === 'trstopicres' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-chat-left-text" />
-            <span>ลงชื่ออบรม</span>
+            <span>ลงทะเบียนร่วมกิจกรรม</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/trstopicres">
             <i className="bi bi-chat-left-text" />
-            <span>ลงชื่ออบรม</span>
+            <span>ลงทะเบียนร่วมกิจกรรม</span>
           </a>
         )}
       </li>
@@ -70,12 +70,12 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
         {name === 'trstopicmgr' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-journal-text" />
-            <span>จัดการหัวข้ออบรม</span>
+            <span>จัดการหัวข้อกิจกรรม</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/trstopicmgr">
             <i className="bi bi-journal-text" />
-            <span>จัดการหัวข้ออบรม</span>
+            <span>จัดการหัวข้อกิจกรรม</span>
           </a>
         )}
       </li>
@@ -83,12 +83,12 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
         {name === 'trsattdmgr' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-journal-text" />
-            <span>จัดการผู้เข้าอบรม</span>
+            <span>จัดการผู้เข้าร่วมกิจกรรม</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/trsattdmgr">
             <i className="bi bi-journal-text" />
-            <span>จัดการผู้เข้าอบรม</span>
+            <span>จัดการผู้เข้าร่วมกิจกรรม</span>
           </a>
         )}
       </li>

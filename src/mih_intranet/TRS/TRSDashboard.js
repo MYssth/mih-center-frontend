@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import { Typography, styled, alpha } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { format } from 'date-fns';
 import MainHeader from '../components/MainHeader';
 import TRSSidebar from './components/nav/TRSSidebar';
 import './css/index.css';
@@ -56,11 +57,41 @@ function TRSDashboard() {
       flex: 1,
     },
     {
-      field: 'id',
+      field: 'sub_id',
       headerName: 'รุ่น',
       maxWidth: 60,
       minWidth: 60,
       flex: 1,
+    },
+    {
+      field: 'date',
+      headerName: 'วันที่',
+      maxWidth: 100,
+      minWidth: 100,
+      flex: 1,
+      valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
+    },
+    {
+      field: 'start_time',
+      headerName: 'จากเวลา',
+      maxWidth: 70,
+      minWidth: 70,
+      flex: 1,
+      valueGetter: (params) =>
+        `${String(new Date(params.row.start_date).getUTCHours()).padStart(2, '0')}:${String(
+          new Date(params.row.start_date).getUTCMinutes()
+        ).padStart(2, '0')}`,
+    },
+    {
+      field: 'end_time',
+      headerName: 'ถึงเวลา',
+      maxWidth: 70,
+      minWidth: 70,
+      flex: 1,
+      valueGetter: (params) =>
+        `${String(new Date(params.row.end_date).getUTCHours()).padStart(2, '0')}:${String(
+          new Date(params.row.end_date).getUTCMinutes()
+        ).padStart(2, '0')}`,
     },
     {
       field: 'name',
@@ -112,20 +143,20 @@ function TRSDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบลงชื่ออบรม | {headSname} </title>
+        <title> ระบบลงทะเบียนร่วมกิจกรรม | {headSname} </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
       <TRSSidebar name="trsdashboard" openNav={open} onCloseNav={() => setOpen(false)} />
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ระบบลงชื่ออบรม - Training Reserve Service (TRS) version: {version}</h1>
+          <h1>ระบบลงทะเบียนร่วมกิจกรรม - Activity Register Service (ARS) version: {version}</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">
                 <a href="/intranet">หน้าหลัก</a>
               </li>
-              <li className="breadcrumb-item my-2">หน้าหลักระบบลงชื่ออบรม</li>
+              <li className="breadcrumb-item my-2">หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</li>
             </ol>
           </nav>
         </div>
@@ -137,11 +168,12 @@ function TRSDashboard() {
               <div className="card">
                 <div className="card-body pt-3">
                   <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
-                    รายการอบรมที่ได้ลงชื่อไว้
+                    รายการกิจกรรมที่ได้ลงทะเบียนไว้
                   </Typography>
                   <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>
                       <StripedDataGrid
+                        getRowId={(row) => row.topic_id}
                         getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
                         autoHeight
                         getRowHeight={() => 'auto'}

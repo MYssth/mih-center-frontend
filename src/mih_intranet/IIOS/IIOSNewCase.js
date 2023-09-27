@@ -19,7 +19,6 @@ const ValidationTextField = styled(TextField)({
   },
 });
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 function IIOSNewCase() {
@@ -54,6 +53,7 @@ function IIOSNewCase() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setInformerId(data.psn_id);
         setInformerName(`${data.fname} ${data.lname}`);
         setDepartmentId(data.dept_id);
@@ -167,7 +167,7 @@ function IIOSNewCase() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

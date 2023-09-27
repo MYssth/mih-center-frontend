@@ -98,7 +98,13 @@ function TRSTopicRes() {
       flex: 0.3,
       maxWidth: 50,
       minWidth: 50,
-      renderCell: (params) => <Radio disabled={isAttd} checked={selSubTopicRes === params.id} value={params.id} />,
+      renderCell: (params) => (
+        <Radio
+          disabled={isAttd || !(params.row.attd < params.row.lmt)}
+          checked={selSubTopicRes === params.id}
+          value={params.id}
+        />
+      ),
     },
     {
       field: 'id',
@@ -279,6 +285,7 @@ function TRSTopicRes() {
                           // setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
 
                           // =====temp=====
+
                           const minDate = attd?.find((data) => data.topic_id === 'TRS000002');
                           if (newSelectionModel[0] === 'TRS000003') {
                             const isPreReq = attd.find((data) => data.topic_id === 'TRS000002');
@@ -330,8 +337,14 @@ function TRSTopicRes() {
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         selectionModel={selTopicRes}
                         onSelectionModelChange={(newSelectionModel) => {
-                          if (!isAttd && selTopicName !== '' && selTopicName !== undefined) {
-                            setSelSubTopicRes(newSelectionModel[0]);
+                          if (subTopicFilter) {
+                            if (
+                              subTopicFilter.find((data) => data.id === newSelectionModel[0] && data.attd < data.lmt)
+                            ) {
+                              if (!isAttd && selTopicName !== '' && selTopicName !== undefined) {
+                                setSelSubTopicRes(newSelectionModel[0]);
+                              }
+                            }
                           }
                         }}
                         hideFooterSelectedRowCount

@@ -25,7 +25,7 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
 
-    // setTokenData(token ? token.lv_list.find((o) => o.mihapp_id === 'TRS').lv_id : '');
+    setTokenData(token ? token.lv_list.find((o) => o.mihapp_id === 'TRS')?.lv_id : '');
 
     if (openNav) {
       onCloseNav();
@@ -61,6 +61,19 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
           </a>
         )}
       </li>
+      <li className="nav-item">
+        {name === 'trsreport' ? (
+          <a className="nav-link" href="#">
+            <i className="bi bi-journal-text" />
+            <span>รายงาน</span>
+          </a>
+        ) : (
+          <a className="nav-link collapsed" href="/trsreport">
+            <i className="bi bi-journal-text" />
+            <span>รายงาน</span>
+          </a>
+        )}
+      </li>
     </>
   );
 
@@ -69,12 +82,12 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
       <li className="nav-item">
         {name === 'trstopicmgr' ? (
           <a className="nav-link" href="#">
-            <i className="bi bi-journal-text" />
+            <i className="bi bi-folder-plus" />
             <span>จัดการหัวข้อกิจกรรม</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/trstopicmgr">
-            <i className="bi bi-journal-text" />
+            <i className="bi bi-folder-plus" />
             <span>จัดการหัวข้อกิจกรรม</span>
           </a>
         )}
@@ -82,12 +95,12 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
       <li className="nav-item">
         {name === 'trsattdmgr' ? (
           <a className="nav-link" href="#">
-            <i className="bi bi-journal-text" />
+            <i className="bi bi-person-gear" />
             <span>จัดการผู้เข้าร่วมกิจกรรม</span>
           </a>
         ) : (
           <a className="nav-link collapsed" href="/trsattdmgr">
-            <i className="bi bi-journal-text" />
+            <i className="bi bi-person-gear" />
             <span>จัดการผู้เข้าร่วมกิจกรรม</span>
           </a>
         )}

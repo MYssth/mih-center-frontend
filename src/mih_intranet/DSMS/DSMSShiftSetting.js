@@ -13,7 +13,6 @@ const ValidationTextField = styled(TextField)({
   },
 });
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 function DSMSBookSetting() {
@@ -74,7 +73,7 @@ function DSMSBookSetting() {
   return (
     <>
       <Helmet>
-        <title> ระบบจองเวรแพทย์ | {headSname} </title>
+        <title> ระบบจองเวรแพทย์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

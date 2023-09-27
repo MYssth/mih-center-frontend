@@ -40,7 +40,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 let selBookNew = [];
 let selBookAdd = [];
@@ -818,7 +817,7 @@ function CBSMergeBook() {
   return (
     <>
       <Helmet>
-        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | MIH Center </title>
       </Helmet>
       <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
       <SubmtComp

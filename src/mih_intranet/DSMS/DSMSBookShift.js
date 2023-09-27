@@ -17,7 +17,6 @@ const Item = styled('div')(({ theme }) => ({
   textAlign: 'left',
 }));
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 let selectedDate = [];
 let setMonth = moment().add(1, 'month');
@@ -291,7 +290,7 @@ function DSMSBookShift() {
   return (
     <>
       <Helmet>
-        <title> ระบบจองเวรแพทย์ | {headSname} </title>
+        <title> ระบบจองเวรแพทย์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

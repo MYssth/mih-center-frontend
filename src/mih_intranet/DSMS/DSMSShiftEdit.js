@@ -29,7 +29,6 @@ import MainHeader from '../components/MainHeader';
 import DSMSSidebar from './components/nav/DSMSSidebar';
 import DSMSShiftEditDialg from './components/dialogs/DSMSShiftEditDialg';
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 let selectedDate = [];
@@ -375,7 +374,7 @@ function DSMSShiftEdit() {
   return (
     <>
       <Helmet>
-        <title> ระบบจองเวรแพทย์ | {headSname} </title>
+        <title> ระบบจองเวรแพทย์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

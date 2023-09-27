@@ -1,13 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { Typography, styled, alpha } from '@mui/material';
+import { Button, Typography, styled, alpha, Radio } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { format } from 'date-fns';
 import MainHeader from '../components/MainHeader';
 import TRSSidebar from './components/nav/TRSSidebar';
-import './css/index.css';
+import TRSPsnListExcel from './components/excelgen/TRSPsnListExcel';
 
 const ODD_OPACITY = 0.2;
 
@@ -36,77 +35,54 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-let psnId;
-
-function TRSDashboard() {
+function TRSReport() {
   const [open, setOpen] = useState(false);
-  const [version, setVersion] = useState('');
   const [pageSize, setPageSize] = useState(25);
 
-  const [attdList, setAttdList] = useState('');
+  const [topicList, setTopicList] = useState([]);
+  const [attdList, setAttdList] = useState([]);
+  const [selTopicRes, setSelTopicRes] = useState('');
 
   const rToken = localStorage.getItem('token');
 
-  const columns = [
+  const topicListCol = [
     {
-      field: 'topic_id',
+      field: 'action',
+      headerName: '',
+      sortable: false,
+      flex: 0.3,
+      maxWidth: 50,
+      minWidth: 50,
+      renderCell: (params) => <Radio checked={selTopicRes === params.id} value={params.id} />,
+    },
+    {
+      field: 'id',
       headerName: 'เลขที่',
-      maxWidth: 100,
-      minWidth: 100,
+      maxWidth: 120,
+      minWidth: 120,
       flex: 1,
     },
-    {
-      field: 'sub_id',
-      headerName: 'รุ่น',
-      maxWidth: 60,
-      minWidth: 60,
-      flex: 1,
-    },
-    {
-      field: 'date',
-      headerName: 'วันที่',
-      maxWidth: 100,
-      minWidth: 100,
-      flex: 1,
-      valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
-    },
-    {
-      field: 'start_time',
-      headerName: 'จากเวลา',
-      maxWidth: 70,
-      minWidth: 70,
-      flex: 1,
-      valueGetter: (params) =>
-        `${String(new Date(params.row.start_date).getUTCHours()).padStart(2, '0')}:${String(
-          new Date(params.row.start_date).getUTCMinutes()
-        ).padStart(2, '0')}`,
-    },
-    {
-      field: 'end_time',
-      headerName: 'ถึงเวลา',
-      maxWidth: 70,
-      minWidth: 70,
-      flex: 1,
-      valueGetter: (params) =>
-        `${String(new Date(params.row.end_date).getUTCHours()).padStart(2, '0')}:${String(
-          new Date(params.row.end_date).getUTCMinutes()
-        ).padStart(2, '0')}`,
-    },
+    // {
+    //   field: 'start_date',
+    //   headerName: 'วันเวลา',
+    //   maxWidth: 200,
+    //   minWidth: 200,
+    //   flex: 1,
+    // },
     {
       field: 'name',
-      headerName: 'เรื่อง',
+      headerName: 'ชื่อเรื่อง',
       minWidth: 200,
       flex: 1,
-      valueGetter: (params) => `${params.row.topic_name} ${params.row.name}`,
     },
   ];
 
   useEffect(() => {
-    psnId = jwtDecode(localStorage.getItem('token')).psn_id;
-
     refreshTable();
+  }, []);
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getversion`, {
+  async function refreshTable() {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/gettopiclist`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -115,15 +91,12 @@ function TRSDashboard() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setVersion(data);
+        setTopicList(data);
       })
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, []);
-
-  const refreshTable = () => {
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getattd/${psnId}`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getattdpsn`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -137,25 +110,28 @@ function TRSDashboard() {
       .catch((error) => {
         console.error('Error:', error);
       });
-  };
+  }
 
   return (
     <>
       <Helmet>
-        <title> ระบบลงทะเบียนร่วมกิจกรรม | MIH Center </title>
+        <title> รายงาน | MIH Center </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <TRSSidebar name="trsdashboard" openNav={open} onCloseNav={() => setOpen(false)} />
+      <TRSSidebar name="trsreport" openNav={open} onCloseNav={() => setOpen(false)} />
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ระบบลงทะเบียนร่วมกิจกรรม - Activity Register Service (ARS) version: {version}</h1>
+          <h1>รายงาน</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">
                 <a href="/intranet">หน้าหลัก</a>
               </li>
-              <li className="breadcrumb-item my-2">หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</li>
+              <li className="breadcrumb-item my-2">
+                <a href="/trsdashboard">หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</a>
+              </li>
+              <li className="breadcrumb-item my-2">รายงาน</li>
             </ol>
           </nav>
         </div>
@@ -167,19 +143,27 @@ function TRSDashboard() {
               <div className="card">
                 <div className="card-body pt-3">
                   <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
-                    รายการกิจกรรมที่ได้ลงทะเบียนไว้
+                    เลือกหัวข้อกิจกรรม
                   </Typography>
                   <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>
                       <StripedDataGrid
-                        getRowId={(row) => row.topic_id}
                         getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
                         autoHeight
                         getRowHeight={() => 'auto'}
-                        columns={columns}
-                        rows={attdList}
+                        columns={topicListCol}
+                        rows={topicList}
                         pageSize={pageSize}
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                        selectionModel={selTopicRes}
+                        onSelectionModelChange={(newSelectionModel) => {
+                          //   disBtn = true;
+                          // setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
+                          setSelTopicRes(newSelectionModel[0]);
+                          // setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
+                          // setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
+                        }}
+                        hideFooterSelectedRowCount
                         componentsProps={{
                           toolbar: {
                             printOptions: { hideFooter: true, hideToolbar: true },
@@ -187,6 +171,17 @@ function TRSDashboard() {
                           },
                         }}
                       />
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        // disabled={disBtn}
+                        onClick={() => {
+                          //   setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
+                          //   setOpenAttd(true);
+                        }}
+                      >
+                        ดาวน์โหลดรายชื่อผู้เข้าร่วมกิจกรรม
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -199,4 +194,4 @@ function TRSDashboard() {
   );
 }
 
-export default TRSDashboard;
+export default TRSReport;

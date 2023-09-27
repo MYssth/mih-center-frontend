@@ -63,7 +63,6 @@ function QuickSearchToolbar() {
 let tokenData = '';
 let pid = '';
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 function IIOSUsrPermit() {
@@ -205,7 +204,7 @@ function IIOSUsrPermit() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

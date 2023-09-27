@@ -145,7 +145,6 @@ const columns = [
   },
 ];
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 function IIOSUserDashboard() {
@@ -306,7 +305,7 @@ function IIOSUserDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

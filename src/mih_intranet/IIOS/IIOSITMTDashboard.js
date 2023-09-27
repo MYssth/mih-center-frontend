@@ -42,7 +42,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 let pId = '';
 let lvId = '';
 let vId = '';
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 function IIOSITMTDashboard() {
@@ -434,7 +433,7 @@ function IIOSITMTDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบแจ้งปัญหาออนไลน์ | {headSname} </title>
+        <title> ระบบแจ้งปัญหาออนไลน์ | MIH Center </title>
       </Helmet>
 
       <MainHeader onOpenNav={() => setOpen(true)} />

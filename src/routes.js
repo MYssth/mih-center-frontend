@@ -39,6 +39,7 @@ import IIOSUsrPermit from './mih_intranet/IIOS/IIOSUsrPermit';
 import TRSDashboard from './mih_intranet/TRS/TRSDashboard';
 import TRSTopicRes from './mih_intranet/TRS/TRSTopicRes';
 import TRSAttdMgr from './mih_intranet/TRS/TRSAttdMgr';
+import TRSReport from './mih_intranet/TRS/TRSReport';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -153,6 +154,10 @@ export default function Router() {
     {
       path: '/trsattdmgr',
       element: <TRSAttdMgr />,
+    },
+    {
+      path: '/trsreport',
+      element: <TRSReport />,
     },
 
     {

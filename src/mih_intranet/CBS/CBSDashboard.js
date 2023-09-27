@@ -43,7 +43,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 export default function CBSDashboard() {
@@ -368,7 +367,7 @@ export default function CBSDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | MIH Center </title>
       </Helmet>
 
       <div>

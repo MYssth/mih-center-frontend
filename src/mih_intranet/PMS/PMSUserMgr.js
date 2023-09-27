@@ -36,8 +36,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const headSname = `${localStorage.getItem('sname')} Center`;
-
 function PMSUserMgr() {
   const [open, setOpen] = useState(null);
   const [personnel, setPersonnel] = useState([]);
@@ -204,7 +202,7 @@ function PMSUserMgr() {
   return (
     <>
       <Helmet>
-        <title> จัดการผู้ใช้ | {headSname} </title>
+        <title> จัดการผู้ใช้ | MIH Center </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
       <MainSidebar name="pmsusermgr" openNav={open} onCloseNav={() => setOpen(false)} />

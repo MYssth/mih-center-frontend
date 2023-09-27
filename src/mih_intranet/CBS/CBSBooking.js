@@ -51,8 +51,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const headSname = `${localStorage.getItem('sname')} Center`;
-
 function CBSBooking() {
   const columns = [
     {
@@ -466,7 +464,7 @@ function CBSBooking() {
   return (
     <>
       <Helmet>
-        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | MIH Center </title>
       </Helmet>
       <div>
         <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />

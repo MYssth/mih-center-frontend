@@ -36,7 +36,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const headSname = `${localStorage.getItem('sname')} Center`;
 const rToken = localStorage.getItem('token');
 
 function CBSReqPermit() {
@@ -196,7 +195,7 @@ function CBSReqPermit() {
   return (
     <>
       <Helmet>
-        <title> ระบบบริหารจัดการยานพาหนะ | {headSname} </title>
+        <title> ระบบบริหารจัดการยานพาหนะ | MIH Center </title>
       </Helmet>
 
       <div>

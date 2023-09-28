@@ -360,7 +360,8 @@ function TRSTopicRes() {
                   <Button
                     variant="contained"
                     fullWidth
-                    disabled={disBtn}
+                    // disabled={disBtn}
+                    disabled={selSubTopicRes === '' || selSubTopicRes === undefined}
                     onClick={() => {
                       setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
                       setOpenAttd(true);

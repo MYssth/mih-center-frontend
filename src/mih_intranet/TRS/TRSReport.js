@@ -36,6 +36,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 function TRSReport() {
+
   const [open, setOpen] = useState(false);
   const [pageSize, setPageSize] = useState(25);
 
@@ -174,8 +175,9 @@ function TRSReport() {
                       <Button
                         variant="contained"
                         fullWidth
-                        // disabled={disBtn}
+                        disabled={selTopicRes==='' || selTopicRes===undefined}
                         onClick={() => {
+                          TRSPsnListExcel(attdList.filter((data) => data.topic_id === selTopicRes), selTopicRes, rToken);
                           //   setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
                           //   setOpenAttd(true);
                         }}

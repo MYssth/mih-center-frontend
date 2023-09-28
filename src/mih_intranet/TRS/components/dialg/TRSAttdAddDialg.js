@@ -89,8 +89,8 @@ function TRSAttdAddDialg({ openDialg, onCloseDialg, topic, psnList, rToken }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={onCloseDialg}>ยกเลิก</Button>
-          <Button variant="contained" onClick={handleTopicAttd} color="error">
-            ยืนยันการลบ
+          <Button variant="contained" onClick={handleTopicAttd} color="success">
+            ยืนยันการเพิ่ม
           </Button>
         </DialogActions>
       </Dialog>

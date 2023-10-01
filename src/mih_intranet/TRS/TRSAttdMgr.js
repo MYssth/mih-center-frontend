@@ -47,11 +47,14 @@ function TRSAttdMgr() {
   const [subTopicFilter, setSubTopicFilter] = useState([]);
   const [attdList, setAttdList] = useState([]);
   const [attdFilter, setAttdFilter] = useState([]);
+  const [attdByTopicList, setAttdByTopicList] = useState([]);
+  const [isDup, setIsDup] = useState(false);
 
   const [selTopicRes, setSelTopicRes] = useState('');
   const [selTopicName, setSelTopicName] = useState('');
   const [selSubTopicRes, setSelSubTopicRes] = useState('');
   const [selSubTopicName, setSelSubTopicName] = useState('');
+  const [isFull, setIsFull] = useState(false);
 
   const [openAttdDel, setOpenAttdDel] = useState(false);
   const [openAttdAdd, setOpenAttdAdd] = useState(false);
@@ -216,7 +219,23 @@ function TRSAttdMgr() {
   }, []);
 
   useEffect(() => {
-    disBtn = false;
+    if (attdFilter.length !== 0) {
+      disBtn = false;
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getattdbytopic/${selTopicRes}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setAttdByTopicList(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
   }, [attdFilter]);
 
   async function refreshTable() {
@@ -226,6 +245,9 @@ function TRSAttdMgr() {
     setSelSubTopicName('');
     setSubTopicFilter([]);
     setAttdFilter([]);
+    setAttdByTopicList([]);
+    setIsFull(false);
+    setIsDup(false);
 
     disBtn = true;
 
@@ -316,6 +338,7 @@ function TRSAttdMgr() {
         }}
         topic={focusTopic}
         psnList={psnList}
+        attdByTopicList={attdByTopicList}
         rToken={rToken}
       />
 
@@ -385,7 +408,19 @@ function TRSAttdMgr() {
                         selectionModel={selTopicRes}
                         onSelectionModelChange={(newSelectionModel) => {
                           setSelSubTopicRes(newSelectionModel[0]);
-                          setSelSubTopicName(subTopicList.find((data) => data.id === newSelectionModel[0])?.name);
+                          setSelSubTopicName(
+                            subTopicList.find(
+                              (data) => data.id === newSelectionModel[0] && data.topic_id === selTopicRes
+                            )?.name
+                          );
+                          setIsFull(
+                            subTopicList.find(
+                              (data) =>
+                                data.id === newSelectionModel[0] &&
+                                data.topic_id === selTopicRes &&
+                                data.attd < data.lmt
+                            ) === undefined
+                          );
                           setAttdFilter(
                             attdList.filter(
                               (data) => data.topic_id === selTopicRes && data.sub_id === newSelectionModel[0]
@@ -440,10 +475,10 @@ function TRSAttdMgr() {
                     variant="contained"
                     color="success"
                     fullWidth
+                    // disabled={disBtn || isFull}
                     disabled={disBtn}
                     onClick={() => {
                       setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
-                      // console.log(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
                       setOpenAttdAdd(true);
                     }}
                   >

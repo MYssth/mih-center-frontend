@@ -184,8 +184,14 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
                 </li> */}
 
         {DSMS}
-        {PMS}
         {TRS}
+        <li className="nav-item">
+          <a className="nav-link collapsed" href="https://mail.mukinter.com/interface/root#/login">
+            <i className="bi bi-envelope" />
+            <span>ระบบอีเมลบริษัท</span>
+          </a>
+        </li>
+        {PMS}
         <li className="nav-heading">เอกสารเผยแพร่</li>
         <li className="nav-item">
           {/* <a className="nav-link collapsed" href="mihdocuments/announce.html"> */}

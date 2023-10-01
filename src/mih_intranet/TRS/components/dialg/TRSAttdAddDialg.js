@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,16 +8,45 @@ import {
   Button,
   Autocomplete,
   TextField,
+  Typography,
 } from '@mui/material';
 import { SubmtERR } from '../../../components/dialogs/response';
 
-function TRSAttdAddDialg({ openDialg, onCloseDialg, topic, psnList, rToken }) {
+function TRSAttdAddDialg({ openDialg, onCloseDialg, topic, psnList, attdByTopicList, rToken }) {
   const [submitERR, setSubmitERR] = useState(false);
 
   const [psnId, setPsnId] = useState('');
   const [psnName, setPsnName] = useState('');
+  const [dupData, setDupData] = useState('');
+
+  useEffect(() => {
+    setDupData(attdByTopicList.find((data) => data.psn_id === psnId));
+  }, [psnId]);
 
   const handleTopicAttd = () => {
+    if (dupData !== undefined) {
+      fetch(
+        `${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/topicattddel/${dupData.topic_id}/${dupData.sub_id}/${dupData.psn_id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status !== 'ok') {
+            setSubmitERR(true);
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          setSubmitERR(true);
+        });
+    }
+
     const jsonData = {
       topic_id: topic?.topic_id,
       sub_id: topic?.sub_id,
@@ -37,6 +66,8 @@ function TRSAttdAddDialg({ openDialg, onCloseDialg, topic, psnList, rToken }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'ok') {
+          setPsnId('');
+          setPsnName('');
           onCloseDialg();
         } else {
           setSubmitERR(true);
@@ -64,8 +95,9 @@ function TRSAttdAddDialg({ openDialg, onCloseDialg, topic, psnList, rToken }) {
           <DialogContentText>
             กรุณาเลือกบุคคลที่ต้องการเพิ่มในกิจกรรม {topic?.topic_name} {topic?.name}
             <Autocomplete
-
-              options={Object.values(psnList).map((option) => `${option.psn_id} ${option.pname}${option.fname} ${option.lname}`)}
+              options={Object.values(psnList).map(
+                (option) => `${option.psn_id} ${option.pname}${option.fname} ${option.lname}`
+              )}
               fullWidth
               value={psnName}
               onChange={(event, newValue) => {
@@ -83,8 +115,16 @@ function TRSAttdAddDialg({ openDialg, onCloseDialg, topic, psnList, rToken }) {
                     borderColor: psnId ? 'green' : 'red',
                   },
                 },
+                mt: 1,
               }}
             />
+            {dupData === undefined ? (
+              ''
+            ) : (
+              <Typography color={'error'} sx={{ mt: 1 }}>
+                ชื่อนี้มีลงชื่อแล้วใน {dupData.name} ต้องการย้ายมาที่ {topic?.name} หรือไม่
+              </Typography>
+            )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

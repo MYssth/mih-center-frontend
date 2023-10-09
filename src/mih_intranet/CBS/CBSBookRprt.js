@@ -7,10 +7,11 @@ import jwtDecode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Stack, Typography, TextField, Button, alpha, styled, Box } from '@mui/material';
+import { Stack, Typography, TextField, Button, alpha, styled, Box, Checkbox, Grid } from '@mui/material';
 import MainHeader from '../components/MainHeader';
 import CBSSidebar from './components/nav/CBSSidebar';
 import reportPDF from './components/pdf';
+import CBSSchedListExcel from './components/excelgen/CBSSchedListExcel';
 
 const dateFns = require('date-fns');
 
@@ -49,8 +50,9 @@ function CBSBookRprt() {
   const [toDate, setToDate] = useState(new Date());
   const [allSched, setAllSched] = useState([]);
   const [filterSched, setFilterSched] = useState([]);
+  const [tempSched, setTempSched] = useState([]);
 
-  // const [isIncomplete, setIsincomplete] = useState(false);
+  const [isNoCancel, setIsNoCancel] = useState(false);
   // const [mode, setMode] = useState("");
 
   const [pageSize, setPageSize] = useState(25);
@@ -63,30 +65,58 @@ function CBSBookRprt() {
 
     for (let i = 0; i < token.lv_list.length; i += 1) {
       if (token.lv_list[i].mihapp_id === 'CBS') {
-        console.log(token.lv_list[i].view_id);
+        // console.log(token.lv_list[i]);
         // to be change to hims database
-        fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydeptid/${token.lv_list[i].view_id}/${token.psn_id}`,
-          {
+        if (
+          token.lv_list[i].lv_id === 'CBS_MGR' ||
+          token.lv_list[i].lv_id === 'CBS_RCV' ||
+          token.lv_list[i].lv_id === 'CBS_ADMIN'
+        ) {
+          fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getallsched`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${rToken}`,
             },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            setAllSched(data);
-            setFilterSched(data);
           })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
+            .then((response) => response.json())
+            .then((data) => {
+              setAllSched(data);
+              setFilterSched(data);
+              setTempSched(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            });
+        } else {
+          fetch(
+            `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydeptid/${token.lv_list[i].view_id}/${token.psn_id}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${rToken}`,
+              },
             }
-          });
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              setAllSched(data);
+              setFilterSched(data);
+              setTempSched(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            });
+        }
         break;
       }
     }
@@ -96,13 +126,32 @@ function CBSBookRprt() {
     };
   }, []);
 
+  const handleNoCancel = (event) => {
+    setIsNoCancel(event.target.checked);
+    if (event.target.checked) {
+      setFilterSched(tempSched.filter((data) => data.status_id !== 0));
+    } else {
+      setFilterSched(tempSched);
+    }
+  };
+
   const handleFindSchedId = () => {
+    setIsNoCancel(false);
     setFilterSched(allSched.filter((dt) => dt.id.includes(document.getElementById('schedId').value)));
+    setTempSched(allSched.filter((dt) => dt.id.includes(document.getElementById('schedId').value)));
   };
 
   const handleFindDate = () => {
+    setIsNoCancel(false);
     const tmpFromDate = dateFns.format(fromDate, 'yyyy-MM-dd');
     setFilterSched(
+      allSched.filter(
+        (dt) =>
+          dt.req_date >= tmpFromDate &&
+          dt.req_date <= dateFns.format(dateFns.addDays(new Date(toDate), 1), 'yyyy-MM-dd')
+      )
+    );
+    setTempSched(
       allSched.filter(
         (dt) =>
           dt.req_date >= tmpFromDate &&
@@ -183,6 +232,12 @@ function CBSBookRprt() {
     {
       field: 'dept_name',
       headerName: 'แผนกที่ขอ',
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: 'fac_name',
+      headerName: 'ฝ่ายที่ขอ',
       flex: 1,
       minWidth: 100,
     },
@@ -432,52 +487,72 @@ function CBSBookRprt() {
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-body pt-3">
-                    <Stack direction="row" spacing={10} sx={{ width: 'auto' }}>
-                      <Box>
-                        <Typography variant="h5">ค้นหาตามเลขที่เอกสาร</Typography>
-                        <Stack direction="row" spacing={1}>
-                          <TextField id="schedId" name="schedId" label="เลขที่เอกสาร" />
-                          <Button variant="contained" sx={{ width: 100 }} onClick={handleFindSchedId}>
-                            ค้นหา
-                          </Button>
-                        </Stack>
-                      </Box>
-                      <Box>
-                        <Typography variant="h5">ค้นหาตามวันเวลาที่แจ้งขอใช้รถ</Typography>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    {/* <Stack direction="row" spacing={10} sx={{ width: 'auto' }}> */}
+                    <Grid container>
+                      <Grid item sm={12} md={4}>
+                        <Box sx={{mb:1}}>
+                          <Typography variant="h5">ค้นหาตามเลขที่เอกสาร</Typography>
                           <Stack direction="row" spacing={1}>
-                            <DatePicker
-                              disableFuture
-                              format="dd-MM-yyyy"
-                              maxDate={toDate}
-                              label="จากวันที่"
-                              value={fromDate}
-                              onChange={(newValue) => {
-                                setFromDate(newValue);
-                              }}
-                              renderInput={(params) => <TextField {...params} />}
-                            />
-                            <DatePicker
-                              disableFuture
-                              format="dd-MM-yyyy"
-                              minDate={fromDate}
-                              label="ถึงวันที่"
-                              value={toDate}
-                              onChange={(newValue) => {
-                                setToDate(newValue);
-                              }}
-                              renderInput={(params) => <TextField {...params} />}
-                            />
-                            <Button variant="contained" onClick={handleFindDate} sx={{ width: 100 }}>
+                            <TextField id="schedId" name="schedId" label="เลขที่เอกสาร" />
+                            <Button variant="contained" sx={{ width: 100 }} onClick={handleFindSchedId}>
                               ค้นหา
                             </Button>
                           </Stack>
-                        </LocalizationProvider>
-                      </Box>
-                    </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item sm={12} md={8}>
+                        <Box>
+                          <Typography variant="h5" sx={{mb:1}}>ค้นหาตามวันเวลาที่แจ้งขอใช้รถ</Typography>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <Stack direction="row" spacing={1}>
+                              <DatePicker
+                                disableFuture
+                                format="dd-MM-yyyy"
+                                maxDate={toDate}
+                                label="จากวันที่"
+                                value={fromDate}
+                                onChange={(newValue) => {
+                                  setFromDate(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                              />
+                              <DatePicker
+                                disableFuture
+                                format="dd-MM-yyyy"
+                                minDate={fromDate}
+                                label="ถึงวันที่"
+                                value={toDate}
+                                onChange={(newValue) => {
+                                  setToDate(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                              />
+                              <Button variant="contained" onClick={handleFindDate} sx={{ width: 100 }}>
+                                ค้นหา
+                              </Button>
+                            </Stack>
+                          </LocalizationProvider>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                    {/* </Stack> */}
                     <br />
                     <Stack spacing={2} sx={{ width: 'auto' }}>
-                      <Typography variant="h5">รายการงานขอใช้รถ</Typography>
+                      <Grid container>
+                        <Grid item sm={12} md={9.5}>
+                          <Typography variant="h5">รายการงานขอใช้รถ</Typography>
+                        </Grid>
+                        <Grid item sm={12} md={2.5}>
+                          <Box>
+                            <Checkbox
+                              checked={isNoCancel}
+                              onChange={handleNoCancel}
+                              sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+                            />
+                            ซ่อนงานที่ยกเลิก
+                          </Box>
+                        </Grid>
+                      </Grid>
                       <div style={{ width: '100%' }}>
                         <StripedDataGrid
                           getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
@@ -518,6 +593,19 @@ function CBSBookRprt() {
                           }}
                         />
                       </div>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        // disabled={selTopicRes==='' || selTopicRes===undefined}
+                        onClick={() => {
+                          CBSSchedListExcel(filterSched, rToken);
+                          // TRSPsnListExcel(attdList.filter((data) => data.topic_id === selTopicRes), selTopicRes, rToken);
+                          //   setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
+                          //   setOpenAttd(true);
+                        }}
+                      >
+                        ดาวน์โหลดรายชื่อผู้เข้าร่วมกิจกรรม
+                      </Button>
                     </Stack>
                   </div>
                 </div>

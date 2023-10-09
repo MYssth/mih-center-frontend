@@ -20,11 +20,14 @@ import {
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import thLocale from 'date-fns/locale/th';
 import { SubmtComp, SubmtERR, SubmtINC } from '../../../../components/dialogs/response';
 import provinceList from '../../../../utils/ProvinceList';
 
+const moment = require('moment');
+
+moment.locale('en');
 let token = '';
 let isBypass = false;
 let rToken = '';
@@ -141,23 +144,25 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
   useEffect(() => {
     if (openDialg) {
-      console.log(data);
+      // console.log(data);
       fetchCarData(data.from_date, data.to_date, data.car_type_id);
 
-      const tmpFrDate = new Date(
-        `${parseInt(new Date(data.from_date).getUTCMonth(), 10) + 1} ${new Date(
-          data.from_date
-        ).getUTCDate()} ${new Date(data.from_date).getUTCFullYear()} ${new Date(
-          data.from_date
-        ).getUTCHours()}:${new Date(data.from_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-      );
-      const tmpToDate = new Date(
-        `${parseInt(new Date(data.to_date).getUTCMonth(), 10) + 1} ${new Date(data.to_date).getUTCDate()} ${new Date(
-          data.to_date
-        ).getUTCFullYear()} ${new Date(data.to_date).getUTCHours()}:${new Date(
-          data.to_date
-        ).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-      );
+      const tmpFrDate = moment.utc(data.from_date);
+      // const tmpFrDate = new Date(
+      //   `${parseInt(new Date(data.from_date).getUTCMonth(), 10) + 1} ${new Date(
+      //     data.from_date
+      //   ).getUTCDate()} ${new Date(data.from_date).getUTCFullYear()} ${new Date(
+      //     data.from_date
+      //   ).getUTCHours()}:${new Date(data.from_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
+      // );
+      const tmpToDate = moment.utc(data.to_date);
+      // const tmpToDate = new Date(
+      //   `${parseInt(new Date(data.to_date).getUTCMonth(), 10) + 1} ${new Date(data.to_date).getUTCDate()} ${new Date(
+      //     data.to_date
+      //   ).getUTCFullYear()} ${new Date(data.to_date).getUTCHours()}:${new Date(
+      //     data.to_date
+      //   ).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
+      // );
       setFromDate(tmpFrDate);
       setFromTime(tmpFrDate);
       setToDate(tmpToDate);
@@ -186,18 +191,20 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   }, [carTypeId]);
 
   useEffect(() => {
-    const tmpFrDate = `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(
-      2,
-      '0'
-    )}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(
-      fromTime?.getMinutes()
-    ).padStart(2, '0')}:00.000Z`;
-    const tmpToDate = `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(
-      2,
-      '0'
-    )}-${String(toDate?.getDate()).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(
-      toTime?.getMinutes()
-    ).padStart(2, '0')}:00.000Z`;
+    const tmpFrDate = `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`;
+    // const tmpFrDate = `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(
+    //   2,
+    //   '0'
+    // )}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(
+    //   fromTime?.getMinutes()
+    // ).padStart(2, '0')}:00.000Z`;
+    const tmpToDate = `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`;
+    // const tmpToDate = `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(
+    //   2,
+    //   '0'
+    // )}-${String(toDate?.getDate()).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(
+    //   toTime?.getMinutes()
+    // ).padStart(2, '0')}:00.000Z`;
     fetchCarData(tmpFrDate, tmpToDate, carTypeId);
   }, [fromDate, fromTime, toDate, toTime]);
 
@@ -238,18 +245,8 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const handleReqPermit = (specReq) => {
     const jsonData = {
       id: id,
-      from_date: `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(
-        2,
-        '0'
-      )}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(
-        fromTime?.getMinutes()
-      ).padStart(2, '0')}:00.000Z`,
-      to_date: `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(2, '0')}-${String(
-        toDate?.getDate()
-      ).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(toTime?.getMinutes()).padStart(
-        2,
-        '0'
-      )}:00.000Z`,
+      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`,
+      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`,
       place: place,
       province: province,
       pax_amt: paxAmt,
@@ -336,18 +333,8 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const handleSavChg = () => {
     const jsonData = {
       id: id,
-      from_date: `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(
-        2,
-        '0'
-      )}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(
-        fromTime?.getMinutes()
-      ).padStart(2, '0')}:00.000Z`,
-      to_date: `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(2, '0')}-${String(
-        toDate?.getDate()
-      ).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(toTime?.getMinutes()).padStart(
-        2,
-        '0'
-      )}:00.000Z`,
+      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`,
+      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`,
       place: place,
       province: province,
       pax_amt: paxAmt,
@@ -446,7 +433,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
             <Grid item md={12}>
               <label className="form-label">วันที่-เวลา</label>
               <br />
-              <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
+              <LocalizationProvider dateAdapter={AdapterMoment} locale={thLocale}>
                 <Stack direction="row" spacing={1}>
                   <DatePicker
                     onAccept={() => {
@@ -458,7 +445,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
                     }}
                     maxDate={toDate}
                     label="เลือกวันที่ไป"
-                    format="dd/MM/yyyy"
+                    format="DD/MM/YYYY"
                     value={fromDate ?? ''}
                     onChange={(newValue) => setFromDate(newValue)}
                     sx={{
@@ -495,7 +482,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
             <Grid item md={12}>
               <label className="form-label">ถึงวันที่-เวลา</label>
               <br />
-              <LocalizationProvider dateAdapter={AdapterDateFns} locale={thLocale}>
+              <LocalizationProvider dateAdapter={AdapterMoment} locale={thLocale}>
                 <Stack direction="row" spacing={1}>
                   <DatePicker
                     open={openToDt}
@@ -510,7 +497,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
                     }}
                     minDate={fromDate}
                     label="เลือกวันที่กลับ"
-                    format="dd/MM/yyyy"
+                    format="DD/MM/YYYY"
                     value={toDate ?? ''}
                     onChange={(newValue) => setToDate(newValue)}
                     sx={{
@@ -732,17 +719,18 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
             {isBypass ? (
               <Button
                 variant="contained"
+                fullWidth
                 onClick={() => handleReqPermit('bypass')}
                 disabled={duplicate && duplicate !== id}
                 className="btn btn-success"
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, mb: 1 }}
               >
                 อนุมัติคำขอใช้รถ
               </Button>
             ) : (
               <></>
             )}
-            <Button variant="contained" onClick={() => handleSavChg()}>
+            <Button variant="contained" fullWidth onClick={() => handleSavChg()}>
               บันทึกข้อมูล
             </Button>
           </Box>

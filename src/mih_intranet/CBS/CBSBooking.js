@@ -680,11 +680,11 @@ function CBSBooking() {
                               onChange={(event) => {
                                 setPaxAmt(event.target.value);
                               }}
-                              // sx={{
-                              //   '& input:valid + fieldset': {
-                              //     borderColor: paxAmt ? 'green' : 'red',
-                              //   },
-                              // }}
+                              sx={{
+                                '& input:valid + fieldset': {
+                                  borderColor: paxAmt ? 'green' : 'red',
+                                },
+                              }}
                             />
                           </Grid>
                           <Grid item md={4} xs={12}>

@@ -558,6 +558,7 @@ function CBSMergeBook() {
   const [driverName, setDriverName] = useState('ไม่ระบุ');
 
   const [placeList, setPlaceList] = useState([]);
+  const [noti, setNoti] = useState(false);
 
   // ************* Add State *******************
 
@@ -819,11 +820,18 @@ function CBSMergeBook() {
       <Helmet>
         <title> ระบบบริหารจัดการยานพาหนะ | MIH Center </title>
       </Helmet>
-      <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
+      <SubmtERR
+        openDialg={submitERR}
+        onCloseDialg={() => {
+          setSubmitERR(false);
+          setNoti(!noti);
+        }}
+      />
       <SubmtComp
         openDialg={submitComp}
         onCloseDialg={() => {
           setSubmitComp(false);
+          setNoti(!noti);
           refreshTable();
         }}
       />
@@ -831,6 +839,7 @@ function CBSMergeBook() {
         openDialg={delGrpSchedSubmDialg}
         onCloseDialg={() => {
           setDelGrpSchedSubmDialg(false);
+          setNoti(!noti);
           refreshTable();
         }}
         data={delData}
@@ -838,7 +847,7 @@ function CBSMergeBook() {
 
       <div>
         <MainHeader onOpenNav={() => setOpen(true)} />
-        <CBSSidebar name="mergeBook" openNav={open} onCloseNav={() => setOpen(false)} />
+        <CBSSidebar name="mergeBook" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
         {/* <!-- ======= Main ======= --> */}
         <main id="main" className="main">

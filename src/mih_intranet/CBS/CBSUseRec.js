@@ -51,6 +51,7 @@ function CBSUseRec() {
 
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [focusTask, setFocusTask] = useState('');
+  const [noti, setNoti] = useState(false);
 
   const columns = [
     {
@@ -219,19 +220,27 @@ function CBSUseRec() {
       </Helmet>
 
       <div>
-        <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+        <CBSTaskDetail
+          openDialg={openTaskDetail}
+          onCloseDialg={() => {
+            setOpenTaskDetail(false);
+            setNoti(!noti);
+          }}
+          data={focusTask}
+        />
 
         <CBSUseRecDialg
           openDialg={useRecDialg}
           onCloseDialg={() => {
             setUseRecDialg(false);
+            setNoti(!noti);
             refreshTable();
           }}
           data={useRecData}
         />
 
         <MainHeader onOpenNav={() => setOpen(true)} />
-        <CBSSidebar name="userec" openNav={open} onCloseNav={() => setOpen(false)} />
+        <CBSSidebar name="userec" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
         {/* <!-- ======= Main ======= --> */}
         <main id="main" className="main">
           <div className="pagetitle">

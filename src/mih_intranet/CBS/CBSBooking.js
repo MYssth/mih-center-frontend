@@ -223,6 +223,8 @@ function CBSBooking() {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [focusTask, setFocusTask] = useState('');
 
+  const [noti, setNoti] = useState(false);
+
   useEffect(() => {
     token = jwtDecode(localStorage.getItem('token'));
 
@@ -473,22 +475,36 @@ function CBSBooking() {
           openDialg={denyDialg}
           onCloseDialg={() => {
             setDenyDialg(false);
+            setNoti(!noti);
             refreshTable();
           }}
           data={denyData}
         />
-        <SubmtINC openDialg={submitINC} onCloseDialg={() => setSubmitINC(false)} />
-        <SubmtERR openDialg={submitERR} onCloseDialg={() => setSubmitERR(false)} />
+        <SubmtINC
+          openDialg={submitINC}
+          onCloseDialg={() => {
+            setSubmitINC(false);
+            setNoti(!noti);
+          }}
+        />
+        <SubmtERR
+          openDialg={submitERR}
+          onCloseDialg={() => {
+            setSubmitERR(false);
+            setNoti(!noti);
+          }}
+        />
         <SubmtComp
           openDialg={submitComp}
           onCloseDialg={() => {
             setSubmitComp(false);
+            setNoti(!noti);
             navigate('/cbsdashboard', { replace: true });
           }}
         />
 
         <MainHeader onOpenNav={() => setOpen(true)} />
-        <CBSSidebar name="booking" openNav={open} onCloseNav={() => setOpen(false)} />
+        <CBSSidebar name="booking" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
         {/* <!-- ======= Main ======= --> */}
         <main id="main" className="main">

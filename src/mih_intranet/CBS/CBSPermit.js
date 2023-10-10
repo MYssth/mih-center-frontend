@@ -172,6 +172,7 @@ function CBSPermit() {
   const [permitData, setPermitData] = useState([]);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [focusTask, setFocusTask] = useState('');
+  const [noti, setNoti] = useState(false);
 
   useEffect(() => {
     refreshTable();
@@ -205,12 +206,20 @@ function CBSPermit() {
       </Helmet>
 
       <div>
-        <CBSTaskDetail openDialg={openTaskDetail} onCloseDialg={() => setOpenTaskDetail(false)} data={focusTask} />
+        <CBSTaskDetail
+          openDialg={openTaskDetail}
+          onCloseDialg={() => {
+            setOpenTaskDetail(false);
+            setNoti(!noti);
+          }}
+          data={focusTask}
+        />
 
         <CBSDenyDialg
           openDialg={denyDialg}
           onCloseDialg={() => {
             setDenyDialg(false);
+            setNoti(!noti);
             refreshTable();
           }}
           data={permitData}
@@ -220,13 +229,14 @@ function CBSPermit() {
           openDialg={permitDialg}
           onCloseDialg={() => {
             setPermitDialg(false);
+            setNoti(!noti);
             refreshTable();
           }}
           data={permitData}
         />
 
         <MainHeader onOpenNav={() => setOpen(true)} />
-        <CBSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} />
+        <CBSSidebar name="permit" openNav={open} onCloseNav={() => setOpen(false)} notiTrigger={noti} />
 
         {/* <!-- ======= Main ======= --> */}
         <main id="main" className="main">

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Drawer } from '@mui/material';
 
 import useResponsive from '../../../../hooks/useResponsive';
+// import '../../css/index.css';
 
 CBSSidebar.propTypes = {
   openNav: PropTypes.bool,
@@ -14,16 +15,20 @@ CBSSidebar.propTypes = {
 
 const NAV_WIDTH = 280;
 
-export default function CBSSidebar({ name, openNav, onCloseNav }) {
+export default function CBSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
 
   const [tokenData, setTokenData] = useState([]);
+  const [noti, setNoti] = useState('');
 
   useEffect(() => {
     const token = jwtDecode(localStorage.getItem('token'));
     // setTokenData(token);
+
+    notiTrigger = '';
+    refreshNoti();
 
     setTokenData(token.lv_list.find((o) => o.mihapp_id === 'CBS').lv_id);
 
@@ -32,6 +37,33 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  useEffect(() => {
+    refreshNoti();
+  }, [notiTrigger]);
+
+  function refreshNoti() {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getnoti`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // noti = data;
+        setNoti(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') {
+          console.log('cancelled');
+        } else {
+          console.error('Error:', error);
+        }
+      });
+  }
 
   const mainMenu = (
     <>
@@ -70,11 +102,27 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
         <a className="nav-link" href="#">
           <i className="bi bi-journal-text" />
           <span>จัดการคำขอใช้รถ</span>
+          &nbsp;
+          {noti?.permitReq ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.permitReq}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       ) : (
         <a className="nav-link collapsed" href="/cbspermitreq">
           <i className="bi bi-journal-text" />
           <span>จัดการคำขอใช้รถ</span>
+          &nbsp;
+          {noti?.permitReq ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.permitReq}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       )}
     </li>
@@ -102,11 +150,27 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
         <a className="nav-link" href="#">
           <i className="bi bi-journal-check" />
           <span>อนุมัติคำขอใช้รถ</span>
+          &nbsp;
+          {noti?.permit ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.permit}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       ) : (
         <a className="nav-link collapsed" href="/cbspermit">
           <i className="bi bi-journal-check" />
           <span>อนุมัติคำขอใช้รถ</span>
+          &nbsp;
+          {noti?.permit ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.permit}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       )}
     </li>
@@ -118,11 +182,27 @@ export default function CBSSidebar({ name, openNav, onCloseNav }) {
         <a className="nav-link" href="#">
           <i className="bi bi-pencil-square" />
           <span>บันทึกการใช้รถ</span>
+          &nbsp;
+          {noti?.useRec ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.useRec}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       ) : (
         <a className="nav-link collapsed" href="/cbsuserec">
           <i className="bi bi-pencil-square" />
           <span>บันทึกการใช้รถ</span>
+          &nbsp;
+          {noti?.useRec ? (
+            <div className="circle" style={{ background: 'red', color: 'white' }}>
+              {noti.useRec}
+            </div>
+          ) : (
+            ''
+          )}
         </a>
       )}
     </li>

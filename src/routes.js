@@ -4,6 +4,8 @@ import SimpleLayout from './layouts/simple';
 import LoginPage from './mih_intranet/LoginPage';
 import Page404 from './mih_intranet/Page404';
 
+import ProtectedRoutes from './ProtectedRoutes';
+
 // DSMS
 import DSMSDashboard from './mih_intranet/DSMS/DSMSDashboard';
 import DSMSBookShift from './mih_intranet/DSMS/DSMSBookShift';
@@ -44,6 +46,9 @@ import TRSReport from './mih_intranet/TRS/TRSReport';
 
 export default function Router() {
   const routes = useRoutes([
+    {
+      element: <ProtectedRoutes />,
+    },
     {
       path: '/login',
       element: <LoginPage />,

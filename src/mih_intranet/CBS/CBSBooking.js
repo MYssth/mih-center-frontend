@@ -21,6 +21,10 @@ import provinceList from '../utils/ProvinceList';
 import { CBSDenyDialg } from './components/dialogs/forms';
 import { CBSTaskDetail } from './components/dialogs/taskdetails';
 
+const moment = require('moment');
+
+moment.locale('en');
+
 let token = '';
 const rToken = localStorage.getItem('token');
 
@@ -182,6 +186,7 @@ function CBSBooking() {
   const [submitINC, setSubmitINC] = useState(false);
   const [submitERR, setSubmitERR] = useState(false);
   const [submitComp, setSubmitComp] = useState(false);
+  const [msg, setMsg] = useState('');
 
   const [dept, setDept] = useState([]);
   const [deptId, setDeptId] = useState('');
@@ -205,6 +210,8 @@ function CBSBooking() {
   const [paxAmt, setPaxAmt] = useState('');
   const [telNo, setTelNo] = useState('');
   const [detail, setDetail] = useState('');
+  const [note, setNote] = useState('');
+  const [isReqNote, setIsReqNote] = useState(false);
 
   const [car, setCar] = useState([]);
   const [filteredCar, setFilteredCar] = useState([]);
@@ -426,17 +433,46 @@ function CBSBooking() {
       car_type_name: carTypeName,
       car_id: carId,
       car_name: carName,
+      note: note,
     };
 
-    if (
-      jsonData.from_date === null ||
-      jsonData.to_date === null ||
-      jsonData.place === '' ||
-      jsonData.province === '' ||
-      jsonData.pax_amt === '' ||
-      jsonData.detail === '' ||
-      jsonData.dept_id === ''
-    ) {
+    if (jsonData.from_date === null) {
+      setMsg('กรุณากรอกวันที่ไปให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.to_date === null) {
+      setMsg('กรุณากรอกวันที่กลับให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.place === '') {
+      setMsg('กรุณากรอกสถานที่ให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.province === '') {
+      setMsg('กรุณากรอกจังหวัดให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.pax_amt === '') {
+      setMsg('กรุณากรอกจำนวนผู้โดยสารให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.detail === '') {
+      setMsg('กรุณากรอกรายละเอียดให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.dept_id === '') {
+      setMsg('กรุณากรอกแผนกให้ถูกต้อง');
+      setSubmitINC(true);
+      return;
+    }
+    if (jsonData.note === '' && isReqNote) {
+      setMsg('กรุณากรอกหมายเหตุให้ถูกต้อง');
       setSubmitINC(true);
       return;
     }
@@ -487,7 +523,9 @@ function CBSBooking() {
           onCloseDialg={() => {
             setSubmitINC(false);
             setNoti(!noti);
+            setMsg('');
           }}
+          msg={msg}
         />
         <SubmtERR
           openDialg={submitERR}
@@ -545,8 +583,9 @@ function CBSBooking() {
                     </ul>
                     <div className="tab-content pt-3">
                       <div className="tab-pane fade show active profile-overview pt-2" id="carbooking-form">
-                        <h5 className="card-title">แบบฟอร์มขอใช้รถ</h5>
-
+                        <h5 className="card-title">
+                          แบบฟอร์มขอใช้รถ<Typography color={'error'}>*กรุณาขอใช้รถล่วงหน้า 2 ชม.*</Typography>
+                        </h5>
                         <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 2 }}>
                           <Grid item xs={12} md={4}>
                             <label className="form-label">แผนก</label>
@@ -619,6 +658,10 @@ function CBSBooking() {
                                   // minutesStep="15"
                                   value={fromTime}
                                   onChange={(newValue) => {
+                                    if (isReqNote !== moment().add(30, 'minutes') > newValue) {
+                                      setNote('');
+                                    }
+                                    setIsReqNote(moment().add(30, 'minutes') > newValue);
                                     setFromTime(newValue);
                                     setCarId(0);
                                     setCarName('ไม่ระบุ');
@@ -687,6 +730,28 @@ function CBSBooking() {
                             <div className="invalid-feedback">กรุณาระบุวันที่-เวลา</div>
                           </Grid>
                           <Grid item xs={0} md={4} />
+                          <Grid item xs={12}>
+                            {isReqNote ? (
+                              <Typography>หมายเหตุ *กรุณาระบุหมายเหตุกรณีขอใช้รถล่วงหน้าน้อยกว่า 30 นาที*</Typography>
+                            ) : (
+                              <Typography>หมายเหตุ</Typography>
+                            )}
+                            <TextField
+                              label="หมายเหตุ"
+                              fullWidth
+                              value={note}
+                              onChange={(event) => {
+                                setNote(event.target.value);
+                              }}
+                              sx={{
+                                '& input:valid + fieldset': {
+                                  // borderColor: note ? 'green' : 'red',
+                                  borderColor: isReqNote ? (note ? 'green' : 'red') : 'grey',
+                                },
+                                mt: 1,
+                              }}
+                            />
+                          </Grid>
                           <Grid item md={2} xs={12}>
                             <label className="form-label">จำนวนผู้โดยสาร</label>
                             <br />

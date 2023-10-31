@@ -583,6 +583,19 @@ function CBSBookRprt() {
                           </Box>
                         </Grid>
                       </Grid>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        // disabled={selTopicRes==='' || selTopicRes===undefined}
+                        onClick={() => {
+                          CBSSchedListExcel(filterSched, rToken);
+                          // TRSPsnListExcel(attdList.filter((data) => data.topic_id === selTopicRes), selTopicRes, rToken);
+                          //   setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
+                          //   setOpenAttd(true);
+                        }}
+                      >
+                        ดาวน์โหลดรายงานขอใช้รถ
+                      </Button>
                       <div style={{ width: '100%' }}>
                         <StripedDataGrid
                           getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
@@ -623,19 +636,6 @@ function CBSBookRprt() {
                           }}
                         />
                       </div>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        // disabled={selTopicRes==='' || selTopicRes===undefined}
-                        onClick={() => {
-                          CBSSchedListExcel(filterSched, rToken);
-                          // TRSPsnListExcel(attdList.filter((data) => data.topic_id === selTopicRes), selTopicRes, rToken);
-                          //   setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
-                          //   setOpenAttd(true);
-                        }}
-                      >
-                        ดาวน์โหลดรายงานขอใช้รถ
-                      </Button>
                     </Stack>
                   </div>
                 </div>

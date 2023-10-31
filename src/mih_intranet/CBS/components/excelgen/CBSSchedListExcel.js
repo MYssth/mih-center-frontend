@@ -23,9 +23,11 @@ export default async function CBSSchedListExcel(data, rToken) {
   worksheet.getColumn('M').width = 12;
   worksheet.getColumn('N').width = 6;
   worksheet.getColumn('O').width = 23;
-  worksheet.getColumn('P').width = 15;
+  worksheet.getColumn('P').width = 23;
   worksheet.getColumn('Q').width = 15;
-  worksheet.getColumn('R').width = 12;
+  worksheet.getColumn('R').width = 15;
+  worksheet.getColumn('S').width = 12;
+  worksheet.getColumn('T').width = 23;
 
   worksheet.getCell('A1').value = 'รายงานขอใช้รถโรงพยาบาลมุกดาหารอินเตอร์เนชั่นแนล';
   worksheet.getCell('A1').font = {
@@ -33,7 +35,7 @@ export default async function CBSSchedListExcel(data, rToken) {
     size: 20,
     bold: true,
   };
-  worksheet.mergeCells('A1:R1');
+  worksheet.mergeCells('A1:T1');
   worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
   let row = 3;
@@ -128,20 +130,30 @@ export default async function CBSSchedListExcel(data, rToken) {
   worksheet.getCell(`O${row}`).font = HFont;
   worksheet.getCell(`O${row}`).border = border;
 
-  worksheet.getCell(`P${row}`).value = 'เลขไมล์ก่อนออก';
+  worksheet.getCell(`P${row}`).value = 'ชื่อผู้อนุมัติขอใช้รถ';
   worksheet.getCell(`P${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
   worksheet.getCell(`P${row}`).font = HFont;
   worksheet.getCell(`P${row}`).border = border;
 
-  worksheet.getCell(`Q${row}`).value = 'เลขไมล์หลังออก';
+  worksheet.getCell(`Q${row}`).value = 'เลขไมล์ก่อนออก';
   worksheet.getCell(`Q${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
   worksheet.getCell(`Q${row}`).font = HFont;
   worksheet.getCell(`Q${row}`).border = border;
 
-  worksheet.getCell(`R${row}`).value = 'สถานะ';
+  worksheet.getCell(`R${row}`).value = 'เลขไมล์หลังออก';
   worksheet.getCell(`R${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
   worksheet.getCell(`R${row}`).font = HFont;
   worksheet.getCell(`R${row}`).border = border;
+
+  worksheet.getCell(`S${row}`).value = 'สถานะ';
+  worksheet.getCell(`S${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  worksheet.getCell(`S${row}`).font = HFont;
+  worksheet.getCell(`S${row}`).border = border;
+
+  worksheet.getCell(`T${row}`).value = 'หมายเหตุ';
+  worksheet.getCell(`T${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  worksheet.getCell(`T${row}`).font = HFont;
+  worksheet.getCell(`T${row}`).border = border;
 
   row += 1;
 
@@ -214,19 +226,27 @@ export default async function CBSSchedListExcel(data, rToken) {
       worksheet.getCell(`O${row}`).font = NFont;
       worksheet.getCell(`O${row}`).border = border;
 
-      worksheet.getCell(`P${row}`).value = data[i].dep_mi ?? '-';
-      worksheet.getCell(`P${row}`).alignment = { horizontal: 'right' };
+      worksheet.getCell(`P${row}`).value = data[i].permit_name ?? '-';
       worksheet.getCell(`P${row}`).font = NFont;
       worksheet.getCell(`P${row}`).border = border;
 
-      worksheet.getCell(`Q${row}`).value = data[i].arr_mi ?? '-';
+      worksheet.getCell(`Q${row}`).value = data[i].dep_mi ?? '-';
       worksheet.getCell(`Q${row}`).alignment = { horizontal: 'right' };
       worksheet.getCell(`Q${row}`).font = NFont;
       worksheet.getCell(`Q${row}`).border = border;
 
-      worksheet.getCell(`R${row}`).value = data[i].status_name;
+      worksheet.getCell(`R${row}`).value = data[i].arr_mi ?? '-';
+      worksheet.getCell(`R${row}`).alignment = { horizontal: 'right' };
       worksheet.getCell(`R${row}`).font = NFont;
       worksheet.getCell(`R${row}`).border = border;
+
+      worksheet.getCell(`S${row}`).value = data[i].status_name;
+      worksheet.getCell(`S${row}`).font = NFont;
+      worksheet.getCell(`S${row}`).border = border;
+
+      worksheet.getCell(`T${row}`).value = data[i].note;
+      worksheet.getCell(`T${row}`).font = NFont;
+      worksheet.getCell(`T${row}`).border = border;
 
       row += 1;
     }

@@ -73,73 +73,75 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const [submitComp, setSubmitComp] = useState(false);
 
   useEffect(() => {
-    token = jwtDecode(localStorage.getItem('token'));
-    rToken = localStorage.getItem('token');
+    if (localStorage.getItem('token') !== null) {
+      token = jwtDecode(localStorage.getItem('token'));
+      rToken = localStorage.getItem('token');
 
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'CBS') {
-        if (token.lv_list[i].lv_id === 'CBS_MGR' || token.lv_list[i].lv_id === 'CBS_ADMIN') {
-          isBypass = true;
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'CBS') {
+          if (token.lv_list[i].lv_id === 'CBS_MGR' || token.lv_list[i].lv_id === 'CBS_ADMIN') {
+            isBypass = true;
+          }
         }
       }
+
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDept(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setCarType(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setDriver(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
     }
-
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDept(data);
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
-
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCarType(data);
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
-
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDriver(data);
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
   }, []);
 
   useEffect(() => {

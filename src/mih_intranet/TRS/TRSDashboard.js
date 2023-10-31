@@ -45,7 +45,7 @@ function TRSDashboard() {
 
   const [attdList, setAttdList] = useState('');
 
-  const rToken = localStorage.getItem('token');
+  let rToken = '';
 
   const columns = [
     {
@@ -102,24 +102,27 @@ function TRSDashboard() {
   ];
 
   useEffect(() => {
-    psnId = jwtDecode(localStorage.getItem('token')).psn_id;
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      psnId = jwtDecode(localStorage.getItem('token')).psn_id;
 
-    refreshTable();
+      refreshTable();
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getversion`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setVersion(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getversion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setVersion(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
   }, []);
 
   const refreshTable = () => {

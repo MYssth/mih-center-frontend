@@ -36,6 +36,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
+let rToken = '';
+
 function PMSUserMgr() {
   const [open, setOpen] = useState(null);
   const [personnel, setPersonnel] = useState([]);
@@ -48,8 +50,6 @@ function PMSUserMgr() {
   const [pageSize, setPageSize] = useState(25);
   const [version, setVersion] = useState('');
   const [himsVersion, setHimsVersion] = useState('');
-
-  const rToken = localStorage.getItem('token');
 
   const columns = [
     {
@@ -119,67 +119,70 @@ function PMSUserMgr() {
   ];
 
   useEffect(() => {
-    refreshTable();
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      refreshTable();
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getlevels`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setLevels(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getlevels`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setLevels(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getlevelviews`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setLevelViews(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getlevelviews`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setLevelViews(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getversion`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setVersion(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getversion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setVersion(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getversion`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setHimsVersion(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getversion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setHimsVersion(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
   }, []);
 
   const refreshTable = () => {

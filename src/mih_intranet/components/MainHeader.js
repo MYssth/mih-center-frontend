@@ -12,9 +12,11 @@ export default function MainHeader({ onOpenNav }) {
   const [tokenData, setTokenData] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token !== null) {
-      setTokenData(jwtDecode(token));
+    if (localStorage.getItem('token') !== null) {
+      const token = localStorage.getItem('token');
+      if (token !== null) {
+        setTokenData(jwtDecode(token));
+      }
     }
   }, []);
 

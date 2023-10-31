@@ -10,7 +10,7 @@ import 'moment/locale/th';
 import MainHeader from '../components/MainHeader';
 import DSMSSidebar from './components/nav/DSMSSidebar';
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 const today = new Date();
 let defaultDate = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -27,63 +27,66 @@ function DSMSDashboard() {
   const [isOnlyOper, setIsOnlyOper] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setTokenData(token ? jwtDecode(token) : '');
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
+      setTokenData(token ? jwtDecode(token) : '');
 
-    const fetchData = async () => {
-      let response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getevent`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      });
-      let data = await response.json();
-      await setAllEventsList(data);
-
-      if (data.length === 0 || data === null) {
-        firstTime = true;
-      }
-
-      response = await fetch(
-        `${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/geteventbypsnid/${jwtDecode(token).psn_id}`,
-        {
+      const fetchData = async () => {
+        let response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getevent`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${rToken}`,
           },
-        }
-      );
-      data = await response.json();
-      if (data.length === 0) {
-        await setOperatorEvent([]);
-      } else {
-        await setOperatorEvent(data);
-      }
-      await setFilteredEvent(data);
-      // console.log(data);
-      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getversion`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setVersion(data);
-        })
-        .catch((error) => {
-          if (error.name === 'AbortError') {
-            console.log('cancelled');
-          } else {
-            console.error('Error:', error);
-          }
         });
-    };
+        let data = await response.json();
+        await setAllEventsList(data);
 
-    fetchData();
+        if (data.length === 0 || data === null) {
+          firstTime = true;
+        }
+
+        response = await fetch(
+          `${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/geteventbypsnid/${jwtDecode(token).psn_id}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${rToken}`,
+            },
+          }
+        );
+        data = await response.json();
+        if (data.length === 0) {
+          await setOperatorEvent([]);
+        } else {
+          await setOperatorEvent(data);
+        }
+        await setFilteredEvent(data);
+        // console.log(data);
+        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getversion`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setVersion(data);
+          })
+          .catch((error) => {
+            if (error.name === 'AbortError') {
+              console.log('cancelled');
+            } else {
+              console.error('Error:', error);
+            }
+          });
+      };
+
+      fetchData();
+    }
   }, []);
 
   const localizer = momentLocalizer(moment);

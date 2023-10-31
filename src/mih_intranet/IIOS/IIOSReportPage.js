@@ -41,7 +41,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSReport() {
   const [open, setOpen] = useState(false);
@@ -61,62 +61,60 @@ function IIOSReport() {
   // const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const token = jwtDecode(localStorage.getItem('token'));
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
 
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'DMIS') {
-        fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getalltasklist/${token.psn_id}/${token.lv_list[i].lv_id}/${token.lv_list[i].view_id}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${rToken}`,
-            },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            setCompleteTaskList(data);
-            setFilterTaskList(data);
-          })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'DMIS') {
+          fetch(
+            `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getalltasklist/${token.psn_id}/${token.lv_list[i].lv_id}/${token.lv_list[i].view_id}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${rToken}`,
+              },
             }
-          });
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              setCompleteTaskList(data);
+              setFilterTaskList(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            });
 
-        fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.psn_id}/${token.lv_list[i].lv_id}/${token.lv_list[i].view_id}/report`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${rToken}`,
-            },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            setTaskList(data);
-          })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
+          fetch(
+            `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.psn_id}/${token.lv_list[i].lv_id}/${token.lv_list[i].view_id}/report`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${rToken}`,
+              },
             }
-          });
-        break;
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              setTaskList(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            });
+          break;
+        }
       }
     }
-
-    return () => {
-      controller.abort();
-    };
   }, []);
 
   const handleFindTaskId = () => {

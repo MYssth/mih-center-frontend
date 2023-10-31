@@ -43,7 +43,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 export default function CBSDashboard() {
   const columns = [
@@ -115,84 +115,87 @@ export default function CBSDashboard() {
   const [showDate, setShowDate] = useState('Today');
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    // setTokenData(token);
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token')
+      const token = jwtDecode(localStorage.getItem('token'));
+      // setTokenData(token);
 
-    setUSRLv(token.lv_list.find((o) => o.mihapp_id === 'CBS').lv_id);
+      setUSRLv(token.lv_list.find((o) => o.mihapp_id === 'CBS').lv_id);
 
-    fetchSched(0);
+      fetchSched(0);
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getstatcntr`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setStatCntr(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getstatcntr`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setStatCntr(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getversion`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setVersion(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getversion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setVersion(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcalendarcntr`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const result = [];
-        for (let i = 0; i < data.length; i += 1) {
-          result.push({
-            id: i,
-            title: '',
-            start: new Date(data[i].date),
-            end: new Date(data[i].date),
-            data: {
-              request: data[i].request,
-              permitRep: data[i].permitRep,
-              permit: data[i].permit,
-              complete: data[i].complete,
-            },
-          });
-        }
-        setEvents(result);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcalendarcntr`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          const result = [];
+          for (let i = 0; i < data.length; i += 1) {
+            result.push({
+              id: i,
+              title: '',
+              start: new Date(data[i].date),
+              end: new Date(data[i].date),
+              data: {
+                request: data[i].request,
+                permitRep: data[i].permitRep,
+                permit: data[i].permit,
+                complete: data[i].complete,
+              },
+            });
+          }
+          setEvents(result);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+    }
   }, []);
 
   function fetchSched(date) {

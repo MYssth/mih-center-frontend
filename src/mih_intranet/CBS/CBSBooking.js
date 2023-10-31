@@ -226,105 +226,107 @@ function CBSBooking() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    token = jwtDecode(localStorage.getItem('token'));
+    if (localStorage.getItem('token') !== null) {
+      token = jwtDecode(localStorage.getItem('token'));
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getpsndatabyid/${token.psn_id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDeptId(data.dept_id);
-        setDeptName(data.dept_name);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getpsndatabyid/${token.psn_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setDeptId(data.dept_id);
+          setDeptName(data.dept_name);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDept(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setDept(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCarType(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcartype`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setCarType(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDriver(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getdriver`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setDriver(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcar`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCar(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getcar`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setCar(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    refreshTable();
+      refreshTable();
+    }
   }, []);
 
   function refreshTable() {

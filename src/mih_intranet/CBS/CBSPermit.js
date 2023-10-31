@@ -36,7 +36,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function CBSPermit() {
   const columns = [
@@ -175,7 +175,10 @@ function CBSPermit() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    refreshTable();
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      refreshTable();
+    }
   }, []);
 
   function refreshTable() {

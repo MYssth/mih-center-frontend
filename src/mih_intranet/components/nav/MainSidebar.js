@@ -25,16 +25,18 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
   const [isCBS, setIsCBS] = useState(false);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'PMS') {
-        setIsPMS(true);
-      } else if (token.lv_list[i].mihapp_id === 'DMIS') {
-        setIsIIOS(true);
-      } else if (token.lv_list[i].mihapp_id === 'DSMS') {
-        setIsDSMS(true);
-      } else if (token.lv_list[i].mihapp_id === 'CBS') {
-        setIsCBS(true);
+    if (localStorage.getItem('token') !== null) {
+      const token = jwtDecode(localStorage.getItem('token'));
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'PMS') {
+          setIsPMS(true);
+        } else if (token.lv_list[i].mihapp_id === 'DMIS') {
+          setIsIIOS(true);
+        } else if (token.lv_list[i].mihapp_id === 'DSMS') {
+          setIsDSMS(true);
+        } else if (token.lv_list[i].mihapp_id === 'CBS') {
+          setIsCBS(true);
+        }
       }
     }
   }, []);
@@ -142,6 +144,17 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
     </>
   );
 
+  const PRPO = (
+    <>
+    <li className="nav-item">
+        <a className="nav-link collapsed" href="/prpodashboard">
+          <i className="bi bi-clipboard-check" />
+          <span>ระบบอนุมัติออนไลน์</span>
+        </a>
+      </li>
+    </>
+  )
+
   const renderContent = (
     <>
       {/* <!-- ======= Sidebar ======= --> */}
@@ -185,6 +198,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
 
         {DSMS}
         {TRS}
+        {PRPO}
         <li className="nav-item">
           <a className="nav-link collapsed" href="https://mail.mukinter.com/interface/root#/login">
             <i className="bi bi-envelope" />

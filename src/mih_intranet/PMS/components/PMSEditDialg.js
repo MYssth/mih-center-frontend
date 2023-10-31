@@ -182,7 +182,7 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
 
   const handleEdit = () => {
     const levelList = [];
-
+    console.log(rToken);
     if (isDMIS) {
       if (DMISLevelId === '') {
         alert('กรุณาเลือกหน้าที่ของระบบแจ้งซ่อม');

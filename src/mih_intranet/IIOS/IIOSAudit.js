@@ -62,7 +62,7 @@ function QuickSearchToolbar() {
 
 let pId = '';
 let viewId = '';
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSAudit() {
   const columns = [
@@ -176,14 +176,17 @@ function IIOSAudit() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    pId = token.psn_id;
-    setAuditId(token.psn_id);
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'DMIS') {
-        viewId = token.lv_list[i].view_id;
-        refreshTable();
-        break;
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
+      pId = token.psn_id;
+      setAuditId(token.psn_id);
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'DMIS') {
+          viewId = token.lv_list[i].view_id;
+          refreshTable();
+          break;
+        }
       }
     }
   }, []);

@@ -4,8 +4,6 @@ import SimpleLayout from './layouts/simple';
 import LoginPage from './mih_intranet/LoginPage';
 import Page404 from './mih_intranet/Page404';
 
-import ProtectedRoutes from './ProtectedRoutes';
-
 // DSMS
 import DSMSDashboard from './mih_intranet/DSMS/DSMSDashboard';
 import DSMSBookShift from './mih_intranet/DSMS/DSMSBookShift';
@@ -42,13 +40,14 @@ import TRSDashboard from './mih_intranet/TRS/TRSDashboard';
 import TRSTopicRes from './mih_intranet/TRS/TRSTopicRes';
 import TRSAttdMgr from './mih_intranet/TRS/TRSAttdMgr';
 import TRSReport from './mih_intranet/TRS/TRSReport';
+
+// PRPO
+import PRPODashboard from './mih_intranet/PRPO/PRPODashboard';
+import PRReport from './mih_intranet/PRPO/PRReport';
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
-    {
-      element: <ProtectedRoutes />,
-    },
     {
       path: '/login',
       element: <LoginPage />,
@@ -163,6 +162,16 @@ export default function Router() {
     {
       path: '/trsreport',
       element: <TRSReport />,
+    },
+
+    // PRPO
+    {
+      path: '/prpodashboard',
+      element: <PRPODashboard />,
+    },
+    {
+      path: '/prreport',
+      element: <PRReport />,
     },
 
     {

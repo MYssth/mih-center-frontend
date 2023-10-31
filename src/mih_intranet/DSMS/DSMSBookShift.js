@@ -17,7 +17,7 @@ const Item = styled('div')(({ theme }) => ({
   textAlign: 'left',
 }));
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 let selectedDate = [];
 let setMonth = moment().add(1, 'month');
 
@@ -41,75 +41,78 @@ function DSMSBookShift() {
   const isSkip = (value) => value !== '';
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setTokenData(jwtDecode(token));
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
+      setTokenData(jwtDecode(token));
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getsetting`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (moment().date() > data.limit_date) {
-          setMonth = moment().add(2, 'month');
-        }
-
-        fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getbookdata/${
-            jwtDecode(token).psn_id
-          }/${setMonth.format('M')}/${setMonth.format('YYYY')}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${rToken}`,
-            },
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getsetting`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (moment().date() > data.limit_date) {
+            setMonth = moment().add(2, 'month');
           }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.length === 0) {
-              setEmptyEvent(true);
-            } else {
-              setMyBookData(data);
+
+          fetch(
+            `${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getbookdata/${
+              jwtDecode(token).psn_id
+            }/${setMonth.format('M')}/${setMonth.format('YYYY')}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${rToken}`,
+              },
             }
-          })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
-            }
-          });
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.length === 0) {
+                setEmptyEvent(true);
+              } else {
+                setMyBookData(data);
+              }
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            });
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getshift`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getshift`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setShift(data);
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setShift(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+    }
   }, []);
 
   const localizer = momentLocalizer(moment);

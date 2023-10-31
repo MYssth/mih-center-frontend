@@ -29,7 +29,7 @@ import MainHeader from '../components/MainHeader';
 import DSMSSidebar from './components/nav/DSMSSidebar';
 import DSMSShiftEditDialg from './components/dialogs/DSMSShiftEditDialg';
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 let selectedDate = [];
 let psnRender = [];
@@ -67,49 +67,52 @@ function DSMSShiftEdit() {
   const isSkip = (value) => value !== '';
 
   useEffect(() => {
-    setMonth = new URLSearchParams(search).get('setMonth');
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      setMonth = new URLSearchParams(search).get('setMonth');
 
-    if (setMonth === null) {
-      setMonth = moment();
-    }
-
-    const fetchData = async () => {
-      let response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getevent`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      });
-      let data = await response.json();
-      await setAllEventsList(data);
-
-      if (data.length === 0 || data === null) {
-        firstTime = true;
+      if (setMonth === null) {
+        setMonth = moment();
       }
 
-      response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getoperator`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      });
-      data = await response.json();
-      await setOperator(data);
+      const fetchData = async () => {
+        let response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getevent`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        });
+        let data = await response.json();
+        await setAllEventsList(data);
 
-      response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getshift`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      });
-      data = await response.json();
-      await setShift(data);
-    };
+        if (data.length === 0 || data === null) {
+          firstTime = true;
+        }
 
-    fetchData();
+        response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getoperator`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        });
+        data = await response.json();
+        await setOperator(data);
+
+        response = await fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getshift`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${rToken}`,
+          },
+        });
+        data = await response.json();
+        await setShift(data);
+      };
+
+      fetchData();
+    }
   }, []);
 
   useEffect(() => {

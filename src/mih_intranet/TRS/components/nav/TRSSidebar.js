@@ -22,13 +22,15 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
   const [tokenData, setTokenData] = useState([]);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    // setTokenData(token);
+    if (localStorage.getItem('token') !== null) {
+      const token = jwtDecode(localStorage.getItem('token'));
+      // setTokenData(token);
 
-    setTokenData(token ? token.lv_list.find((o) => o.mihapp_id === 'TRS')?.lv_id : '');
+      setTokenData(token ? token.lv_list.find((o) => o.mihapp_id === 'TRS')?.lv_id : '');
 
-    if (openNav) {
-      onCloseNav();
+      if (openNav) {
+        onCloseNav();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);

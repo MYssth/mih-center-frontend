@@ -56,7 +56,7 @@ function TRSTopicRes() {
 
   const [openAttd, setOpenAttd] = useState(false);
 
-  const rToken = localStorage.getItem('token');
+  let rToken = '';
 
   const topicListCol = [
     {
@@ -160,8 +160,11 @@ function TRSTopicRes() {
   ];
 
   useEffect(() => {
-    psnId = jwtDecode(localStorage.getItem('token')).psn_id;
-    refreshTable();
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      psnId = jwtDecode(localStorage.getItem('token')).psn_id;
+      refreshTable();
+    }
   }, []);
 
   useEffect(() => {

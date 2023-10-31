@@ -63,7 +63,7 @@ function QuickSearchToolbar() {
 let tokenData = '';
 let pid = '';
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSUsrPermit() {
   const columns = [
@@ -165,14 +165,17 @@ function IIOSUsrPermit() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    setPermitId(token.psn_id);
-    pid = token.psn_id;
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'DMIS') {
-        tokenData = token.lv_list[i];
-        refreshTable();
-        break;
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
+      setPermitId(token.psn_id);
+      pid = token.psn_id;
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'DMIS') {
+          tokenData = token.lv_list[i];
+          refreshTable();
+          break;
+        }
       }
     }
   }, []);

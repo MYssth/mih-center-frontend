@@ -36,7 +36,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 function TRSReport() {
-
   const [open, setOpen] = useState(false);
   const [pageSize, setPageSize] = useState(25);
 
@@ -44,7 +43,7 @@ function TRSReport() {
   const [attdList, setAttdList] = useState([]);
   const [selTopicRes, setSelTopicRes] = useState('');
 
-  const rToken = localStorage.getItem('token');
+  let rToken = '';
 
   const topicListCol = [
     {
@@ -79,7 +78,10 @@ function TRSReport() {
   ];
 
   useEffect(() => {
-    refreshTable();
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      refreshTable();
+    }
   }, []);
 
   async function refreshTable() {
@@ -175,9 +177,13 @@ function TRSReport() {
                       <Button
                         variant="contained"
                         fullWidth
-                        disabled={selTopicRes==='' || selTopicRes===undefined}
+                        disabled={selTopicRes === '' || selTopicRes === undefined}
                         onClick={() => {
-                          TRSPsnListExcel(attdList.filter((data) => data.topic_id === selTopicRes), selTopicRes, rToken);
+                          TRSPsnListExcel(
+                            attdList.filter((data) => data.topic_id === selTopicRes),
+                            selTopicRes,
+                            rToken
+                          );
                           //   setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
                           //   setOpenAttd(true);
                         }}

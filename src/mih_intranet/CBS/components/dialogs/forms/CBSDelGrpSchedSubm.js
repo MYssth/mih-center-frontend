@@ -15,8 +15,10 @@ function CBSDelGrpSchedSubm({ openDialg, onCloseDialg, data }) {
   const [submitERR, setSubmitERR] = useState(false);
 
   useEffect(() => {
-    pname = jwtDecode(localStorage.getItem('token')).psn_name;
-    token = localStorage.getItem('token');
+    if (localStorage.getItem('token') !== null) {
+      pname = jwtDecode(localStorage.getItem('token')).psn_name;
+      token = localStorage.getItem('token');
+    }
   }, []);
 
   useEffect(() => {

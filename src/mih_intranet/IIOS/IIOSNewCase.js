@@ -19,7 +19,7 @@ const ValidationTextField = styled(TextField)({
   },
 });
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSNewCase() {
   const [open, setOpen] = useState(false);
@@ -40,57 +40,54 @@ function IIOSNewCase() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    // eslint-disable-next-line prefer-destructuring
-    const token = jwtDecode(localStorage.getItem('token'));
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      // eslint-disable-next-line prefer-destructuring
+      const token = jwtDecode(localStorage.getItem('token'));
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getpersonnel/${token.psn_id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setInformerId(data.psn_id);
-        setInformerName(`${data.fname} ${data.lname}`);
-        setDepartmentId(data.dept_id);
-        setDepartmentName(data.dept_name);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getpersonnel/${token.psn_id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
-        }
-      })
-
-      .then(
-        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getdepartments`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${rToken}`,
-          },
+        .then((response) => response.json())
+        .then((data) => {
+          setInformerId(data.psn_id);
+          setInformerName(`${data.fname} ${data.lname}`);
+          setDepartmentId(data.dept_id);
+          setDepartmentName(data.dept_name);
         })
-          .then((response) => response.json())
-          .then((data) => {
-            setDepartments(data);
-          })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
-            }
-          })
-      );
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        })
 
-    return () => {
-      controller.abort();
-    };
+        .then(
+          fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getdepartments`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${rToken}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              setDepartments(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            })
+        );
+    }
   }, []);
 
   const handleSubmit = () => {

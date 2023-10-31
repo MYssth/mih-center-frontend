@@ -22,13 +22,15 @@ function DSMSSidebar({ name, openNav, onCloseNav }) {
   const [tokenData, setTokenData] = useState([]);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    // setTokenData(token);
+    if (localStorage.getItem('token') !== null) {
+      const token = jwtDecode(localStorage.getItem('token'));
+      // setTokenData(token);
 
-    setTokenData(token.lv_list.find((o) => o.mihapp_id === 'DSMS').lv_id);
+      setTokenData(token.lv_list.find((o) => o.mihapp_id === 'DSMS').lv_id);
 
-    if (openNav) {
-      onCloseNav();
+      if (openNav) {
+        onCloseNav();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);

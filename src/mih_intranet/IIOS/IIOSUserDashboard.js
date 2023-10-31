@@ -145,7 +145,7 @@ const columns = [
   },
 ];
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSUserDashboard() {
   const [taskList, setTaskList] = useState([]);
@@ -167,112 +167,109 @@ function IIOSUserDashboard() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const token = jwtDecode(localStorage.getItem('token'));
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'DMIS') {
+          fetch(
+            `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.psn_id}/${
+              token.lv_list[i].lv_id
+            }/${token.lv_list[i].view_id}/${true}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${rToken}`,
+              },
+            }
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              setTaskList(data);
+              setFilterTaskList(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            })
+            .then(
+              fetch(
+                `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/counttask/${token.psn_id}/${
+                  token.lv_list[i].lv_id
+                }/${token.lv_list[i].view_id}/${true}`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${rToken}`,
+                  },
+                }
+              )
+                .then((response) => response.json())
+                .then((data) => {
+                  setTaskCount(data);
+                })
+                .catch((error) => {
+                  if (error.name === 'AbortError') {
+                    console.log('cancelled');
+                  } else {
+                    console.error('Error:', error);
+                  }
+                })
+            )
+            .then(
+              fetch(
+                `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getcompletetasklist/${token.psn_id}/${
+                  token.lv_list[i].lv_id
+                }/${token.lv_list[i].view_id}/${true}`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${rToken}`,
+                  },
+                }
+              )
+                .then((response) => response.json())
+                .then((data) => {
+                  setCompleteTaskList(data);
+                })
+                .catch((error) => {
+                  if (error.name === 'AbortError') {
+                    console.log('cancelled');
+                  } else {
+                    console.error('Error:', error);
+                  }
+                })
+            );
 
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'DMIS') {
-        fetch(
-          `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/gettasklist/${token.psn_id}/${
-            token.lv_list[i].lv_id
-          }/${token.lv_list[i].view_id}/${true}`,
-          {
+          fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getversion`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${rToken}`,
             },
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            setTaskList(data);
-            setFilterTaskList(data);
           })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
-            }
-          })
-          .then(
-            fetch(
-              `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/counttask/${token.psn_id}/${
-                token.lv_list[i].lv_id
-              }/${token.lv_list[i].view_id}/${true}`,
-              {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${rToken}`,
-                },
+            .then((response) => response.json())
+            .then((data) => {
+              setVersion(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
               }
-            )
-              .then((response) => response.json())
-              .then((data) => {
-                setTaskCount(data);
-              })
-              .catch((error) => {
-                if (error.name === 'AbortError') {
-                  console.log('cancelled');
-                } else {
-                  console.error('Error:', error);
-                }
-              })
-          )
-          .then(
-            fetch(
-              `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getcompletetasklist/${token.psn_id}/${
-                token.lv_list[i].lv_id
-              }/${token.lv_list[i].view_id}/${true}`,
-              {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${rToken}`,
-                },
-              }
-            )
-              .then((response) => response.json())
-              .then((data) => {
-                setCompleteTaskList(data);
-              })
-              .catch((error) => {
-                if (error.name === 'AbortError') {
-                  console.log('cancelled');
-                } else {
-                  console.error('Error:', error);
-                }
-              })
-          );
+            });
 
-        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getversion`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${rToken}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            setVersion(data);
-          })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
-            }
-          });
-
-        break;
+          break;
+        }
       }
     }
-
-    return () => {
-      controller.abort();
-    };
   }, []);
 
   useEffect(() => {

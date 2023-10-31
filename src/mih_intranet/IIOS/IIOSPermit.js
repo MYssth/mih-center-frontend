@@ -61,7 +61,7 @@ function QuickSearchToolbar() {
 }
 
 let lvId = '';
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSPermit() {
   const columns = [
@@ -131,7 +131,9 @@ function IIOSPermit() {
         `${
           params.row.status_id_request === 2 && params.row.category_id === 1
             ? 'กำลังดำเนินการ (HIMS)'
-            : params.row.status_id_request === 5 && (params.row.category_id === 1 || params.row.category_id === 16)
+            : params.row.status_id_request === 5 &&
+              (params.row.category_id === 1 || params.row.category_id === 16) &&
+              params.row.is_program_change
             ? 'ดำเนินการเสร็จสิ้น (ขอวางโปรแกรม)'
             : params.row.status_id_request === 2 && params.row.category_id === 16
             ? 'กำลังดำเนินการ (HIMS Change)'
@@ -174,13 +176,16 @@ function IIOSPermit() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    setPermitId(token.psn_id);
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'DMIS') {
-        lvId = token.lv_list[i].lv_id;
-        refreshTable();
-        break;
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
+      setPermitId(token.psn_id);
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'DMIS') {
+          lvId = token.lv_list[i].lv_id;
+          refreshTable();
+          break;
+        }
       }
     }
   }, []);

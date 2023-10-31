@@ -37,7 +37,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 let levelData = '';
 let token = '';
 
@@ -165,10 +165,13 @@ function CBSUseRec() {
   }
 
   useEffect(() => {
-    token = jwtDecode(localStorage.getItem('token'));
-    levelData = token.lv_list.find((o) => o.mihapp_id === 'CBS');
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      token = jwtDecode(localStorage.getItem('token'));
+      levelData = token.lv_list.find((o) => o.mihapp_id === 'CBS');
 
-    refreshTable();
+      refreshTable();
+    }
   }, []);
 
   function refreshTable() {

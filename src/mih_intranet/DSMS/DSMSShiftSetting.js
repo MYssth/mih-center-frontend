@@ -13,28 +13,31 @@ const ValidationTextField = styled(TextField)({
   },
 });
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function DSMSBookSetting() {
   const [limitDate, setLimitDate] = useState('');
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getsetting`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data.limit_date);
-        setLimitDate(data.limit_date);
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dsmsPort}/getsetting`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data.limit_date);
+          setLimitDate(data.limit_date);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
   }, []);
 
   const handleEdit = () => {

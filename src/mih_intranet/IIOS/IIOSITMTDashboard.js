@@ -42,7 +42,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 let pId = '';
 let lvId = '';
 let vId = '';
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function IIOSITMTDashboard() {
   // เหลือทำ process หน้าดำเนินการ
@@ -181,74 +181,80 @@ function IIOSITMTDashboard() {
   const [noti, setNoti] = useState(false);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
 
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'DMIS') {
-        pId = token.psn_id;
-        lvId = token.lv_list[i].lv_id;
-        vId = token.lv_list[i].view_id;
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'DMIS') {
+          pId = token.psn_id;
+          lvId = token.lv_list[i].lv_id;
+          vId = token.lv_list[i].view_id;
 
-        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getoperator/${token.lv_list[i].lv_id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${rToken}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            setOperatorList(data);
-          })
-          .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('cancelled');
-            } else {
-              console.error('Error:', error);
+          fetch(
+            `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getoperator/${token.lv_list[i].lv_id}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${rToken}`,
+              },
             }
-          });
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              setOperatorList(data);
+            })
+            .catch((error) => {
+              if (error.name === 'AbortError') {
+                console.log('cancelled');
+              } else {
+                console.error('Error:', error);
+              }
+            });
 
-        refreshTable();
+          refreshTable();
 
-        break;
-      }
-    }
-
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getestimation`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setEstimationList(data);
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
+          break;
         }
-      });
+      }
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getstatus`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setStatus(data);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getestimation`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          setEstimationList(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
 
-    setRecvId(token.psn_id);
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getstatus`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setStatus(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+      setRecvId(token.psn_id);
+    }
   }, []);
 
   async function refreshTable() {

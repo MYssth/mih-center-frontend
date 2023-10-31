@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // @mui
 import { Stack, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -17,6 +17,8 @@ export default function LoginForm() {
   const [authToken, setAuthToken] = useState('');
 
   const [message, setMessage] = useState('');
+
+  const location = useLocation();
 
   const handleSubmit = () => {
     const jsonData = {
@@ -36,8 +38,14 @@ export default function LoginForm() {
         setMessage(data.message);
         if (data.status === 'ok') {
           localStorage.setItem('token', data.token);
-          sessionStorage.setItem('reloadCount', String(1));
-          navigate('/intranet', { replace: true });
+
+          if (location.state?.from) {
+            navigate(location.state.from.pathname === '/login' ? '/intranet' : location.state.from.pathname, {
+              replace: true,
+            });
+          } else {
+            navigate('/intranet', { replace: true });
+          }
         } else if (data.status === 'expire') {
           setAuthToken(data.token);
           setPwdBtn(true);

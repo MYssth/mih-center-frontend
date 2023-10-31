@@ -42,7 +42,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const rToken = localStorage.getItem('token');
+let rToken = '';
 
 function CBSBookRprt() {
   const [fromDate, setFromDate] = useState('');
@@ -59,71 +59,69 @@ function CBSBookRprt() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    // eslint-disable-next-line prefer-destructuring
-    const token = jwtDecode(localStorage.getItem('token'));
+    if (localStorage.getItem('token') !== null) {
+      // eslint-disable-next-line prefer-destructuring
+      rToken = localStorage.getItem('token');
+      const token = jwtDecode(localStorage.getItem('token'));
 
-    for (let i = 0; i < token.lv_list.length; i += 1) {
-      if (token.lv_list[i].mihapp_id === 'CBS') {
-        // console.log(token.lv_list[i]);
-        // to be change to hims database
-        if (
-          token.lv_list[i].lv_id === 'CBS_MGR' ||
-          token.lv_list[i].lv_id === 'CBS_RCV' ||
-          token.lv_list[i].lv_id === 'CBS_ADMIN'
-        ) {
-          fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getallsched`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${rToken}`,
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              setAllSched(data);
-              setFilterSched(data);
-              setTempSched(data);
-            })
-            .catch((error) => {
-              if (error.name === 'AbortError') {
-                console.log('cancelled');
-              } else {
-                console.error('Error:', error);
-              }
-            });
-        } else {
-          fetch(
-            `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydeptid/${token.lv_list[i].view_id}/${token.psn_id}`,
-            {
+      for (let i = 0; i < token.lv_list.length; i += 1) {
+        if (token.lv_list[i].mihapp_id === 'CBS') {
+          // console.log(token.lv_list[i]);
+          // to be change to hims database
+          if (
+            token.lv_list[i].lv_id === 'CBS_MGR' ||
+            token.lv_list[i].lv_id === 'CBS_RCV' ||
+            token.lv_list[i].lv_id === 'CBS_ADMIN'
+          ) {
+            fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getallsched`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${rToken}`,
               },
-            }
-          )
-            .then((response) => response.json())
-            .then((data) => {
-              setAllSched(data);
-              setFilterSched(data);
-              setTempSched(data);
             })
-            .catch((error) => {
-              if (error.name === 'AbortError') {
-                console.log('cancelled');
-              } else {
-                console.error('Error:', error);
+              .then((response) => response.json())
+              .then((data) => {
+                setAllSched(data);
+                setFilterSched(data);
+                setTempSched(data);
+              })
+              .catch((error) => {
+                if (error.name === 'AbortError') {
+                  console.log('cancelled');
+                } else {
+                  console.error('Error:', error);
+                }
+              });
+          } else {
+            fetch(
+              `${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getschedbydeptid/${token.lv_list[i].view_id}/${token.psn_id}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${rToken}`,
+                },
               }
-            });
+            )
+              .then((response) => response.json())
+              .then((data) => {
+                setAllSched(data);
+                setFilterSched(data);
+                setTempSched(data);
+              })
+              .catch((error) => {
+                if (error.name === 'AbortError') {
+                  console.log('cancelled');
+                } else {
+                  console.error('Error:', error);
+                }
+              });
+          }
+          break;
         }
-        break;
       }
     }
-
-    return () => {
-      controller.abort();
-    };
   }, []);
 
   const handleNoCancel = (event) => {
@@ -328,6 +326,36 @@ function CBSBookRprt() {
       minWidth: 100,
     },
     {
+      field: 'proc_name',
+      headerName: 'ผู้ยกเลิก',
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: 'proc_date',
+      headerName: 'วันที่ยกเลิก',
+      flex: 1,
+      minWidth: 100,
+      valueGetter: (params) =>
+        params.row.proc_date
+          ? `${String(new Date(params.row.proc_date).getUTCDate()).padStart(2, '0')}/${String(
+              parseInt(new Date(params.row.proc_date).getUTCMonth(), 10) + 1
+            ).padStart(2, '0')}/${new Date(params.row.proc_date).getUTCFullYear()}`
+          : '',
+    },
+    {
+      field: 'proc_time',
+      headerName: 'เวลาที่ยกเลิก',
+      flex: 1,
+      minWidth: 60,
+      valueGetter: (params) =>
+        params.row.proc_date
+          ? `${String(new Date(params.row.proc_date).getUTCHours()).padStart(2, '0')}:${String(
+              new Date(params.row.proc_date).getUTCMinutes()
+            ).padStart(2, '0')}`
+          : '',
+    },
+    {
       field: 'rcv_name',
       headerName: 'ผู้รับเรื่อง',
       flex: 1,
@@ -490,7 +518,7 @@ function CBSBookRprt() {
                     {/* <Stack direction="row" spacing={10} sx={{ width: 'auto' }}> */}
                     <Grid container>
                       <Grid item sm={12} md={4}>
-                        <Box sx={{mb:1}}>
+                        <Box sx={{ mb: 1 }}>
                           <Typography variant="h5">ค้นหาตามเลขที่เอกสาร</Typography>
                           <Stack direction="row" spacing={1}>
                             <TextField id="schedId" name="schedId" label="เลขที่เอกสาร" />
@@ -502,7 +530,9 @@ function CBSBookRprt() {
                       </Grid>
                       <Grid item sm={12} md={8}>
                         <Box>
-                          <Typography variant="h5" sx={{mb:1}}>ค้นหาตามวันเวลาที่แจ้งขอใช้รถ</Typography>
+                          <Typography variant="h5" sx={{ mb: 1 }}>
+                            ค้นหาตามวันเวลาที่แจ้งขอใช้รถ
+                          </Typography>
                           <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <Stack direction="row" spacing={1}>
                               <DatePicker
@@ -604,7 +634,7 @@ function CBSBookRprt() {
                           //   setOpenAttd(true);
                         }}
                       >
-                        ดาวน์โหลดรายชื่อผู้เข้าร่วมกิจกรรม
+                        ดาวน์โหลดรายงานขอใช้รถ
                       </Button>
                     </Stack>
                   </div>

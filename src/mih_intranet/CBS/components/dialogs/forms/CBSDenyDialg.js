@@ -35,8 +35,10 @@ function CBSDenyDialg({ openDialg, onCloseDialg, data }) {
   const [submitINC, setSubmitINC] = useState(false);
 
   useEffect(() => {
-    token = jwtDecode(localStorage.getItem('token'));
-    rToken = localStorage.getItem('token');
+    if (localStorage.getItem('token') !== null) {
+      token = jwtDecode(localStorage.getItem('token'));
+      rToken = localStorage.getItem('token');
+    }
   }, []);
 
   useEffect(() => {

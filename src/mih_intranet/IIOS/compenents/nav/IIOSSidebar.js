@@ -29,17 +29,19 @@ function IIOSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
   const [tokenViewData, setTokenViewData] = useState([]);
 
   useEffect(() => {
-    const token = jwtDecode(localStorage.getItem('token'));
-    // setTokenData(token);
+    if (localStorage.getItem('token') !== null) {
+      const token = jwtDecode(localStorage.getItem('token'));
+      // setTokenData(token);
 
-    notiTrigger = '';
-    refreshNoti();
+      notiTrigger = '';
+      refreshNoti();
 
-    setTokenData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id);
-    setTokenViewData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id);
+      setTokenData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id);
+      setTokenViewData(token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id);
 
-    if (openNav) {
-      onCloseNav();
+      if (openNav) {
+        onCloseNav();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -49,31 +51,33 @@ function IIOSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
   }, [notiTrigger]);
 
   function refreshNoti() {
-    const token = jwtDecode(localStorage.getItem('token'));
-    fetch(
-      `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getnoti/${token.psn_id}/${
-        token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id
-      }/${token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        // noti = data;
-        setNoti(data);
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('cancelled');
-        } else {
-          console.error('Error:', error);
+    if (localStorage.getItem('token') !== null) {
+      const token = jwtDecode(localStorage.getItem('token'));
+      fetch(
+        `${process.env.REACT_APP_host}${process.env.REACT_APP_dmisPort}/getnoti/${token.psn_id}/${
+          token.lv_list.find((o) => o.mihapp_id === 'DMIS').lv_id
+        }/${token.lv_list.find((o) => o.mihapp_id === 'DMIS').view_id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      });
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          // noti = data;
+          setNoti(data);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('cancelled');
+          } else {
+            console.error('Error:', error);
+          }
+        });
+    }
   }
 
   const mainMenu = (

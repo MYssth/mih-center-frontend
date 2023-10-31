@@ -62,7 +62,7 @@ function TRSAttdMgr() {
 
   const [psnList, setPsnList] = useState([]);
 
-  const rToken = localStorage.getItem('token');
+  let rToken = '';
 
   const topicListCol = [
     {
@@ -214,8 +214,11 @@ function TRSAttdMgr() {
   ];
 
   useEffect(() => {
-    psnId = jwtDecode(localStorage.getItem('token')).psn_id;
-    refreshTable();
+    if (localStorage.getItem('token') !== null) {
+      rToken = localStorage.getItem('token');
+      psnId = jwtDecode(localStorage.getItem('token')).psn_id;
+      refreshTable();
+    }
   }, []);
 
   useEffect(() => {

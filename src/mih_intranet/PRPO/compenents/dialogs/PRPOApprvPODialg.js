@@ -158,6 +158,9 @@ function PRPOApprvPODialg({ openDialg, onCloseDialg, POHeader, PODetail, usrChk,
     if (offset > 0) {
       // console.log(usrReq + usrVal.substring(tmp.length, tmp.length + offset));
       setUsrReq((usrReq + usrVal.substring(tmp.length, tmp.length + offset)).toUpperCase());
+    } else if (offset < -1 && usrVal.length === 1) {
+      // console.log('reset!');
+      setUsrReq(usrVal);
     } else if (offset < 0) {
       // console.log(tmp.substring(0, tmp.length + offset));
       setUsrReq(tmp.substring(0, tmp.length + offset).toUpperCase());

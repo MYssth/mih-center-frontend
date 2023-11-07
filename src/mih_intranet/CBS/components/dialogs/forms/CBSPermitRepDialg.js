@@ -55,6 +55,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const [paxAmt, setPaxAmt] = useState('');
   const [telNo, setTelNo] = useState('');
   const [detail, setDetail] = useState('');
+  const [note, setNote] = useState('');
 
   const [dept, setDept] = useState([]);
   const [deptId, setDeptId] = useState('');
@@ -146,25 +147,10 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
   useEffect(() => {
     if (openDialg) {
-      // console.log(data);
       fetchCarData(data.from_date, data.to_date, data.car_type_id);
 
       const tmpFrDate = moment.utc(data.from_date);
-      // const tmpFrDate = new Date(
-      //   `${parseInt(new Date(data.from_date).getUTCMonth(), 10) + 1} ${new Date(
-      //     data.from_date
-      //   ).getUTCDate()} ${new Date(data.from_date).getUTCFullYear()} ${new Date(
-      //     data.from_date
-      //   ).getUTCHours()}:${new Date(data.from_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-      // );
       const tmpToDate = moment.utc(data.to_date);
-      // const tmpToDate = new Date(
-      //   `${parseInt(new Date(data.to_date).getUTCMonth(), 10) + 1} ${new Date(data.to_date).getUTCDate()} ${new Date(
-      //     data.to_date
-      //   ).getUTCFullYear()} ${new Date(data.to_date).getUTCHours()}:${new Date(
-      //     data.to_date
-      //   ).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-      // );
       setFromDate(tmpFrDate);
       setFromTime(tmpFrDate);
       setToDate(tmpToDate);
@@ -183,6 +169,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       setCarName(data.car_id ? `${data.car_reg_no} ${data.car_name}` : 'ไม่ระบุ');
       setDeptId(data.dept_id);
       setDeptName(data.dept_name);
+      setNote(data.note);
 
       setReqName(data.req_name);
     }
@@ -194,19 +181,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
 
   useEffect(() => {
     const tmpFrDate = `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`;
-    // const tmpFrDate = `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(
-    //   2,
-    //   '0'
-    // )}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(
-    //   fromTime?.getMinutes()
-    // ).padStart(2, '0')}:00.000Z`;
     const tmpToDate = `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`;
-    // const tmpToDate = `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(
-    //   2,
-    //   '0'
-    // )}-${String(toDate?.getDate()).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(
-    //   toTime?.getMinutes()
-    // ).padStart(2, '0')}:00.000Z`;
     fetchCarData(tmpFrDate, tmpToDate, carTypeId);
   }, [fromDate, fromTime, toDate, toTime]);
 
@@ -225,7 +200,6 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       .then((result) => {
         setCar(result);
         carFilter(result, typeId);
-        // setDuplicate(result.find((o) => o.type_id === data.car_type_id).duplicate);
         setDuplicate(result.find((o) => o.id === data.car_id).duplicate);
         setDupDept(result.find((o) => o.type_id === data.car_type_id).dept_name);
       })
@@ -267,6 +241,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       dept_id: deptId,
       dept_name: deptName,
       req_name: reqName,
+      note: note,
     };
 
     if (
@@ -350,6 +325,7 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
       car_name: carName,
       dept_id: deptId,
       dept_name: deptName,
+      note: note,
     };
 
     // if (
@@ -711,6 +687,17 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
                   '& input:valid + fieldset': {
                     borderColor: detail ? 'green' : 'red',
                   },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <label className="form-label">หมายเหตุ</label>
+              <TextField
+                label="หมายเหตุ"
+                fullWidth
+                value={note ?? ''}
+                onChange={(event) => {
+                  setNote(event.target.value);
                 }}
               />
             </Grid>

@@ -43,7 +43,10 @@ import TRSReport from './mih_intranet/TRS/TRSReport';
 
 // PRPO
 import PRPODashboard from './mih_intranet/PRPO/PRPODashboard';
-import PRReport from './mih_intranet/PRPO/PRReport';
+import PRPOReport from './mih_intranet/PRPO/PRPOReport';
+
+import Testo from './mih_intranet/RMS/Testo';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -170,8 +173,13 @@ export default function Router() {
       element: <PRPODashboard />,
     },
     {
-      path: '/prreport',
-      element: <PRReport />,
+      path: '/prporeport',
+      element: <PRPOReport />,
+    },
+
+    {
+      path: '/testo',
+      element: <Testo />,
     },
 
     {

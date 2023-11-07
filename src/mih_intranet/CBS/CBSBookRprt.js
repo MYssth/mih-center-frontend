@@ -519,7 +519,9 @@ function CBSBookRprt() {
                     <Grid container>
                       <Grid item sm={12} md={4}>
                         <Box sx={{ mb: 1 }}>
-                          <Typography variant="h5">ค้นหาตามเลขที่เอกสาร</Typography>
+                          <Typography variant="h5" sx={{ mb: 1 }}>
+                            ค้นหาตามเลขที่เอกสาร
+                          </Typography>
                           <Stack direction="row" spacing={1}>
                             <TextField id="schedId" name="schedId" label="เลขที่เอกสาร" />
                             <Button variant="contained" sx={{ width: 100 }} onClick={handleFindSchedId}>

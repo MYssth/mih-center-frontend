@@ -41,6 +41,19 @@ function PRPOSidebar({ name, openNav, onCloseNav }) {
           </a>
         )}
       </li>
+      <li className="nav-item">
+        {name === 'prporeport' ? (
+          <a className="nav-link" href="#">
+            <i className="bi bi-clipboard-check" />
+            <span>รายงาน PR/PO ที่อนุมัติแล้ว</span>
+          </a>
+        ) : (
+          <a className="nav-link collapsed" href="/prporeport">
+            <i className="bi bi-clipboard-check" />
+            <span>รายงาน PR/PO ที่อนุมัติแล้ว</span>
+          </a>
+        )}
+      </li>
     </>
   );
 

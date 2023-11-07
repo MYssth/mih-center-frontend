@@ -55,6 +55,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
   const [paxAmt, setPaxAmt] = useState('');
   const [telNo, setTelNo] = useState('');
   const [detail, setDetail] = useState('');
+  const [note, setNote] = useState('');
 
   const [dept, setDept] = useState([]);
   const [deptId, setDeptId] = useState('');
@@ -178,6 +179,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
       setCarName(data.car_id ? `${data.car_reg_no} ${data.car_name}` : 'ไม่ระบุ');
       setDeptId(data.dept_id);
       setDeptName(data.dept_name);
+      setNote(data.note);
 
       setReqName(data.req_name);
     }
@@ -257,6 +259,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
       dept_id: deptId,
       dept_name: deptName,
       req_name: reqName,
+      npte: note,
     };
 
     if (
@@ -274,7 +277,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
       setSubmitINC(true);
       return;
     }
-    console.log(jsonData);
+    // console.log(jsonData);
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/permitbook`, {
       method: 'POST',
@@ -317,6 +320,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
       car_name: carName,
       dept_id: deptId,
       dept_name: deptName,
+      note: note,
     };
 
     if (
@@ -684,6 +688,17 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
                   '& input:valid + fieldset': {
                     borderColor: detail ? 'green' : 'red',
                   },
+                }}
+              />
+            </Grid>
+            <Grid item md={12}>
+              <label className="form-label">หมายเหตุ</label>
+              <TextField
+                label="หมายเหตุ"
+                fullWidth
+                value={note ?? ''}
+                onChange={(event) => {
+                  setNote(event.target.value);
                 }}
               />
             </Grid>

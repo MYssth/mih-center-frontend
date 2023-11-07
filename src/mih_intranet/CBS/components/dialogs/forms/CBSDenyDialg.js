@@ -52,6 +52,7 @@ function CBSDenyDialg({ openDialg, onCloseDialg, data }) {
       id: id,
       permit_pid: token.psn_id,
       note: document.getElementById('note').value,
+      grp_id: data.grp_id,
     };
 
     if (!jsonData.note) {

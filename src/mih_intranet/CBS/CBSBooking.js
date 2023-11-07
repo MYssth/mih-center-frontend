@@ -211,6 +211,8 @@ function CBSBooking() {
   const [telNo, setTelNo] = useState('');
   const [detail, setDetail] = useState('');
   const [note, setNote] = useState('');
+  const [isEarlyDate, setIsEarlyDate] = useState(false);
+  const [isEarlyTime, setIsEarlyTime] = useState(false);
   const [isReqNote, setIsReqNote] = useState(false);
 
   const [car, setCar] = useState([]);
@@ -636,6 +638,13 @@ function CBSBooking() {
                                   format="dd/MM/yyyy"
                                   value={fromDate}
                                   onChange={(newValue) => {
+                                    setIsEarlyDate(moment(newValue).isBefore(moment()));
+                                    if (moment(newValue).isBefore(moment()) && isEarlyTime) {
+                                      setNote('');
+                                      setIsReqNote(true);
+                                    } else {
+                                      setIsReqNote(false);
+                                    }
                                     setFromDate(newValue);
                                     setCarId(0);
                                     setCarName('ไม่ระบุ');
@@ -658,10 +667,23 @@ function CBSBooking() {
                                   // minutesStep="15"
                                   value={fromTime}
                                   onChange={(newValue) => {
-                                    if (isReqNote !== moment().add(30, 'minutes') > newValue) {
+                                    // console.log(`is ${moment(newValue)} before ${moment().add(30, 'minutes')}`);
+                                    // console.log(moment(newValue).isBefore(moment().add(30, 'minutes')));
+                                    // console.log(`is ${moment(fromDate)} before ${moment()}`);
+                                    // console.log(moment(fromDate).isBefore(moment()));
+
+                                    setIsEarlyTime(moment(newValue).isBefore(moment().add(30, 'minutes')));
+                                    if (moment(newValue).isBefore(moment().add(30, 'minutes')) && isEarlyDate) {
                                       setNote('');
+                                      setIsReqNote(true);
+                                    } else {
+                                      setIsReqNote(false);
                                     }
-                                    setIsReqNote(moment().add(30, 'minutes') > newValue);
+
+                                    // if (isReqNote !== moment().add(30, 'minutes') > newValue) {
+                                    //   setNote('');
+                                    // }
+                                    // setIsReqNote(moment().add(30, 'minutes') > newValue);
                                     setFromTime(newValue);
                                     setCarId(0);
                                     setCarName('ไม่ระบุ');

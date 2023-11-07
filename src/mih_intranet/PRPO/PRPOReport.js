@@ -1,15 +1,19 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import { Typography, styled, alpha, Button, TextField, Divider } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Typography, styled, alpha, Button, TextField, Divider, Box, Stack } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import MainHeader from '../components/MainHeader';
 import PRPOSidebar from './compenents/nav/PRPOSidebar';
-import PRPOApprvPRDialg from './compenents/dialogs/PRPOApprvPRDialg';
-import PRPOApprvPODialg from './compenents/dialogs/PRPOApprvPODialg';
+import PRRprtDialg from './compenents/dialogs/PRRprtDialg';
+import PORprtDialg from './compenents/dialogs/PORprtDialg';
 import { ErrMsgDialg } from '../components/dialogs/response';
 import './css/index.css';
 
 const moment = require('moment');
+const dateFns = require('date-fns');
 
 moment.locale('th');
 
@@ -44,28 +48,31 @@ let rToken = '';
 let hideAll = setTimeout(() => {}, 0);
 let usrReqList = {};
 
-function PRPODashboard() {
+function PRPOReport() {
   const [open, setOpen] = useState(false);
-  const [version, setVersion] = useState('');
-  const [pageSize, setPageSize] = useState(25);
   const [PRHeadList, setPRHeadList] = useState([]);
   const [POHeadList, setPOHeadList] = useState([]);
+  const [filterPRHeadList, setFilterPRHeadList] = useState([]);
+  const [filterPOHeadList, setFilterPOHeadList] = useState([]);
 
   const [openErrMsg, setOpenErrMsg] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
-  const [openPRApprv, setOpenPRApprv] = useState(false);
+  const [openPRData, setOpenPRData] = useState(false);
   const [PRHeader, setPRHeader] = useState('');
   const [PRDetail, setPRDetail] = useState([]);
 
-  const [openPOApprv, setOpenPOApprv] = useState(false);
+  const [openPOData, setOpenPOData] = useState(false);
   const [POHeader, setPOHeader] = useState('');
   const [PODeatail, setPODetail] = useState([]);
 
   const [usrReqTmp, setUserReqTmp] = useState('');
   const [usrReq, setUsrReq] = useState('');
   const [isShow, setIsShow] = useState(false);
-  const [usrNam, setUsrNam] = useState('');
+
+  const [fromDate, setFromDate] = useState('');
+  // const [toDate, setToDate] = useState(dateFns.format(new Date(), 'yyyy-MM-dd'));
+  const [toDate, setToDate] = useState(new Date());
 
   const PRColumns = [
     {
@@ -78,12 +85,13 @@ function PRPODashboard() {
 
       renderCell: (params) => {
         const handleBttn = () => {
-          handlePRApprove(params.row);
+          setPRHeader(params.row);
+          setOpenPRData(true);
         };
 
         return (
           <Button size="small" variant="outlined" onClick={handleBttn}>
-            ดำเนินการ
+            ดูข้อมูล
           </Button>
         );
       },
@@ -130,12 +138,13 @@ function PRPODashboard() {
 
       renderCell: (params) => {
         const handleBttn = () => {
-          handlePOApprove(params.row);
+          setPOHeader(params.row);
+          setOpenPOData(true);
         };
 
         return (
           <Button size="small" variant="outlined" onClick={handleBttn}>
-            ดำเนินการ
+            ดูข้อมูล
           </Button>
         );
       },
@@ -165,6 +174,13 @@ function PRPODashboard() {
       valueGetter: (params) => params.row.NETAMT.toLocaleString(undefined, { maximumFractionDigits: 2 }),
     },
     {
+      field: 'STATUS_PO',
+      headerName: 'สถานะ',
+      //   maxWidth: 100,
+      minWidth: 100,
+      flex: 1,
+    },
+    {
       field: 'REMARK',
       headerName: 'หมายเหตุ',
       //   maxWidth: 100,
@@ -176,27 +192,12 @@ function PRPODashboard() {
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
       rToken = localStorage.getItem('token');
-      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/getversion`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setVersion(data);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
     }
   }, []);
 
   const handlePRPOQry = () => {
     setIsShow(true);
     // console.log(usrReq);
-    setUsrNam('');
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getusrreqlist/${usrReq}`, {
       method: 'GET',
@@ -243,7 +244,7 @@ function PRPODashboard() {
         console.error('Error:', error);
       });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/getprheader/${usrReq}`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/getcompprheader/${usrReq}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -253,12 +254,13 @@ function PRPODashboard() {
       .then((response) => response.json())
       .then((data) => {
         setPRHeadList(data);
+        setFilterPRHeadList(data);
       })
       .catch((error) => {
         console.error('Error:', error);
       });
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/getpoheader/${usrReq}`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/getcomppoheader/${usrReq}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -268,6 +270,7 @@ function PRPODashboard() {
       .then((response) => response.json())
       .then((data) => {
         setPOHeadList(data);
+        setFilterPOHeadList(data);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -281,64 +284,23 @@ function PRPODashboard() {
     }
   };
 
-  const handlePRApprove = (PRHeader) => {
-    fetch(
-      `${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/checkapprovestatuspr/${PRHeader.PGM}/${PRHeader.RQODTE}/${PRHeader.RQONO}`,
-      // `${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/checkapprovestatuspr/${PRHeader.PGM}/${
-      //   parseInt(moment().format('YYYYMMDD'), 10) + 5430000
-      // }/${PRHeader.RQONO}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setErrMsg(data.msg);
-        if (data.msg === '') {
-          // if (1) {
-          setPRHeader(PRHeader);
-          setOpenPRApprv(true);
-        } else {
-          setOpenErrMsg(true);
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  };
+  const handleFindDate = () => {
+    const tmpFromDate = dateFns.format(fromDate, 'yyyy-MM-dd');
 
-  const handlePOApprove = (POHeader) => {
-    fetch(
-      `${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/checkapprovestatuspo/${POHeader.PGM}/${POHeader.PODTE}/${POHeader.PONO}`,
-      // `${process.env.REACT_APP_host}${process.env.REACT_APP_prpoPort}/checkapprovestatuspo/${POHeader.PGM}/${
-      //   parseInt(moment().format('YYYYMMDD'), 10) + 5430000
-      // }/${POHeader.PONO}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${rToken}`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setErrMsg(data.msg);
-        if (data.msg === '') {
-          // if (1) {
-          setPOHeader(POHeader);
-          setOpenPOApprv(true);
-        } else {
-          setOpenErrMsg(true);
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    setFilterPRHeadList(
+      PRHeadList.filter(
+        (dt) =>
+          dt.RQODTE - 5430000 >= moment(fromDate).format('YYYYMMDD') &&
+          dt.RQODTE - 5430000 <= moment(toDate).format('YYYYMMDD')
+      )
+    );
+    setFilterPOHeadList(
+      POHeadList.filter(
+        (dt) =>
+          dt.PODTE - 5430000 >= moment(fromDate).format('YYYYMMDD') &&
+          dt.PODTE - 5430000 <= moment(toDate).format('YYYYMMDD')
+      )
+    );
   };
 
   const onPasswordChange = (val) => {
@@ -391,34 +353,26 @@ function PRPODashboard() {
         <title> ระบบอนุมัติออนไลน์ | MIH Center </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <PRPOSidebar name="prpodashboard" openNav={open} onCloseNav={() => setOpen(false)} />
+      <PRPOSidebar name="prporeport" openNav={open} onCloseNav={() => setOpen(false)} />
 
-      <PRPOApprvPRDialg
-        openDialg={openPRApprv}
+      <PRRprtDialg
+        openDialg={openPRData}
         onCloseDialg={() => {
           setPRHeader('');
-          handlePRPOQry();
-          setOpenPRApprv(false);
+          setOpenPRData(false);
         }}
         PRHeader={PRHeader}
         PRDetail={PRDetail.filter((data) => data.RQONO === PRHeader.RQONO)}
-        usrChk={usrReq}
-        usrName={usrReqList.name}
-        rToken={rToken}
       />
 
-      <PRPOApprvPODialg
-        openDialg={openPOApprv}
+      <PORprtDialg
+        openDialg={openPOData}
         onCloseDialg={() => {
           setPOHeader('');
-          handlePRPOQry();
-          setOpenPOApprv(false);
+          setOpenPOData(false);
         }}
         POHeader={POHeader}
         PODetail={PODeatail.filter((data) => data.PONO === POHeader.PONO)}
-        usrChk={usrReq}
-        usrName={usrReqList.name}
-        rToken={rToken}
       />
       <ErrMsgDialg
         openDialg={openErrMsg}
@@ -432,13 +386,16 @@ function PRPODashboard() {
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ระบบอนุมัติออนไลน์ - Online Approve Service (OAS) version: {version}</h1>
+          <h1>รายงาน PR/PO ที่อนุมัติแล้ว</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">
                 <a href="/intranet">หน้าหลัก</a>
               </li>
-              <li className="breadcrumb-item my-2">หน้าหลักระบบอนุมัติออนไลน์</li>
+              <li className="breadcrumb-item my-2">
+                <a href="/prpodashboard">หน้าหลักระบบอนุมัติออนไลน์</a>
+              </li>
+              <li className="breadcrumb-item my-2">รายงาน PR/PO ที่อนุมัติแล้ว</li>
             </ol>
           </nav>
         </div>
@@ -458,6 +415,8 @@ function PRPODashboard() {
                       onPasswordChange(event.target.value);
                       usrReqList = {};
                       setIsShow(false);
+                      setFromDate('');
+                      setToDate(new Date());
                     }}
                     sx={{
                       '& input:valid + fieldset': {
@@ -485,8 +444,48 @@ function PRPODashboard() {
                   ) : (
                     ''
                   )}
+
                   {usrReq && isShow ? (
                     <>
+                      <Box sx={{ mt: 1 }}>
+                        <Typography variant="h5" sx={{ mb: 1 }}>
+                          ค้นหาตามวันเวลาที่อนุมัติ
+                        </Typography>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                          <Stack direction="row" spacing={1}>
+                            <DatePicker
+                              disableFuture
+                              format="dd-MM-yyyy"
+                              maxDate={toDate}
+                              label="จากวันที่"
+                              value={fromDate}
+                              onChange={(newValue) => {
+                                setFromDate(newValue);
+                              }}
+                              renderInput={(params) => <TextField {...params} />}
+                            />
+                            <DatePicker
+                              disableFuture
+                              format="dd-MM-yyyy"
+                              minDate={fromDate}
+                              label="ถึงวันที่"
+                              value={toDate}
+                              onChange={(newValue) => {
+                                setToDate(newValue);
+                              }}
+                              renderInput={(params) => <TextField {...params} />}
+                            />
+                            <Button
+                              variant="contained"
+                              onClick={handleFindDate}
+                              sx={{ width: 100 }}
+                              disabled={fromDate === ''}
+                            >
+                              ค้นหา
+                            </Button>
+                          </Stack>
+                        </LocalizationProvider>
+                      </Box>
                       <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
                         PR | ใบเสนอซื้อรออนุมัติ
                       </Typography>
@@ -504,7 +503,7 @@ function PRPODashboard() {
                           }}
                           disableSelectionOnClick
                           columns={PRColumns}
-                          rows={PRHeadList}
+                          rows={filterPRHeadList}
                           pageSize={10}
                           // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                           componentsProps={{
@@ -532,7 +531,7 @@ function PRPODashboard() {
                           }}
                           disableSelectionOnClick
                           columns={POColumns}
-                          rows={POHeadList}
+                          rows={filterPOHeadList}
                           pageSize={10}
                           // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                           componentsProps={{
@@ -557,4 +556,4 @@ function PRPODashboard() {
   );
 }
 
-export default PRPODashboard;
+export default PRPOReport;

@@ -1,7 +1,21 @@
 /* eslint-disable react/prop-types */
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  Grid,
+  styled,
+} from '@mui/material';
 import { useState } from 'react';
 import { SubmtERR, SubmtINC } from '../../../../components/dialogs/response';
+
+const Item = styled('div')(({ theme }) => ({
+  padding: theme.spacing(1),
+  textAlign: 'left',
+}));
 
 function IIOSTaskUsrPrmt({ openDialg, onCloseDialg, data, permitId }) {
   const [submitINC, setSubmitINC] = useState(false);
@@ -52,6 +66,34 @@ function IIOSTaskUsrPrmt({ openDialg, onCloseDialg, data, permitId }) {
         <DialogContent>
           <DialogContentText>คุณต้องการอนุมัติงานนี้ใช่หรือไม่</DialogContentText>
           <br />
+          <Grid container spacing={1}>
+            <Grid item xs={4}>
+              <Item sx={{ textAlign: 'right' }}>แผนกที่แจ้งปัญหา:</Item>
+            </Grid>
+            <Grid item xs={8}>
+              <Item>{data?.issue_department_name}</Item>
+            </Grid>
+            <Grid item xs={4}>
+              <Item sx={{ textAlign: 'right' }}>รายละเอียดงานที่แจ้ง:</Item>
+            </Grid>
+            <Grid item xs={8}>
+              <Item>{data?.task_issue}</Item>
+            </Grid>
+            <Grid item xs={4}>
+              <Item sx={{ textAlign: 'right' }}>ผู้แจ้ง:</Item>
+            </Grid>
+            <Grid item xs={8}>
+              <Item>
+                {data?.informer_firstname} {data?.informer_lastname}
+              </Item>
+            </Grid>
+            <Grid item xs={4}>
+              <Item sx={{ textAlign: 'right' }}>งบประมาณที่ใช้:</Item>
+            </Grid>
+            <Grid item xs={8}>
+              <Item>{data?.task_cost}</Item>
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <div style={{ flex: '1 0 0' }} />

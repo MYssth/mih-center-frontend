@@ -52,6 +52,10 @@ function IIOSTaskAcpt({ openDialg, onCloseDialg, data, operList, estList, recvId
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'ok') {
+          setOperatorId('');
+          setOperatorName('');
+          setEstimationId('');
+          setEstimationName('');
           onCloseDialg();
         } else {
           setSubmitERR(true);
@@ -74,6 +78,8 @@ function IIOSTaskAcpt({ openDialg, onCloseDialg, data, operList, estList, recvId
         onClose={() => {
           setOperatorId('');
           setOperatorName('');
+          setEstimationId('');
+          setEstimationName('');
           onCloseDialg();
         }}
       >

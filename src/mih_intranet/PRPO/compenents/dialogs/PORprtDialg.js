@@ -1,22 +1,12 @@
 /* eslint-disable react/prop-types */
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  Grid,
-  Box,
-  Typography,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, Grid, Box, Typography } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 
 const moment = require('moment');
 
 moment.locale('th');
 
-
 function PORprtDialg({ openDialg, onCloseDialg, POHeader, PODetail }) {
-
   const col = [
     {
       field: 'id',
@@ -118,6 +108,12 @@ function PORprtDialg({ openDialg, onCloseDialg, POHeader, PODetail }) {
               </Grid>
               <Grid item xs={7} sm={9} md={10}>
                 {moment(PODetail[0].PODTE, 'YYYYMMDD').format('DD MMMM YYYY')}
+              </Grid>
+              <Grid item xs={5} sm={3} md={2}>
+                วันที่อนุมัติ:
+              </Grid>
+              <Grid item xs={7} sm={9} md={10}>
+                {moment(POHeader.AUTDTE, 'YYYYMMDD').format('DD MMMM YYYY')}
               </Grid>
               <Grid item xs={5} sm={3} md={2}>
                 หน่วยงานที่ขอ:

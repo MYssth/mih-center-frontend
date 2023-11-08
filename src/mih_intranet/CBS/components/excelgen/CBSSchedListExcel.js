@@ -277,14 +277,14 @@ export default async function CBSSchedListExcel(data, rToken) {
       worksheet.getCell(`S${row}`).font = NFont;
       worksheet.getCell(`S${row}`).border = border;
 
-      worksheet.getCell(`T${row}`).value = data[i].rcv_date
+      worksheet.getCell(`T${row}`).value = data[i].permit_date
         ? `${moment.utc(data[i].permit_date).format('DD/MM/YYYY')}`
         : '-';
       worksheet.getCell(`T${row}`).alignment = { horizontal: 'right' };
       worksheet.getCell(`T${row}`).font = NFont;
       worksheet.getCell(`T${row}`).border = border;
 
-      worksheet.getCell(`U${row}`).value = data[i].rcv_date
+      worksheet.getCell(`U${row}`).value = data[i].permit_date
         ? `${moment.utc(data[i].permit_date).format('HH:mm')}`
         : '-';
       worksheet.getCell(`U${row}`).alignment = { horizontal: 'right' };
@@ -316,15 +316,19 @@ export default async function CBSSchedListExcel(data, rToken) {
   row += 2;
   worksheet.mergeCells(`A${row}:I${row}`);
   worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(`A${row}`).value = `ลงชื่อ ..................................................................... ผู้จัดทำ`;
+  worksheet.getCell(
+    `A${row}`
+  ).value = `ลงชื่อ ..................................................................... ผู้จัดทำ`;
   worksheet.getCell(`A${row}`).font = NFont;
 
   worksheet.mergeCells(`J${row}:Y${row}`);
   worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(`J${row}`).value = `ลงชื่อ ..................................................................... ผู้ตรวจสอบ`;
+  worksheet.getCell(
+    `J${row}`
+  ).value = `ลงชื่อ ..................................................................... ผู้ตรวจสอบ`;
   worksheet.getCell(`J${row}`).font = NFont;
 
-  row+=1;
+  row += 1;
   worksheet.mergeCells(`A${row}:I${row}`);
   worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
   worksheet.getCell(`A${row}`).value = `(                                                                  )`;
@@ -335,7 +339,7 @@ export default async function CBSSchedListExcel(data, rToken) {
   worksheet.getCell(`J${row}`).value = `(                                                                  )`;
   worksheet.getCell(`J${row}`).font = NFont;
 
-  row+=1;
+  row += 1;
   worksheet.mergeCells(`A${row}:I${row}`);
   worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
   worksheet.getCell(`A${row}`).value = `วันที่ ........................................................`;

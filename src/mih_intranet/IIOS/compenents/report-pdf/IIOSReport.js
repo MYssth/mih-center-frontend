@@ -290,8 +290,8 @@ export default async function IIOSReport(data) {
                             ? '(งานซ่อมบำรุงทั่วไป)'
                             : '(งานซ่อมบำรุงเครื่องมือแพทย์)'
                         }</strong></td>
-                    <td>เริ่มใช้วันที่ 30 มิ.ย. 2566<br />
-                        ปรับปรุงครั้งที่ 5 เมื่อ 30 มิ.ย. 2566</td>
+                    <td>เริ่มใช้วันที่ 7 พ.ย. 2566<br />
+                        ปรับปรุงครั้งที่ 6 เมื่อ 7 พ.ย. 2566</td>
                 </tr>
         </table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
             <tr>
@@ -344,7 +344,7 @@ export default async function IIOSReport(data) {
                           )}`
                     }`}</td></td></table></td>
             </tr>
-        </table><table data-pdfmake="{'heights':['auto',65],'widths':['*']}">
+        </table><table data-pdfmake="{'heights':['auto',85],'widths':['*']}">
             <tr>
                 <td><strong>การประเมินงาน</strong></td>
             </tr>
@@ -356,6 +356,7 @@ export default async function IIOSReport(data) {
                       : data.status_name
                     : 'ดำเนินการโดยผู้รับผิดชอบ'
                 }<br />
+                งบประมาณที่ใช้: ${!data.task_cost || data.task_cost === undefined ? '0' : data.task_cost}<br/>
                     หมายเหตุ: ${data.task_note === null || data.task_note === '' ? '-' : data.task_note}</td>
                 </tr>
         </table><table data-pdfmake="{'widths':${
@@ -417,13 +418,12 @@ export default async function IIOSReport(data) {
                             'dd/MM/yyyy'
                           )}`
                     }`}</td></tr>
-                </table></td></tr></table><table data-pdfmake="{'heights':['auto',105],'widths':['*']}">
+                </table></td></tr></table><table data-pdfmake="{'heights':['auto',85],'widths':['*']}">
             <tr>
                 <td><strong>ผลการดำเนินงาน</strong></td>
             </tr>
             <tr>
-                <td>งบประมาณที่ใช้: ${!data.task_cost || data.task_cost === undefined ? '0' : data.task_cost}<br/>
-                รายละเอียดการแก้ไขปัญหา: ${
+                <td>รายละเอียดการแก้ไขปัญหา: ${
                   data.status_name === 'ยกเลิก'
                     ? 'ยกเลิกใบงาน'
                     : !data.task_date_end || data.task_date_end === undefined

@@ -213,7 +213,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
       jsonData.estimation_id === '' ||
       jsonData.estimation_id === null ||
       ((jsonData.status_id_request === 3 || jsonData.status_id_request === 4) &&
-        (jsonData.task_note === '' || jsonData.task_note === null))
+        (jsonData.task_note === '' || jsonData.task_note === null)) ||
+      (jsonData.category_id === 16 && jsonData.task_cost === '')
     ) {
       setSubmitINC(true);
       return;
@@ -355,6 +356,11 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                 setTaskCost(event.target.value);
               }}
               label="งบประมาณที่ใช้"
+              sx={{
+                '& input:valid + fieldset': {
+                  borderColor: categoryId === 16 ? (taskCost ? 'green' : 'red') : '',
+                },
+              }}
             />
             <Autocomplete
               value={estimationName === null ? '' : estimationName}

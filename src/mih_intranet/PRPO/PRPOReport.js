@@ -104,10 +104,20 @@ function PRPOReport() {
       flex: 1,
     },
     {
+      field: 'AUTDTE',
+      headerName: 'วันที่อนุมัติ',
+      maxWidth: 200,
+      minWidth: 140,
+      flex: 1,
+      renderCell: (params) => {
+        return moment(`25${params.row.AUTDTE}`).format('DD MMMM YYYY');
+      },
+    },
+    {
       field: 'DIVNAM',
       headerName: 'แผนกที่ขอซื้อ',
       //   maxWidth: 100,
-      minWidth: 100,
+      minWidth: 120,
       flex: 1,
     },
     {
@@ -159,10 +169,20 @@ function PRPOReport() {
       flex: 1,
     },
     {
+      field: 'AUTDTE',
+      headerName: 'วันที่อนุมัติ',
+      maxWidth: 140,
+      minWidth: 140,
+      flex: 1,
+      renderCell: (params) => {
+        return moment(params.row.AUTDTE, 'YYYYMMDD').format('DD MMMM YYYY');
+      },
+    },
+    {
       field: 'DIVNAM',
       headerName: 'แผนกที่ขอซื้อ',
       //   maxWidth: 100,
-      minWidth: 100,
+      minWidth: 120,
       flex: 1,
     },
     {
@@ -197,6 +217,8 @@ function PRPOReport() {
 
   const handlePRPOQry = () => {
     setIsShow(true);
+    setFromDate('');
+    setToDate(new Date());
     // console.log(usrReq);
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getusrreqlist/${usrReq}`, {
@@ -290,15 +312,15 @@ function PRPOReport() {
     setFilterPRHeadList(
       PRHeadList.filter(
         (dt) =>
-          dt.RQODTE - 5430000 >= moment(fromDate).format('YYYYMMDD') &&
-          dt.RQODTE - 5430000 <= moment(toDate).format('YYYYMMDD')
+          parseInt(`25${dt.AUTDTE}`, 10) - 5430000 >= moment(fromDate).format('YYYYMMDD') &&
+          parseInt(`25${dt.AUTDTE}`, 10) - 5430000 <= moment(toDate).format('YYYYMMDD')
       )
     );
     setFilterPOHeadList(
       POHeadList.filter(
         (dt) =>
-          dt.PODTE - 5430000 >= moment(fromDate).format('YYYYMMDD') &&
-          dt.PODTE - 5430000 <= moment(toDate).format('YYYYMMDD')
+          dt.AUTDTE - 5430000 >= moment(fromDate).format('YYYYMMDD') &&
+          dt.AUTDTE - 5430000 <= moment(toDate).format('YYYYMMDD')
       )
     );
   };

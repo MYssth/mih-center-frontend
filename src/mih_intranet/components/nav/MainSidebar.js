@@ -23,6 +23,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
   const [isIIOS, setIsIIOS] = useState(false);
   const [isDSMS, setIsDSMS] = useState(false);
   const [isCBS, setIsCBS] = useState(false);
+  const [isDIS, setIsDIS] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
@@ -36,6 +37,8 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
           setIsDSMS(true);
         } else if (token.lv_list[i].mihapp_id === 'CBS') {
           setIsCBS(true);
+        } else if (token.lv_list[i].mihapp_id === 'DIS') {
+          setIsDIS(true);
         }
       }
     }
@@ -146,14 +149,36 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
 
   const PRPO = (
     <>
-    <li className="nav-item">
+      <li className="nav-item">
         <a className="nav-link collapsed" href="/prpodashboard">
           <i className="bi bi-clipboard-check" />
           <span>ระบบอนุมัติออนไลน์</span>
         </a>
       </li>
     </>
-  )
+  );
+
+  const DIS = (
+    <>
+      {isDIS ? (
+        <li className="nav-item">
+          {name === 'disdruginfolist' ? (
+            <a className="nav-link" href="#">
+              <i className="bi bi-capsule-pill" />
+              <span>ระบบข้อมูลยาออนไลน์</span>
+            </a>
+          ) : (
+            <a className="nav-link collapsed" href="/disdruginfolist">
+              <i className="bi bi-capsule-pill" />
+              <span>ระบบข้อมูลยาออนไลน์</span>
+            </a>
+          )}
+        </li>
+      ) : (
+        ''
+      )}
+    </>
+  );
 
   const renderContent = (
     <>
@@ -206,6 +231,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
           </a>
         </li>
         {PMS}
+        {DIS}
         <li className="nav-heading">เอกสารเผยแพร่</li>
         <li className="nav-item">
           {/* <a className="nav-link collapsed" href="mihdocuments/announce.html"> */}

@@ -47,6 +47,10 @@ import PRPOReport from './mih_intranet/PRPO/PRPOReport';
 
 import Testo from './mih_intranet/RMS/Testo';
 
+// DIS
+import DISDrugInfoList from './mih_intranet/DIS/DISDrugInfoList';
+import DISProdView from './mih_intranet/DIS/DISProdView';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -180,6 +184,16 @@ export default function Router() {
     {
       path: '/testo',
       element: <Testo />,
+    },
+
+    // DIS
+    {
+      path: '/disdruginfolist',
+      element: <DISDrugInfoList />,
+    },
+    {
+      path: '/druginfo',
+      element: <DISProdView />,
     },
 
     {

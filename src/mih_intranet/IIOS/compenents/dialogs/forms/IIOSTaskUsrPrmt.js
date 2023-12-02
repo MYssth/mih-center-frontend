@@ -29,6 +29,7 @@ function IIOSTaskUsrPrmt({ openDialg, onCloseDialg, data, permitId }) {
       level_id: data.level_id,
       permit_id: permitId,
       taskCase: permitCase,
+      category_id: data.category_id
     };
 
     // console.log(jsonData);

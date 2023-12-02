@@ -17,32 +17,33 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token !== null) {
-      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_loginPort}/authen`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status !== 'ok') {
-            // alert('กรุณาเข้าสู่ระบบ');
-            localStorage.removeItem('token');
-            navigate('/login', { replace: true, state: { from: location } });
-          }
-
+    // console.log(location.pathname);
+    if (location.pathname !== '/druginfo') {
+      if (token !== null) {
+        fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_loginPort}/authen`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .catch((error) => {
-          console.error('Error:', error);
-          alert(`authen failed : ${error}`);
-          navigate('/login', { replace: true, state: { from: location } });
-        });
-    } else {
-      navigate('/login', { replace: true, state: { from: location } });
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status !== 'ok') {
+              // alert('กรุณาเข้าสู่ระบบ');
+              localStorage.removeItem('token');
+              navigate('/login', { replace: true, state: { from: location } });
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert(`authen failed : ${error}`);
+            navigate('/login', { replace: true, state: { from: location } });
+          });
+      } else {
+        navigate('/login', { replace: true, state: { from: location } });
+      }
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

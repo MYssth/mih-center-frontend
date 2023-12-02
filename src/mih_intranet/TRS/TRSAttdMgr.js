@@ -38,6 +38,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 
 let psnId;
 let disBtn = true;
+let rToken = '';
 
 function TRSAttdMgr() {
   const [open, setOpen] = useState(false);
@@ -61,8 +62,6 @@ function TRSAttdMgr() {
   const [focusTopic, setFocusTopic] = useState([]);
 
   const [psnList, setPsnList] = useState([]);
-
-  let rToken = '';
 
   const topicListCol = [
     {
@@ -221,9 +220,12 @@ function TRSAttdMgr() {
     }
   }, []);
 
+  // useEffect(() => {
+  //   disBtn = false;
+  // }, [isFull]);
+
   useEffect(() => {
     if (attdFilter.length !== 0) {
-      disBtn = false;
       fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getattdbytopic/${selTopicRes}`, {
         method: 'GET',
         headers: {
@@ -416,14 +418,27 @@ function TRSAttdMgr() {
                               (data) => data.id === newSelectionModel[0] && data.topic_id === selTopicRes
                             )?.name
                           );
-                          setIsFull(
-                            subTopicList.find(
-                              (data) =>
-                                data.id === newSelectionModel[0] &&
-                                data.topic_id === selTopicRes &&
-                                data.attd < data.lmt
-                            ) === undefined
-                          );
+                          if (newSelectionModel[0]) {
+                            disBtn = false;
+                          }
+
+                          // disBtn =
+                          //   subTopicList.find(
+                          //     (data) =>
+                          //       data.id === newSelectionModel[0] &&
+                          //       data.topic_id === selTopicRes &&
+                          //       data.attd < data.lmt
+                          //   ) === undefined;
+
+                          // setIsFull(
+                          //   subTopicList.find(
+                          //     (data) =>
+                          //       data.id === newSelectionModel[0] &&
+                          //       data.topic_id === selTopicRes &&
+                          //       data.attd < data.lmt
+                          //   ) === undefined
+                          // );
+
                           setAttdFilter(
                             attdList.filter(
                               (data) => data.topic_id === selTopicRes && data.sub_id === newSelectionModel[0]

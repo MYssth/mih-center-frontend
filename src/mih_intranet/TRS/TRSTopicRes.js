@@ -39,10 +39,11 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 
 let psnId;
 let disBtn = true;
+let rToken = '';
 
 function TRSTopicRes() {
   const [open, setOpen] = useState(false);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(50);
 
   const [attd, setAttd] = useState([]);
   const [isAttd, setIsAttd] = useState('');
@@ -55,8 +56,6 @@ function TRSTopicRes() {
   const [selSubTopicRes, setSelSubTopicRes] = useState('');
 
   const [openAttd, setOpenAttd] = useState(false);
-
-  let rToken = '';
 
   const topicListCol = [
     {
@@ -119,7 +118,8 @@ function TRSTopicRes() {
       maxWidth: 100,
       minWidth: 100,
       flex: 1,
-      valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
+      // valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
+      valueGetter: (params) => `${new Date(params.row.start_date).getUTCDate()}/${new Date(params.row.start_date).getUTCMonth()}/${new Date(params.row.start_date).getUTCFullYear()}`,
     },
     {
       field: 'start_time',
@@ -323,7 +323,15 @@ function TRSTopicRes() {
                       />
                     </div>
                   </div>
-
+                  {selTopicName === 'ยืนยันสิทธิ์เข้าร่วมงานเลี้ยงปีใหม่ และลงทะเบียนจองที่นั่งโต๊ะจีน' ? (
+                    <img
+                      src={'assets/img/newyear_seat_chart.png'}
+                      style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto' }}
+                      alt="ไม่มีรูปภาพ"
+                    />
+                  ) : (
+                    ''
+                  )}
                   <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
                     เลือกรุ่นของหัวข้อกิจกรรม {selTopicName}
                   </Typography>

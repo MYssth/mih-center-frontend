@@ -115,7 +115,7 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
     setIsDisStatus(false);
     if (
       ((permitId === '' || permitId === null) && categoryId === 1) ||
-      ((userPermitId === '' || userPermitId === null) && categoryId === 16)
+      ((userPermitId === '' || userPermitId === null || permitId === '' || permitId === null) && categoryId === 16)
     ) {
       setIsDisStatus(true);
       setStatusId(2);
@@ -162,6 +162,8 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
         } else {
           taskCase = 'request';
         }
+      } else if (permitId === '' || permitId === null) {
+        taskCase = 'request';
       }
       if (permitId !== '' && permitId !== null && statusId === 5) {
         taskCase = 'pRequest';
@@ -475,11 +477,14 @@ function IIOSTaskProc({ openDialg, onCloseDialg, data, operList, estList, statLi
                 {categoryId === 1 ? (
                   <Typography sx={{ color: 'error.main', ml: 1 }}>
                     งานนี้จะเข้าสู่กระบวนการอนุมัติเมื่อกดดำเนินการ
+                    <br />
                     กรณีที่งานนี้เสร็จสิ้นแล้วผู้ดำเนินงานต้องกลับมาปิดงานนี้อีกครั้งหลังอนุมัติ
                   </Typography>
                 ) : categoryId === 16 ? (
                   <Typography sx={{ color: 'error.main', ml: 1 }}>
                     งานนี้จะเข้าสู่กระบวนการรออนุมัติแก้ไขโปรแกรม กรุณาแจ้งหน่วยงานต้นเรื่องเพื่อทำการอนุมัติ
+                    <br />
+                    กรณีที่หน่วยงานต้นเรื่องอนุมัติแล้วให้แจ้งผู้จัดการแผนกเทคโนโลยีสารเทศ
                   </Typography>
                 ) : (
                   ''

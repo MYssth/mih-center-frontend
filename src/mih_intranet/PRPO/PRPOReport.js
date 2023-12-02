@@ -116,14 +116,14 @@ function PRPOReport() {
     {
       field: 'DIVNAM',
       headerName: 'แผนกที่ขอซื้อ',
-      //   maxWidth: 100,
+      maxWidth: 250,
       minWidth: 120,
       flex: 1,
     },
     {
       field: 'NETAMT',
       headerName: 'ราคาสุทธิ',
-      //   maxWidth: 100,
+      maxWidth: 150,
       minWidth: 100,
       flex: 1,
       valueGetter: (params) => params.row.NETAMT.toLocaleString(undefined, { maximumFractionDigits: 2 }),
@@ -132,7 +132,7 @@ function PRPOReport() {
       field: 'REMARK',
       headerName: 'หมายเหตุ',
       //   maxWidth: 100,
-      minWidth: 200,
+      minWidth: 300,
       flex: 1,
     },
   ];
@@ -171,8 +171,8 @@ function PRPOReport() {
     {
       field: 'AUTDTE',
       headerName: 'วันที่อนุมัติ',
-      maxWidth: 140,
-      minWidth: 140,
+      maxWidth: 150,
+      minWidth: 150,
       flex: 1,
       renderCell: (params) => {
         return moment(params.row.AUTDTE, 'YYYYMMDD').format('DD MMMM YYYY');
@@ -181,14 +181,14 @@ function PRPOReport() {
     {
       field: 'DIVNAM',
       headerName: 'แผนกที่ขอซื้อ',
-      //   maxWidth: 100,
+      maxWidth: 250,
       minWidth: 120,
       flex: 1,
     },
     {
       field: 'NETAMT',
       headerName: 'ราคาสุทธิ',
-      //   maxWidth: 100,
+      maxWidth: 150,
       minWidth: 100,
       flex: 1,
       valueGetter: (params) => params.row.NETAMT.toLocaleString(undefined, { maximumFractionDigits: 2 }),
@@ -196,15 +196,15 @@ function PRPOReport() {
     {
       field: 'STATUS_PO',
       headerName: 'สถานะ',
-      //   maxWidth: 100,
-      minWidth: 100,
+      maxWidth: 200,
+      minWidth: 120,
       flex: 1,
     },
     {
       field: 'REMARK',
       headerName: 'หมายเหตุ',
       //   maxWidth: 100,
-      minWidth: 200,
+      minWidth: 300,
       flex: 1,
     },
   ];
@@ -276,7 +276,9 @@ function PRPOReport() {
       .then((response) => response.json())
       .then((data) => {
         setPRHeadList(data);
-        setFilterPRHeadList(data);
+        setFilterPRHeadList(
+          data.filter((dt) => parseInt(`25${dt.AUTDTE}`, 10) - 5430000 >= moment(new Date()).format('YYYYMMDD'))
+        );
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -292,7 +294,7 @@ function PRPOReport() {
       .then((response) => response.json())
       .then((data) => {
         setPOHeadList(data);
-        setFilterPOHeadList(data);
+        setFilterPOHeadList(data.filter((dt) => dt.AUTDTE - 5430000 >= moment(new Date()).format('YYYYMMDD')));
       })
       .catch((error) => {
         console.error('Error:', error);

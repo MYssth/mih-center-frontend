@@ -37,6 +37,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 let psnId;
+let rToken = '';
 
 function TRSDashboard() {
   const [open, setOpen] = useState(false);
@@ -44,8 +45,6 @@ function TRSDashboard() {
   const [pageSize, setPageSize] = useState(25);
 
   const [attdList, setAttdList] = useState('');
-
-  let rToken = '';
 
   const columns = [
     {

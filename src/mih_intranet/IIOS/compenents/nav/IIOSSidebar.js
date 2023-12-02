@@ -307,7 +307,7 @@ function IIOSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
         ) : (
           ''
         )}
-        {tokenViewData === 'HEMP' || tokenViewData === 'MGR' || tokenViewData === 'HMGR' || tokenViewData === 'ALL' ? (
+        {tokenViewData === 'MGR' || tokenViewData === 'HMGR' || tokenViewData === 'ALL' ? (
           <>{usrPermitDashboard}</>
         ) : (
           ''

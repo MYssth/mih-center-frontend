@@ -35,6 +35,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
+let rToken = '';
+
 function TRSReport() {
   const [open, setOpen] = useState(false);
   const [pageSize, setPageSize] = useState(25);
@@ -42,8 +44,6 @@ function TRSReport() {
   const [topicList, setTopicList] = useState([]);
   const [attdList, setAttdList] = useState([]);
   const [selTopicRes, setSelTopicRes] = useState('');
-
-  let rToken = '';
 
   const topicListCol = [
     {

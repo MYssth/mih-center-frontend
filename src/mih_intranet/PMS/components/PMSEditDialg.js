@@ -47,8 +47,17 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
   const [CBSLevelViewId, setCBSLevelViewId] = useState('');
   const [CBSLevelViewName, setCBSLevelViewName] = useState('');
   const [CBSLevelViewDescription, setCBSLevelViewDescription] = useState('');
-
   const [isCBS, setIsCBS] = useState(false);
+
+  const [TRSLevelName, setTRSLevelName] = useState('');
+  const [TRSLevelId, setTRSLevelId] = useState('');
+  const [TRSLevelDescription, setTRSLevelDescription] = useState('');
+  const [isTRS, setIsTRS] = useState(false);
+
+  const [DISLevelName, setDISLevelName] = useState('');
+  const [DISLevelId, setDISLevelId] = useState('');
+  const [DISLevelDescription, setDISLevelDescription] = useState('');
+  const [isDIS, setIsDIS] = useState(false);
 
   const isSkip = (value) => value !== '';
   const [showSecret, setShowSecret] = useState(false);
@@ -116,6 +125,18 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
               setCBSLevelViewDescription(data[i].view_descr);
               setIsCBS(true);
             }
+            if (data[i].mihapp_id === 'TRS') {
+              setTRSLevelId(data[i].lv_id);
+              setTRSLevelName(data[i].lv_name);
+              setTRSLevelDescription(data[i].lv_descr);
+              setIsTRS(true);
+            }
+            if (data[i].mihapp_id === 'DIS') {
+              setDISLevelId(data[i].lv_id);
+              setDISLevelName(data[i].lv_name);
+              setDISLevelDescription(data[i].lv_descr);
+              setIsDIS(true);
+            }
           }
         })
         .catch((error) => {
@@ -153,6 +174,16 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
     setCBSLevelViewName('');
     setCBSLevelViewDescription('');
     setIsCBS(false);
+
+    setTRSLevelId('');
+    setTRSLevelName('');
+    setTRSLevelDescription('');
+    setIsTRS(false);
+
+    setDISLevelId('');
+    setDISLevelName('');
+    setDISLevelDescription('');
+    setIsDIS(false);
 
     setImageUrl(null);
   };
@@ -221,6 +252,22 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
         return;
       }
       levelList.push({ lv_id: CBSLevelId, view_id: CBSLevelViewId });
+    }
+
+    if (isTRS) {
+      if (TRSLevelId === '') {
+        alert('กรุณาใส่หน้าที่ของระบบลงทะเบียนร่วมกิจกรรม');
+        return;
+      }
+      levelList.push({ lv_id: TRSLevelId, view_id: '' });
+    }
+
+    if (isDIS) {
+      if (DISLevelId === '') {
+        alert('กรุณาใส่หน้าที่ของระบบข้อมูลยาออนไลน์');
+        return;
+      }
+      levelList.push({ lv_id: DISLevelId, view_id: '' });
     }
 
     if (personnelInputSecret) {
@@ -325,6 +372,28 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
       setCBSLevelId('');
       setCBSLevelName('');
       setCBSLevelDescription('');
+    }
+  };
+
+  const handleChangeTRS = (event) => {
+    if (event.target.checked) {
+      setIsTRS(true);
+    } else {
+      setIsTRS(false);
+      setTRSLevelId('');
+      setTRSLevelName('');
+      setTRSLevelDescription('');
+    }
+  };
+
+  const handleChangeDIS = (event) => {
+    if (event.target.checked) {
+      setIsDIS(true);
+    } else {
+      setIsDIS(false);
+      setDISLevelId('');
+      setDISLevelName('');
+      setDISLevelDescription('');
     }
   };
 
@@ -646,6 +715,82 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
             <Typography sx={{ pl: 1.5 }}>{`${CBSLevelViewDescription}`}</Typography>
             <br />
             {/* ==== END OF CBS ==== */}
+            {/* ==== TRS ==== */}
+            <Checkbox checked={isTRS} onChange={handleChangeTRS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />
+            ระบบลงทะเบียนร่วมกิจกรรม
+            {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
+            <Autocomplete
+              disabled={!isTRS}
+              value={TRSLevelName}
+              onChange={(event, newValue) => {
+                setTRSLevelName(newValue);
+                if (newValue !== null) {
+                  setTRSLevelId(levels.find((o) => o.name === newValue && o.mihapp_id === 'TRS').id);
+                  setTRSLevelDescription(
+                    `รายละเอียด: ${levels.find((o) => o.name === newValue && o.mihapp_id === 'TRS').descr}`
+                  );
+                } else {
+                  setTRSLevelId('');
+                  setTRSLevelDescription('');
+                }
+              }}
+              id="controllable-states-TRS-levels-id"
+              // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
+              options={Object.values(levels)
+                .map((option) => (option.mihapp_id === 'TRS' ? `${option.name}` : ''))
+                .filter(isSkip)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="ระบบลงทะเบียนร่วมกิจกรรม" />}
+              sx={{
+                '& .MuiAutocomplete-inputRoot': {
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isTRS ? (TRSLevelName ? 'green' : 'red') : '',
+                  },
+                },
+              }}
+            />
+            <Typography sx={{ pl: 1.5 }}>{`${TRSLevelDescription}`}</Typography>
+            <br />
+            {/* ==== END OF TRS ==== */}
+            {/* ==== DIS ==== */}
+            <Checkbox checked={isDIS} onChange={handleChangeDIS} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />
+            ระบบข้อมูลยาออนไลน์
+            {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
+            <Autocomplete
+              disabled={!isDIS}
+              value={DISLevelName}
+              onChange={(event, newValue) => {
+                setDISLevelName(newValue);
+                if (newValue !== null) {
+                  setDISLevelId(levels.find((o) => o.name === newValue && o.mihapp_id === 'DIS').id);
+                  setDISLevelDescription(
+                    `รายละเอียด: ${levels.find((o) => o.name === newValue && o.mihapp_id === 'DIS').descr}`
+                  );
+                } else {
+                  setDISLevelId('');
+                  setDISLevelDescription('');
+                }
+              }}
+              id="controllable-states-DIS-levels-id"
+              // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
+              options={Object.values(levels)
+                .map((option) => (option.mihapp_id === 'DIS' ? `${option.name}` : ''))
+                .filter(isSkip)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="ระบบข้อมูลยาออนไลน์" />}
+              sx={{
+                '& .MuiAutocomplete-inputRoot': {
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isDIS ? (DISLevelName ? 'green' : 'red') : '',
+                  },
+                },
+              }}
+            />
+            <Typography sx={{ pl: 1.5 }}>{`${DISLevelDescription}`}</Typography>
+            <br />
+            {/* ==== END OF DIS ==== */}
           </Box>
         </DialogContent>
         <DialogActions>

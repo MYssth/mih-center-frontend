@@ -7,24 +7,24 @@ import {
     DialogContentText,
     DialogActions,
     Button,
+    colors,
   } from '@mui/material';
 import { SubmtERR } from '../../../components/dialogs/response';
 
-function TRSAttdSubmtDialg({ openDialg, onCloseDialg, topic, psnId, rToken }) {
+function TRSVoteSubmtDialg({ openDialg, onCloseDialg, data, psnId, rToken }) {
   // const rToken = localStorage.getItem('token');
 
   const [submitERR, setSubmitERR] = useState(false);
 
-  const handleTopicAttd = () => {
+  const handleVote = () => {
     const jsonData = {
-      topic_id: topic?.topic_id,
-      sub_id: topic?.sub_id,
-      psn_id: psnId,
+      vote: data.psn_id,
+      id: psnId,
     };
 
     // console.log(jsonData);
 
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/topicattd`, {
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/vote`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ function TRSAttdSubmtDialg({ openDialg, onCloseDialg, topic, psnId, rToken }) {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'ok') {
-          onCloseDialg(true);
+          onCloseDialg();
         } else {
           setSubmitERR(true);
         }
@@ -57,14 +57,15 @@ function TRSAttdSubmtDialg({ openDialg, onCloseDialg, topic, psnId, rToken }) {
           onCloseDialg();
         }}
       >
-        <DialogTitle>ลงทะเบียนร่วมกิจกรรม</DialogTitle>
+        <DialogTitle>ยืนยันการโหวต</DialogTitle>
         <DialogContent>
-          <DialogContentText>คุณต้องการลงทะเบียนร่วมกิจกรรม {topic?.topic_name} {topic?.name} หรือไม่</DialogContentText>
+          <DialogContentText>คุณต้องการโหวตให้ {data?.pname}{data?.fname} {data?.lname} {data?.dept_name} หรือไม่<br/>
+          <div style={{"color":"red"}}>หากยืนยันการโหวตแล้วจะไม่สามารถแก้ไขได้ทุกกรณี กรุณาตรวจสอบรายชื่อให้ถูกต้อง</div></DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={onCloseDialg}>ยกเลิก</Button>
-          <Button variant="contained" onClick={handleTopicAttd}>
-            ยืนยันการลงทะเบียน
+          <Button variant="contained" onClick={handleVote}>
+            ยืนยันการโหวต
           </Button>
         </DialogActions>
       </Dialog>
@@ -72,4 +73,4 @@ function TRSAttdSubmtDialg({ openDialg, onCloseDialg, topic, psnId, rToken }) {
   );
 }
 
-export default TRSAttdSubmtDialg;
+export default TRSVoteSubmtDialg;

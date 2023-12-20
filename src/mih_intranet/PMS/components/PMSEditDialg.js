@@ -59,6 +59,11 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
   const [DISLevelDescription, setDISLevelDescription] = useState('');
   const [isDIS, setIsDIS] = useState(false);
 
+  const [WIFILevelName, setWIFILevelName] = useState('');
+  const [WIFILevelId, setWIFILevelId] = useState('');
+  const [WIFILevelDescription, setWIFILevelDescription] = useState('');
+  const [isWIFI, setIsWIFI] = useState(false);
+
   const isSkip = (value) => value !== '';
   const [showSecret, setShowSecret] = useState(false);
 
@@ -137,6 +142,12 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
               setDISLevelDescription(data[i].lv_descr);
               setIsDIS(true);
             }
+            if (data[i].mihapp_id === 'WIFI') {
+              setWIFILevelId(data[i].lv_id);
+              setWIFILevelName(data[i].lv_name);
+              setWIFILevelDescription(data[i].lv_descr);
+              setIsWIFI(true);
+            }
           }
         })
         .catch((error) => {
@@ -184,6 +195,11 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
     setDISLevelName('');
     setDISLevelDescription('');
     setIsDIS(false);
+
+    setWIFILevelId('');
+    setWIFILevelName('');
+    setWIFILevelDescription('');
+    setIsWIFI(false);
 
     setImageUrl(null);
   };
@@ -268,6 +284,14 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
         return;
       }
       levelList.push({ lv_id: DISLevelId, view_id: '' });
+    }
+
+    if (isWIFI) {
+      if (WIFILevelId === '') {
+        alert('กรุณาใส่หน้าที่ของระบบจัดการ User Wi-Fi');
+        return;
+      }
+      levelList.push({ lv_id: WIFILevelId, view_id: '' });
     }
 
     if (personnelInputSecret) {
@@ -394,6 +418,17 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
       setDISLevelId('');
       setDISLevelName('');
       setDISLevelDescription('');
+    }
+  };
+
+  const handleChangeWIFI = (event) => {
+    if (event.target.checked) {
+      setIsWIFI(true);
+    } else {
+      setIsWIFI(false);
+      setWIFILevelId('');
+      setWIFILevelName('');
+      setWIFILevelDescription('');
     }
   };
 
@@ -791,6 +826,44 @@ function PMSEditDialg({ openDialg, onCloseDialg, data, levels, levelViews, rToke
             <Typography sx={{ pl: 1.5 }}>{`${DISLevelDescription}`}</Typography>
             <br />
             {/* ==== END OF DIS ==== */}
+            {/* ==== WIFI ==== */}
+            <Checkbox checked={isWIFI} onChange={handleChangeWIFI} sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />
+            ระบบจัดการ User Wi-Fi
+            {/* <div>{`level id: ${level_id !== null ? `'${level_id}'` : 'null'}`}</div><br /> */}
+            <Autocomplete
+              disabled={!isWIFI}
+              value={WIFILevelName}
+              onChange={(event, newValue) => {
+                setWIFILevelName(newValue);
+                if (newValue !== null) {
+                  setWIFILevelId(levels.find((o) => o.name === newValue && o.mihapp_id === 'WIFI').id);
+                  setWIFILevelDescription(
+                    `รายละเอียด: ${levels.find((o) => o.name === newValue && o.mihapp_id === 'WIFI').descr}`
+                  );
+                } else {
+                  setWIFILevelId('');
+                  setWIFILevelDescription('');
+                }
+              }}
+              id="controllable-states-WIFI-levels-id"
+              // options={Object.values(levels).map((option) => option.mihapp_id === "PMS" ? `${option.level_name}` : '')}
+              options={Object.values(levels)
+                .map((option) => (option.mihapp_id === 'WIFI' ? `${option.name}` : ''))
+                .filter(isSkip)}
+              fullWidth
+              required
+              renderInput={(params) => <TextField {...params} label="ระบบจัดการ User Wi-Fi" />}
+              sx={{
+                '& .MuiAutocomplete-inputRoot': {
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isWIFI ? (WIFILevelName ? 'green' : 'red') : '',
+                  },
+                },
+              }}
+            />
+            <Typography sx={{ pl: 1.5 }}>{`${WIFILevelDescription}`}</Typography>
+            <br />
+            {/* ==== END OF WIFI ==== */}
           </Box>
         </DialogContent>
         <DialogActions>

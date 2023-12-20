@@ -180,15 +180,12 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   }, [carTypeId]);
 
   useEffect(() => {
-    const tmpFrDate = `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`;
-    const tmpToDate = `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`;
+    const tmpFrDate = `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromTime).format('HH:mm')}:00.000Z`;
+    const tmpToDate = `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toTime).format('HH:mm')}:00.000Z`;
     fetchCarData(tmpFrDate, tmpToDate, carTypeId);
   }, [fromDate, fromTime, toDate, toTime]);
 
   async function fetchCarData(fDate, tDate, typeId) {
-    console.log(fDate);
-    console.log(tDate);
-    console.log(data.id);
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/getfilteredcar/${fDate}/${tDate}/${data.id}`, {
       method: 'GET',
       headers: {
@@ -221,8 +218,8 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const handleReqPermit = (specReq) => {
     const jsonData = {
       id: id,
-      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`,
-      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`,
+      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromTime).format('HH:mm')}:00.000Z`,
+      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toTime).format('HH:mm')}:00.000Z`,
       place: place,
       province: province,
       pax_amt: paxAmt,
@@ -310,8 +307,8 @@ function CBSPermitRepDialg({ openDialg, onCloseDialg, data }) {
   const handleSavChg = () => {
     const jsonData = {
       id: id,
-      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`,
-      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`,
+      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromTime).format('HH:mm')}:00.000Z`,
+      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toTime).format('HH:mm')}:00.000Z`,
       place: place,
       province: province,
       pax_amt: paxAmt,

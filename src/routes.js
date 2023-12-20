@@ -45,11 +45,15 @@ import TRSReport from './mih_intranet/TRS/TRSReport';
 import PRPODashboard from './mih_intranet/PRPO/PRPODashboard';
 import PRPOReport from './mih_intranet/PRPO/PRPOReport';
 
-import Testo from './mih_intranet/RMS/Testo';
-
 // DIS
 import DISDrugInfoList from './mih_intranet/DIS/DISDrugInfoList';
 import DISProdView from './mih_intranet/DIS/DISProdView';
+
+// RMS
+import RMSDashboard from './mih_intranet/RMS/RMSDashboard';
+
+// WIFI
+import WIFIDashboard from './mih_intranet/WIFI/WIFIDashboard';
 
 // ----------------------------------------------------------------------
 
@@ -181,11 +185,6 @@ export default function Router() {
       element: <PRPOReport />,
     },
 
-    {
-      path: '/testo',
-      element: <Testo />,
-    },
-
     // DIS
     {
       path: '/disdruginfolist',
@@ -194,6 +193,18 @@ export default function Router() {
     {
       path: '/druginfo',
       element: <DISProdView />,
+    },
+
+    // RMS
+    {
+      path: '/rmsdashboard',
+      element: <RMSDashboard />,
+    },
+
+    // WIFI
+    {
+      path: '/wifidashboard',
+      element: <WIFIDashboard />,
     },
 
     {

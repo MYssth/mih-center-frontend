@@ -114,6 +114,21 @@ function DISDrugInfoList() {
       flex: 1,
     },
     {
+      field: 'prod_view',
+      headerName: 'แสดงข้อมูลยา',
+      // maxWidth: 110,
+      minWidth: 200,
+      flex: 1,
+      renderCell: (params) => {
+        const link = `${process.env.REACT_APP_disLinkInfo}${params.row.id}`;
+        return (
+          <a href={link} target="_blank" rel="noopener noreferrer">
+            ดูหน้าข้อมูล
+          </a>
+        );
+      },
+    },
+    {
       field: 'remark',
       headerName: 'หมายเหตุ',
       //   maxWidth: 100,

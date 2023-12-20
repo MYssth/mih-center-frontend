@@ -136,23 +136,8 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
   }, [carTypeId]);
 
   useEffect(() => {
-    // 2023-10-03T14:00:00.000Z
-    // console.log(`${moment.utc(data.from_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`);
-    const tmpFrDate = `${moment.utc(depDate).format('YYYY-MM-DD')}T${moment.utc(depDate).format('HH:mm')}:00.000Z`;
-    // const tmpFrDate = `${depDate?.getFullYear()}-${String(parseInt(depDate?.getMonth(), 10) + 1).padStart(
-    //   2,
-    //   '0'
-    // )}-${String(depDate?.getDate()).padStart(2, '0')}T${String(depTm?.getHours()).padStart(2, '0')}:${String(
-    //   depTm?.getMinutes()
-    // ).padStart(2, '0')}:00.000Z`;
-    // console.log(tmpFrDate);
-    const tmpToDate = `${moment.utc(arrDate).format('YYYY-MM-DD')}T${moment.utc(arrDate).format('HH:mm')}:00.000Z`;
-    // const tmpToDate = `${arrDate?.getFullYear()}-${String(parseInt(arrDate?.getMonth(), 10) + 1).padStart(
-    //   2,
-    //   '0'
-    // )}-${String(arrDate?.getDate()).padStart(2, '0')}T${String(arrTm?.getHours()).padStart(2, '0')}:${String(
-    //   arrTm?.getMinutes()
-    // ).padStart(2, '0')}:00.000Z`;
+    const tmpFrDate = `${moment.utc(depDate).format('YYYY-MM-DD')}T${moment.utc(depTm).format('HH:mm')}:00.000Z`;
+    const tmpToDate = `${moment.utc(arrDate).format('YYYY-MM-DD')}T${moment.utc(arrTm).format('HH:mm')}:00.000Z`;
     fetchCarData(tmpFrDate, tmpToDate);
   }, [depDate, depTm, arrDate, arrTm]);
 
@@ -179,7 +164,6 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
   }
 
   async function carFilter(tempCar) {
-    // await setFilteredCar(Array.isArray(tempCar) ? tempCar.filter(carData => carData.type_id === (carTypeId)) : []);
     await setFilteredCar(tempCar.filter((carData) => carData.type_id === carTypeId));
   }
 
@@ -201,39 +185,10 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
         })
           .then((response) => response.json())
           .then((resultData) => {
-            // console.log(resultData);
             tmpFrDate = moment.utc(resultData.from_date);
-            // tmpFrDate = new Date(
-            //   `${parseInt(new Date(resultData.from_date).getUTCMonth(), 10) + 1} ${new Date(
-            //     resultData.from_date
-            //   ).getUTCDate()} ${new Date(resultData.from_date).getUTCFullYear()} ${new Date(
-            //     resultData.from_date
-            //   ).getUTCHours()}:${new Date(resultData.from_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-            // );
             tmpToDate = moment.utc(resultData.to_date);
-            // tmpToDate = new Date(
-            //   `${parseInt(new Date(resultData.to_date).getUTCMonth(), 10) + 1} ${new Date(
-            //     resultData.to_date
-            //   ).getUTCDate()} ${new Date(resultData.to_date).getUTCFullYear()} ${new Date(
-            //     resultData.to_date
-            //   ).getUTCHours()}:${new Date(resultData.to_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-            // );
             tmpDepDate = moment.utc(resultData.dep_date);
-            // tmpDepDate = new Date(
-            //   `${parseInt(new Date(resultData.dep_date).getUTCMonth(), 10) + 1} ${new Date(
-            //     resultData.dep_date
-            //   ).getUTCDate()} ${new Date(resultData.dep_date).getUTCFullYear()} ${new Date(
-            //     resultData.dep_date
-            //   ).getUTCHours()}:${new Date(resultData.dep_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-            // );
             tmpArrDate = moment.utc(resultData.arr_date);
-            // tmpArrDate = new Date(
-            //   `${parseInt(new Date(resultData.arr_date).getUTCMonth(), 10) + 1} ${new Date(
-            //     resultData.arr_date
-            //   ).getUTCDate()} ${new Date(resultData.arr_date).getUTCFullYear()} ${new Date(
-            //     resultData.arr_date
-            //   ).getUTCHours()}:${new Date(resultData.arr_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-            // );
           })
           .catch((error) => {
             if (error.name === 'AbortError') {
@@ -243,46 +198,11 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
             }
           });
       } else {
-        // console.log(`${moment.utc(data.from_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`);
-        // tmpFrDate = `${moment.utc(data.from_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`;
         tmpFrDate = moment.utc(data.from_date);
-        // tmpFrDate = new Date(
-        //   `${parseInt(new Date(data.from_date).getUTCMonth(), 10) + 1} ${new Date(
-        //     data.from_date
-        //   ).getUTCDate()} ${new Date(data.from_date).getUTCFullYear()} ${new Date(
-        //     data.from_date
-        //   ).getUTCHours()}:${new Date(data.from_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-        // );
-        // tmpToDate = `${moment.utc(data.to_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`;
         tmpToDate = moment.utc(data.to_date);
-        // tmpToDate = new Date(
-        //   `${parseInt(new Date(data.to_date).getUTCMonth(), 10) + 1} ${new Date(data.to_date).getUTCDate()} ${new Date(
-        //     data.to_date
-        //   ).getUTCFullYear()} ${new Date(data.to_date).getUTCHours()}:${new Date(
-        //     data.to_date
-        //   ).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-        // );
-
-        // tmpDepDate = `${moment.utc(data.dep_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`;
         tmpDepDate = moment.utc(data.dep_date);
-        // tmpDepDate = new Date(
-        //   `${parseInt(new Date(data.dep_date).getUTCMonth(), 10) + 1} ${new Date(
-        //     data.dep_date
-        //   ).getUTCDate()} ${new Date(data.dep_date).getUTCFullYear()} ${new Date(
-        //     data.dep_date
-        //   ).getUTCHours()}:${new Date(data.dep_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-        // );
-        // tmpArrDate = `${moment.utc(data.arr_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`;
         tmpArrDate = moment.utc(data.arr_date);
-        // tmpArrDate = new Date(
-        //   `${parseInt(new Date(data.arr_date).getUTCMonth(), 10) + 1} ${new Date(
-        //     data.arr_date
-        //   ).getUTCDate()} ${new Date(data.arr_date).getUTCFullYear()} ${new Date(
-        //     data.arr_date
-        //   ).getUTCHours()}:${new Date(data.arr_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-        // );
       }
-      // console.log('done');
       setCarTypeId(data.car_type_id);
       setCarTypeName(data.car_type_name);
       setCarId(data.car_id);
@@ -305,28 +225,23 @@ function CBSUseRecDialg({ openDialg, onCloseDialg, data }) {
   }, [openDialg]);
 
   const handleUseRec = () => {
-    // const tmpFrDate = `${moment.utc(depDate).format('YYYY-MMM-DD')}T${moment.utc(depDate).format('HH:mm')}:00.000Z`;
     const jsonData = {
       id: id,
       grp_id: grpId,
       rec_pid: token.psn_id,
-      dep_date: `${moment.utc(depDate).format('YYYY-MM-DD')}T${moment.utc(depDate).format('HH:mm')}:00.000Z`,
+      dep_date: `${moment.utc(depDate).format('YYYY-MM-DD')}T${moment.utc(depTm).format('HH:mm')}:00.000Z`,
       dep_mi: depMi,
-      arr_date: `${moment.utc(arrDate).format('YYYY-MM-DD')}T${moment.utc(arrDate).format('HH:mm')}:00.000Z`,
+      arr_date: `${moment.utc(arrDate).format('YYYY-MM-DD')}T${moment.utc(arrTm).format('HH:mm')}:00.000Z`,
       arr_mi: arrMi,
       car_type_id: carTypeId,
       car_id: carId,
       drv_pid: driverId,
     };
 
-    console.log(jsonData);
-
     if (jsonData.drv_pid === 0 || jsonData.car_type_id === 0 || jsonData.car_id === 0) {
       setSubmitINC(true);
       return;
     }
-
-    // console.log(jsonData);
 
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_cbsPort}/userecbook`, {
       method: 'POST',

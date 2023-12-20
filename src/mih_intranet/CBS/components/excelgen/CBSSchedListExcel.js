@@ -313,42 +313,42 @@ export default async function CBSSchedListExcel(data, rToken) {
     }
   }
 
-  row += 2;
-  worksheet.mergeCells(`A${row}:I${row}`);
-  worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(
-    `A${row}`
-  ).value = `ลงชื่อ ..................................................................... ผู้จัดทำ`;
-  worksheet.getCell(`A${row}`).font = NFont;
+  // row += 2;
+  // worksheet.mergeCells(`A${row}:I${row}`);
+  // worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  // worksheet.getCell(
+  //   `A${row}`
+  // ).value = `ลงชื่อ ..................................................................... ผู้จัดทำ`;
+  // worksheet.getCell(`A${row}`).font = NFont;
 
-  worksheet.mergeCells(`J${row}:Y${row}`);
-  worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(
-    `J${row}`
-  ).value = `ลงชื่อ ..................................................................... ผู้ตรวจสอบ`;
-  worksheet.getCell(`J${row}`).font = NFont;
+  // worksheet.mergeCells(`J${row}:Y${row}`);
+  // worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  // worksheet.getCell(
+  //   `J${row}`
+  // ).value = `ลงชื่อ ..................................................................... ผู้ตรวจสอบ`;
+  // worksheet.getCell(`J${row}`).font = NFont;
 
-  row += 1;
-  worksheet.mergeCells(`A${row}:I${row}`);
-  worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(`A${row}`).value = `(                                                                  )`;
-  worksheet.getCell(`A${row}`).font = NFont;
+  // row += 1;
+  // worksheet.mergeCells(`A${row}:I${row}`);
+  // worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  // worksheet.getCell(`A${row}`).value = `(                                                                  )`;
+  // worksheet.getCell(`A${row}`).font = NFont;
 
-  worksheet.mergeCells(`J${row}:Y${row}`);
-  worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(`J${row}`).value = `(                                                                  )`;
-  worksheet.getCell(`J${row}`).font = NFont;
+  // worksheet.mergeCells(`J${row}:Y${row}`);
+  // worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  // worksheet.getCell(`J${row}`).value = `(                                                                  )`;
+  // worksheet.getCell(`J${row}`).font = NFont;
 
-  row += 1;
-  worksheet.mergeCells(`A${row}:I${row}`);
-  worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(`A${row}`).value = `วันที่ ........................................................`;
-  worksheet.getCell(`A${row}`).font = NFont;
+  // row += 1;
+  // worksheet.mergeCells(`A${row}:I${row}`);
+  // worksheet.getCell(`A${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  // worksheet.getCell(`A${row}`).value = `วันที่ ........................................................`;
+  // worksheet.getCell(`A${row}`).font = NFont;
 
-  worksheet.mergeCells(`J${row}:Y${row}`);
-  worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.getCell(`J${row}`).value = `วันที่ ........................................................`;
-  worksheet.getCell(`J${row}`).font = NFont;
+  // worksheet.mergeCells(`J${row}:Y${row}`);
+  // worksheet.getCell(`J${row}`).alignment = { vertical: 'middle', horizontal: 'center' };
+  // worksheet.getCell(`J${row}`).value = `วันที่ ........................................................`;
+  // worksheet.getCell(`J${row}`).font = NFont;
 
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
@@ -357,7 +357,7 @@ export default async function CBSSchedListExcel(data, rToken) {
 
     FileSaver.saveAs(
       blob,
-      `รายงานของใช้รถ_${new Date().getDate()}${new Date().getMonth() + 1}${new Date().getFullYear()}.xlsx`
+      `รายงานขอใช้รถ_${new Date().getDate()}${new Date().getMonth() + 1}${new Date().getFullYear()}.xlsx`
     );
   });
 }

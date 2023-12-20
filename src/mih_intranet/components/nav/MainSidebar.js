@@ -24,6 +24,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
   const [isDSMS, setIsDSMS] = useState(false);
   const [isCBS, setIsCBS] = useState(false);
   const [isDIS, setIsDIS] = useState(false);
+  const [isWIFI, setIsWIFI] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
@@ -39,6 +40,8 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
           setIsCBS(true);
         } else if (token.lv_list[i].mihapp_id === 'DIS') {
           setIsDIS(true);
+        } else if (token.lv_list[i].mihapp_id === 'WIFI') {
+          setIsWIFI(true);
         }
       }
     }
@@ -180,6 +183,41 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
     </>
   );
 
+  const RMS = (
+    <>
+      <li className="nav-item">
+        <a className="nav-link collapsed" href="/rmsdashboard">
+          <i className="bi bi-calendar3" />
+          <span>ระบบจัดการความเสี่ยง</span>
+        </a>
+      </li>
+    </>
+  );
+
+  const WIFI = (
+    <>
+      {isWIFI ? (
+        <>
+          <li className="nav-item">
+            {name === 'wifidashboard' ? (
+              <a className="nav-link" href="#">
+                <i className="bi bi-wifi" />
+                <span>จัดการ User Wi-Fi</span>
+              </a>
+            ) : (
+              <a className="nav-link collapsed" href="/wifidashboard">
+                <i className="bi bi-wifi" />
+                <span>จัดการ User Wi-Fi</span>
+              </a>
+            )}
+          </li>
+        </>
+      ) : (
+        ''
+      )}
+    </>
+  );
+
   const renderContent = (
     <>
       {/* <!-- ======= Sidebar ======= --> */}
@@ -232,6 +270,8 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
         </li>
         {PMS}
         {DIS}
+        {WIFI}
+        {RMS}
         <li className="nav-heading">เอกสารเผยแพร่</li>
         <li className="nav-item">
           {/* <a className="nav-link collapsed" href="mihdocuments/announce.html"> */}

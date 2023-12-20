@@ -140,26 +140,8 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
   useEffect(() => {
     if (openDialg) {
       fetchCarData(data.from_date, data.to_date, data.car_type_id);
-      // moment.locale('en')
-      // console.log(`${moment.utc(data.from_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`);
-      // const tmpFrDate = `${moment.utc(data.from_date).format('ddd MMM DD YYYY HH:mm')}:00 GMT+0700 (Indochina Time)`;
       const tmpFrDate = moment.utc(data.from_date);
-      // const tmpFrDate = new Date(
-      //   `${parseInt(new Date(data.from_date).getUTCMonth(), 10) + 1} ${new Date(
-      //     data.from_date
-      //   ).getUTCDate()} ${new Date(data.from_date).getUTCFullYear()} ${new Date(
-      //     data.from_date
-      //   ).getUTCHours()}:${new Date(data.from_date).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-      // );
       const tmpToDate = moment.utc(data.to_date);
-      // const tmpToDate = new Date(
-      //   `${parseInt(new Date(data.to_date).getUTCMonth(), 10) + 1} ${new Date(data.to_date).getUTCDate()} ${new Date(
-      //     data.to_date
-      //   ).getUTCFullYear()} ${new Date(data.to_date).getUTCHours()}:${new Date(
-      //     data.to_date
-      //   ).getUTCMinutes()}:00 GMT+0700 (เวลาอินโดจีน)`
-      // );
-      // console.log(tmpFrDate);
       setFromDate(tmpFrDate);
       setFromTime(tmpFrDate);
       setToDate(tmpToDate);
@@ -190,20 +172,8 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
   }, [carTypeId]);
 
   useEffect(() => {
-    const tmpFrDate = `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`;
-    // const tmpFrDate = `${fromDate?.getFullYear()}-${String(parseInt(fromDate?.getMonth(), 10) + 1).padStart(
-    //   2,
-    //   '0'
-    // )}-${String(fromDate?.getDate()).padStart(2, '0')}T${String(fromTime?.getHours()).padStart(2, '0')}:${String(
-    //   fromTime?.getMinutes()
-    // ).padStart(2, '0')}:00.000Z`;
-    const tmpToDate = `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`;
-    // const tmpToDate = `${toDate?.getFullYear()}-${String(parseInt(toDate?.getMonth(), 10) + 1).padStart(
-    //   2,
-    //   '0'
-    // )}-${String(toDate?.getDate()).padStart(2, '0')}T${String(toTime?.getHours()).padStart(2, '0')}:${String(
-    //   toTime?.getMinutes()
-    // ).padStart(2, '0')}:00.000Z`;
+    const tmpFrDate = `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromTime).format('HH:mm')}:00.000Z`;
+    const tmpToDate = `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toTime).format('HH:mm')}:00.000Z`;
     fetchCarData(tmpFrDate, tmpToDate, carTypeId);
   }, [fromDate, fromTime, toDate, toTime]);
 
@@ -219,7 +189,7 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
       .then((result) => {
         setCar(result);
         carFilter(result, typeId);
-        setDuplicate(result.find((o) => o.type_id === data.car_type_id).duplicate);
+        setDuplicate(result.find((o) => o.id === data.car_id).duplicate);
         setDupDept(result.find((o) => o.type_id === data.car_type_id).dept_name);
       })
       .catch((error) => {
@@ -241,8 +211,8 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
     const jsonData = {
       id: id,
       grp_id: grpId,
-      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`,
-      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`,
+      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromTime).format('HH:mm')}:00.000Z`,
+      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toTime).format('HH:mm')}:00.000Z`,
       place: place,
       province: province,
       pax_amt: paxAmt,
@@ -305,8 +275,8 @@ function CBSPermitDialg({ openDialg, onCloseDialg, data }) {
     const jsonData = {
       id: id,
       grp_id: grpId,
-      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromDate).format('HH:mm')}:00.000Z`,
-      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toDate).format('HH:mm')}:00.000Z`,
+      from_date: `${moment.utc(fromDate).format('YYYY-MM-DD')}T${moment.utc(fromTime).format('HH:mm')}:00.000Z`,
+      to_date: `${moment.utc(toDate).format('YYYY-MM-DD')}T${moment.utc(toTime).format('HH:mm')}:00.000Z`,
       place: place,
       province: province,
       pax_amt: paxAmt,

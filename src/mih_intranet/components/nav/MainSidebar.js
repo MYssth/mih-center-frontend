@@ -271,7 +271,7 @@ export default function MainSidebar({ name, openNav, onCloseNav }) {
         {PMS}
         {DIS}
         {WIFI}
-        {RMS}
+        {/* {RMS} */}
         <li className="nav-heading">เอกสารเผยแพร่</li>
         <li className="nav-item">
           {/* <a className="nav-link collapsed" href="mihdocuments/announce.html"> */}

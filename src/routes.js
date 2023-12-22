@@ -51,6 +51,7 @@ import DISProdView from './mih_intranet/DIS/DISProdView';
 
 // RMS
 import RMSDashboard from './mih_intranet/RMS/RMSDashboard';
+import RMSNewTask from './mih_intranet/RMS/RMSNewTask';
 
 // WIFI
 import WIFIDashboard from './mih_intranet/WIFI/WIFIDashboard';
@@ -199,6 +200,10 @@ export default function Router() {
     {
       path: '/rmsdashboard',
       element: <RMSDashboard />,
+    },
+    {
+      path: '/rmsnewtask',
+      element: <RMSNewTask />,
     },
 
     // WIFI

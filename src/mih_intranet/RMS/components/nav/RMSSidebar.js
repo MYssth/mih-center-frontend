@@ -16,7 +16,7 @@ RMSSidebar.propTypes = {
 const NAV_WIDTH = 280;
 
 export default function RMSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
-    const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
 
@@ -25,7 +25,7 @@ export default function RMSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
       const token = jwtDecode(localStorage.getItem('token'));
-      setTokenData(token.lv_list.find((o) => o.mihapp_id === 'RMS').lv_id);
+      setTokenData(token ? token.lv_list.find((o) => o.mihapp_id === 'RMS')?.lv_id : '');
 
       if (openNav) {
         onCloseNav();
@@ -101,7 +101,99 @@ export default function RMSSidebar({ name, openNav, onCloseNav, notiTrigger }) {
           </a>
         )}
       </li>
+    </>
+  );
 
+  const refMenu = (
+    <>
+      <li className="nav-item">
+        {name === 'rmsexam' ? (
+          <a className="nav-link" href="#">
+            <i className="bi bi-person-gear" />
+            <span>วิเคราะห์ความเสี่ยง</span>
+          </a>
+        ) : (
+          <a className="nav-link collapsed" href="/rmsexam">
+            <i className="bi bi-person-gear" />
+            <span>วิเคราะห์ความเสี่ยง</span>
+          </a>
+        )}
+      </li>
+      <li className="nav-item">
+        {name === 'rmscnsdr' ? (
+          <a className="nav-link" href="#">
+            <i className="bi bi-person-gear" />
+            <span>พิจารณาความเสี่ยง</span>
+          </a>
+        ) : (
+          <a className="nav-link collapsed" href="/rmscnsdr">
+            <i className="bi bi-person-gear" />
+            <span>พิจารณาความเสี่ยง</span>
+          </a>
+        )}
+      </li>
+      <li className="nav-item">
+        {name === 'rmsest' ? (
+          <a className="nav-link" href="#">
+            <i className="bi bi-person-gear" />
+            <span>ประเมินความเสี่ยง</span>
+          </a>
+        ) : (
+          <a className="nav-link collapsed" href="/rmsest">
+            <i className="bi bi-person-gear" />
+            <span>ประเมินความเสี่ยง</span>
+          </a>
+        )}
+      </li>
+    </>
+  );
+
+  const renderContent = (
+    <>
+      {isDesktop ? (
+        ''
+      ) : (
+        <div className="d-flex align-items-center justify-content-between">
+          <a href="/intranet" className="logo d-flex align-items-center">
+            <img src="assets/img/logo_sticky.png" alt="" />
+          </a>
+        </div>
+      )}
+
+      {/* <!-- ======= Sidebar ======= --> */}
+
+      <ul className="sidebar-nav" id="sidebar-nav">
+        {mainMenu}
+        {tokenData === 'RMS_REF' ? <>{refMenu}</> : ''}
+        <li className="nav-item">
+          <a className="nav-link collapsed" href="/intranet">
+            <i className="bi bi-arrow-return-left" />
+            <span>กลับไปหน้าเมนูหลัก</span>
+          </a>
+        </li>
+      </ul>
+    </>
+  );
+
+  return (
+    <>
+      {isDesktop ? (
+        <Drawer open variant="permanent">
+          <aside id="sidebar" className="sidebar">
+            {renderContent}
+          </aside>
+        </Drawer>
+      ) : (
+        <Drawer
+          open={openNav}
+          onClose={onCloseNav}
+          PaperProps={{
+            sx: { width: NAV_WIDTH },
+          }}
+        >
+          {renderContent}
+        </Drawer>
+      )}
     </>
   );
 }

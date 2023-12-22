@@ -37,20 +37,20 @@ function RMSDashboard() {
   return (
     <>
       <Helmet>
-        <title> ระบบลงทะเบียนร่วมกิจกรรม | MIH Center </title>
+        <title> ระบบจัดการความเสี่ยง | MIH Center </title>
       </Helmet>
       <MainHeader onOpenNav={() => setOpen(true)} />
-      <RMSSidebar name="rmsdashboard" openNav={open} onCloseNav={() => setOpen(false)} />
+      <RMSSidebar name="dashboard" openNav={open} onCloseNav={() => setOpen(false)} />
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>ระบบลงทะเบียนร่วมกิจกรรม - Activity Register Service (ARS) version: {version}</h1>
+          <h1>ระบบจัดการความเสี่ยง - Risk Management Service (RMS) version: {version}</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item my-2">
                 <a href="/intranet">หน้าหลัก</a>
               </li>
-              <li className="breadcrumb-item my-2">หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</li>
+              <li className="breadcrumb-item my-2">หน้าหลักระบบจัดการความเสี่ยง</li>
             </ol>
           </nav>
         </div>

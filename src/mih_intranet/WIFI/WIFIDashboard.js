@@ -13,6 +13,7 @@ let rToken = '';
 function WIFIDashboard() {
   const [open, setOpen] = useState(null);
   const [version, setVersion] = useState('');
+  const [cVoucher, setCVoucher] = useState(0);
   const [file, setFile] = useState({});
   const [fileSel, setFileSel] = useState(false);
 
@@ -24,6 +25,7 @@ function WIFIDashboard() {
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
       rToken = localStorage.getItem('token');
+
       fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_wifiPort}/getversion`, {
         method: 'GET',
         headers: {
@@ -34,6 +36,21 @@ function WIFIDashboard() {
         .then((response) => response.json())
         .then((data) => {
           setVersion(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+      fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_wifiPort}/cvoucher`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${rToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setCVoucher(data.voucher);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -132,6 +149,7 @@ function WIFIDashboard() {
 
                   <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>
+                      จำนวน Voucher ที่เหลือ : {cVoucher}<br/>
                       <input type="file" onChange={handleSelectFile} />
                       <Button
                         onClick={() => {

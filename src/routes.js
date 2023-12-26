@@ -40,6 +40,7 @@ import TRSDashboard from './mih_intranet/TRS/TRSDashboard';
 import TRSTopicRes from './mih_intranet/TRS/TRSTopicRes';
 import TRSAttdMgr from './mih_intranet/TRS/TRSAttdMgr';
 import TRSReport from './mih_intranet/TRS/TRSReport';
+import TRSTopicMgr from './mih_intranet/TRS/TRSTopicMgr';
 
 // PRPO
 import PRPODashboard from './mih_intranet/PRPO/PRPODashboard';
@@ -174,6 +175,10 @@ export default function Router() {
     {
       path: '/trsreport',
       element: <TRSReport />,
+    },
+    {
+      path: '/trstopicmgr',
+      element: <TRSTopicMgr />,
     },
 
     // PRPO

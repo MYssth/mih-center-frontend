@@ -85,13 +85,13 @@ function TRSSidebar({ name, openNav, onCloseNav }) {
         {name === 'trstopicmgr' ? (
           <a className="nav-link" href="#">
             <i className="bi bi-folder-plus" />
-            <span>จัดการหัวข้อกิจกรรม (Coming soon)</span>
+            <span>จัดการหัวข้อกิจกรรม</span>
           </a>
         ) : (
           // <a className="nav-link collapsed" href="/trstopicmgr">
-          <a className="nav-link collapsed" href="#">
+          <a className="nav-link collapsed" href="/trstopicmgr">
             <i className="bi bi-folder-plus" />
-            <span>จัดการหัวข้อกิจกรรม (Coming soon)</span>
+            <span>จัดการหัวข้อกิจกรรม</span>
           </a>
         )}
       </li>

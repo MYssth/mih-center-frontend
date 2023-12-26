@@ -355,6 +355,9 @@ function TRSAttdMgr() {
               <li className="breadcrumb-item my-2">
                 <a href="/intranet">หน้าหลัก</a>
               </li>
+              <li className="breadcrumb-item my-2">
+                <a href="/trsdashboard">หน้าหลักระบบลงทะเบียนร่วมกิจกรรม</a>
+              </li>
               <li className="breadcrumb-item my-2">จัดการผู้เข้าร่วมกิจกรรม</li>
             </ol>
           </nav>

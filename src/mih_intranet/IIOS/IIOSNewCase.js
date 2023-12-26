@@ -68,7 +68,7 @@ function IIOSNewCase() {
         })
 
         .then(
-          fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getdepartments`, {
+          fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_himsPort}/getalldept`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

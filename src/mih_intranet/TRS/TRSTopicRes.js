@@ -8,7 +8,6 @@ import { format } from 'date-fns';
 import MainHeader from '../components/MainHeader';
 import TRSSidebar from './components/nav/TRSSidebar';
 import TRSAttdSubmtDialg from './components/dialg/TRSAttdSubmtDialg';
-import TRSVoteSubmtDialg from './components/dialg/TRSVoteSubmtDialg';
 import TRSAttdShowDialg from './components/dialg/TRSAttdShowDialg';
 import './css/index.css';
 
@@ -40,7 +39,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 let psnId;
-let disBtn = true;
 let rToken = '';
 
 function TRSTopicRes() {
@@ -56,18 +54,13 @@ function TRSTopicRes() {
   const [selTopicRes, setSelTopicRes] = useState('');
   const [selTopicName, setSelTopicName] = useState('');
   const [selSubTopicRes, setSelSubTopicRes] = useState('');
+  const [img, setImg] = useState(false);
 
   const [openAttd, setOpenAttd] = useState(false);
   const [openAttdShow, setOpenAttdShow] = useState(false);
 
   const [attdList, setAttdList] = useState([]);
   const [subName, setSubName] = useState('');
-
-  const [psnList, setPsnList] = useState([]);
-  const [vote, setVote] = useState('');
-  const [voteSel, setVoteSel] = useState('');
-  const [voteSelName, setVoteSelName] = useState('');
-  const [openVote, setOpenVote] = useState(false);
 
   const topicListCol = [
     {
@@ -86,13 +79,30 @@ function TRSTopicRes() {
       minWidth: 120,
       flex: 1,
     },
-    // {
-    //   field: 'start_date',
-    //   headerName: 'วันเวลา',
-    //   maxWidth: 200,
-    //   minWidth: 200,
-    //   flex: 1,
-    // },
+    {
+      field: 'start_sdate',
+      headerName: 'เปิดวันที่',
+      maxWidth: 100,
+      minWidth: 100,
+      flex: 1,
+      // valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
+      valueGetter: (params) =>
+        `${new Date(params.row.start_sdate).getUTCDate()}/${
+          new Date(params.row.start_sdate).getUTCMonth() + 1
+        }/${new Date(params.row.start_sdate).getUTCFullYear()}`,
+    },
+    {
+      field: 'end_sdate',
+      headerName: 'ถึงวันที่',
+      maxWidth: 100,
+      minWidth: 100,
+      flex: 1,
+      // valueGetter: (params) => `${format(new Date(params.row.start_date), 'dd/MM/yyyy')}`,
+      valueGetter: (params) =>
+        `${new Date(params.row.end_sdate).getUTCDate()}/${new Date(params.row.end_sdate).getUTCMonth() + 1}/${new Date(
+          params.row.end_sdate
+        ).getUTCFullYear()}`,
+    },
     {
       field: 'name',
       headerName: 'ชื่อเรื่อง',
@@ -182,19 +192,7 @@ function TRSTopicRes() {
     }
   }, []);
 
-  useEffect(() => {
-    disBtn = false;
-  }, [selSubTopicRes]);
-
   const refreshTable = () => {
-
-    setPsnList([]);
-    setVote('');
-    setVoteSel('');
-    setVoteSelName('');
-
-    disBtn = true;
-
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/gettopiclist`, {
       method: 'GET',
       headers: {
@@ -239,42 +237,6 @@ function TRSTopicRes() {
       .catch((error) => {
         console.error('Error:', error);
       });
-
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_psnDataDistPort}/getactvpersonnel`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPsnList(data.filter((data) => data.pos_id !== 'DR001' && data.pos_id !== 'DR002' && data.pos_id !== 'DR003'
-        && data.pos_id !== 'MD001' && data.pos_id !== 'MD002' && data.pos_id !== 'MD003' && data.pos_id !== 'MD004'
-        && data.pos_id !== 'AM002' && data.pos_id !== 'VCEO' && data.pos_id !== 'AT005' && data.pos_id !== 'DT001'
-        && data.pos_id !== 'CEO'));
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/votecheck/${psnId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${rToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data !== null && data !== '') {
-          setVote(psnList.find((data) => data.psn_id === vote.vote));
-        }
-        setVote(data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
   };
 
   return (
@@ -299,16 +261,6 @@ function TRSTopicRes() {
           setOpenAttd(false);
         }}
         topic={focusTopic}
-        psnId={psnId}
-        rToken={rToken}
-      />
-      <TRSVoteSubmtDialg
-        openDialg={openVote}
-        onCloseDialg={() => {
-          refreshTable();
-          setOpenVote(false);
-        }}
-        data={voteSel}
         psnId={psnId}
         rToken={rToken}
       />
@@ -359,37 +311,12 @@ function TRSTopicRes() {
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         selectionModel={selTopicRes}
                         onSelectionModelChange={(newSelectionModel) => {
-                          disBtn = true;
-                          // setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
                           setSelTopicRes(newSelectionModel[0]);
-                          // setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
-                          // setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
-
-                          // =====temp=====
-
-                          const minDate = attd?.find((data) => data.topic_id === 'TRS000002');
-                          if (newSelectionModel[0] === 'TRS000003') {
-                            const isPreReq = attd.find((data) => data.topic_id === 'TRS000002');
-                            if (isPreReq) {
-                              setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
-                              setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
-                              setSubTopicFilter(
-                                subTopicList.filter(
-                                  (data) =>
-                                    data.topic_id === newSelectionModel[0] && data.start_date >= minDate.start_date
-                                )
-                              );
-                            } else {
-                              setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
-                              setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
-                              setSubTopicFilter('');
-                            }
-                          } else {
-                            setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
-                            setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
-                            setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
-                          }
-                          // =====end of temp=====
+                          setIsAttd(attd?.find((data) => data.topic_id === newSelectionModel[0]));
+                          setSelTopicName(topicList.find((data) => data.id === newSelectionModel[0])?.name);
+                          setSubTopicFilter(subTopicList.filter((data) => data.topic_id === newSelectionModel[0]));
+                          setImg(topicList.find((data) => data.id === newSelectionModel[0])?.img);
+                          setSelSubTopicRes('');
                         }}
                         hideFooterSelectedRowCount
                         componentsProps={{
@@ -401,155 +328,85 @@ function TRSTopicRes() {
                       />
                     </div>
                   </div>
-                  {/* show image (particular use) */}
-                  {selTopicName === 'ยืนยันสิทธิ์เข้าร่วมงานเลี้ยงปีใหม่ และลงทะเบียนจองที่นั่งโต๊ะจีน' ? (
+                  {img ? (
                     <img
-                      src={'assets/img/newyear_seat_chart.png'}
+                      src={`${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getimg/${selTopicRes}`}
                       style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto' }}
                       alt="ไม่มีรูปภาพ"
                     />
                   ) : (
                     ''
                   )}
-                  {/* ============================= */}
 
-                  {/* popular vote (particular case) */}
-                  {selTopicName === 'ลงคะแนนโหวต รางวัลคนดีศรีมุกอินเตอร์ สาขาขวัญใจพนักงาน' ? (
-                    <>
-                      <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
-                        {selTopicName}
-                      </Typography>
-                      <div className="attd">
-                        {vote && psnList.length > 0
-                          ? `คุณได้โหวตให้ ${psnList.find((data) => data.psn_id === vote.vote).pname}${
-                              psnList.find((data) => data.psn_id === vote.vote).fname
-                            } ${psnList.find((data) => data.psn_id === vote.vote).lname} ${
-                              psnList.find((data) => data.psn_id === vote.vote).dept_name
-                            } แล้ว`
-                          : ''}
-                      </div>
-                      <div style={{ display: 'flex', height: '100%' }}>
-                        <div style={{ flexGrow: 1 }}>
-                          <Autocomplete
-                            disabled={vote}
-                            value={voteSelName}
-                            onChange={(event, newValue) => {
-                              setVoteSelName(newValue);
-                              if (newValue !== null) {
-                                setVoteSel(
-                                  psnList.find(
-                                    (data) => `${data.pname}${data.fname} ${data.lname} ${data.dept_name}` === newValue
-                                  )
-                                );
-                              } else {
-                                setVoteSel('');
+                  <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
+                    เลือกรุ่นของหัวข้อกิจกรรม {selTopicName}
+                  </Typography>
+                  <div className="attd">{isAttd ? `คุณได้ลงชื่อกิจกรรมที่ ${isAttd?.name} แล้ว` : ''}</div>
+                  <div style={{ display: 'flex', height: '100%' }}>
+                    <div style={{ flexGrow: 1 }}>
+                      <StripedDataGrid
+                        getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
+                        autoHeight
+                        getRowHeight={() => 'auto'}
+                        columns={topicSubListCol}
+                        rows={subTopicFilter}
+                        pageSize={pageSize}
+                        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                        selectionModel={selTopicRes}
+                        onSelectionModelChange={(newSelectionModel) => {
+                          if (subTopicFilter) {
+                            if (
+                              subTopicFilter.find((data) => data.id === newSelectionModel[0] && data.attd < data.lmt)
+                            ) {
+                              if (!isAttd && selTopicName !== '' && selTopicName !== undefined) {
+                                setSelSubTopicRes(newSelectionModel[0]);
                               }
-                            }}
-                            options={Object.values(psnList).map(
-                              (data) => `${data.pname}${data.fname} ${data.lname} ${data.dept_name}`
-                            )}
-                            fullWidth
-                            required
-                            renderInput={(params) => <TextField {...params} label="รายชื่อบุคลากร" />}
-                            // sx={{
-                            //   '& .MuiAutocomplete-inputRoot': {
-                            //     '& .MuiOutlinedInput-notchedOutline': {
-                            //       borderColor: isPMS ? (PMSLevelName ? 'green' : 'red') : '',
-                            //     },
-                            //   },
-                            // }}
-                          />
-                        </div>
-                      </div>
-                      <Button
-                        sx={{ mt: 1 }}
-                        variant="contained"
-                        fullWidth
-                        // disabled={disBtn}
-                        disabled={voteSel === '' || voteSel === undefined}
-                        onClick={() => {
-                          setOpenVote(true);
+                            }
+                          }
                         }}
-                      >
-                        โหวตลงคะแนน
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Typography sx={{ flex: '1 1 100%', p: 1 }} variant="h6" id="tableTitle" component="div">
-                        เลือกรุ่นของหัวข้อกิจกรรม {selTopicName}
-                      </Typography>
-                      <div className="attd">{isAttd ? `คุณได้ลงชื่อกิจกรรมที่ ${isAttd?.name} แล้ว` : ''}</div>
-                      <div style={{ display: 'flex', height: '100%' }}>
-                        <div style={{ flexGrow: 1 }}>
-                          <StripedDataGrid
-                            getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
-                            autoHeight
-                            getRowHeight={() => 'auto'}
-                            columns={topicSubListCol}
-                            rows={subTopicFilter}
-                            pageSize={pageSize}
-                            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                            selectionModel={selTopicRes}
-                            onSelectionModelChange={(newSelectionModel) => {
-                              if (subTopicFilter) {
-                                if (
-                                  subTopicFilter.find(
-                                    (data) => data.id === newSelectionModel[0] && data.attd < data.lmt
-                                  )
-                                ) {
-                                  if (!isAttd && selTopicName !== '' && selTopicName !== undefined) {
-                                    setSelSubTopicRes(newSelectionModel[0]);
-                                  }
-                                }
-                              }
-                            }}
-                            onCellDoubleClick={(params) => {
-                              setSubName(params.row.name);
-                              fetch(
-                                `${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getattdbytopic/${params.row.topic_id}`,
-                                {
-                                  method: 'GET',
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                    Authorization: `Bearer ${rToken}`,
-                                  },
-                                }
-                              )
-                                .then((response) => response.json())
-                                .then((data) => {
-                                  setAttdList(data.filter((data) => data.id === params.id));
-                                  setOpenAttdShow(true);
-                                  // setAttdByTopicList(data);
-                                })
-                                .catch((error) => {
-                                  console.error('Error:', error);
-                                });
-                            }}
-                            hideFooterSelectedRowCount
-                            componentsProps={{
-                              toolbar: {
-                                printOptions: { hideFooter: true, hideToolbar: true },
-                                csvOptions: { utf8WithBom: true },
+                        onCellDoubleClick={(params) => {
+                          setSubName(params.row.name);
+                          fetch(
+                            `${process.env.REACT_APP_host}${process.env.REACT_APP_trsPort}/getattdbytopic/${params.row.topic_id}`,
+                            {
+                              method: 'GET',
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${rToken}`,
                               },
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        // disabled={disBtn}
-                        disabled={selSubTopicRes === '' || selSubTopicRes === undefined}
-                        onClick={() => {
-                          setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
-                          setOpenAttd(true);
+                            }
+                          )
+                            .then((response) => response.json())
+                            .then((data) => {
+                              setAttdList(data.filter((data) => data.id === params.id));
+                              setOpenAttdShow(true);
+                              // setAttdByTopicList(data);
+                            })
+                            .catch((error) => {
+                              console.error('Error:', error);
+                            });
                         }}
-                      >
-                        ลงทะเบียนร่วมกิจกรรม
-                      </Button>
-                    </>
-                  )}
+                        hideFooterSelectedRowCount
+                        componentsProps={{
+                          toolbar: {
+                            printOptions: { hideFooter: true, hideToolbar: true },
+                            csvOptions: { utf8WithBom: true },
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    disabled={selSubTopicRes === '' || selSubTopicRes === undefined}
+                    onClick={() => {
+                      setFocusTopic(subTopicFilter.find((data) => data.sub_id === selSubTopicRes));
+                      setOpenAttd(true);
+                    }}
+                  >
+                    ลงทะเบียนร่วมกิจกรรม
+                  </Button>
                 </div>
               </div>
             </div>

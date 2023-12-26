@@ -20,6 +20,7 @@ function DISProdView() {
   const id = queryParameters.get('id').toLocaleUpperCase();
 
   const [data, setData] = useState('');
+  const [inactive, setInactive] = useState(true);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_disPort}/getdruginfo/${id}`, {
@@ -30,7 +31,10 @@ function DISProdView() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setData(data);
+        if (!data.inactive) {
+          setData(data);
+          setInactive(false);
+        }
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -46,12 +50,7 @@ function DISProdView() {
         <Grid item xs={5} sx={{ display: 'flex', alignItems: 'flex-end' }}>
           <Box width={'100%'} sx={{ ml: 1 }}>
             <center>
-              <img
-                src="assets/img/logo white border-01.png"
-                width={'80%'}
-                alt=""
-                style={{ maxWidth: '300px' }}
-              />
+              <img src="assets/img/logo white border-01.png" width={'80%'} alt="" style={{ maxWidth: '300px' }} />
               <div className="pagetitle" style={{ color: '#1771ab' }}>
                 <h1 style={{ fontSize: '2.6em' }}>ข้อมูลยา</h1>
               </div>
@@ -65,7 +64,9 @@ function DISProdView() {
           <Box sx={{ backgroundColor: '#b6d9bf', p: 1, mr: 1, borderRadius: 1 }}>
             <center>
               <img
-                src={`${process.env.REACT_APP_host}${process.env.REACT_APP_disPort}/getdrugimg/${data.id}`}
+                src={
+                  inactive ? '' : `${process.env.REACT_APP_host}${process.env.REACT_APP_disPort}/getdrugimg/${data.id}`
+                }
                 width={'100%'}
                 height={'auto'}
                 style={{ maxHeight: '500px', maxWidth: '500px', minHeight: '150px' }}
